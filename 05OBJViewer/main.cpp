@@ -717,7 +717,7 @@ void renderFrame(){
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 
-		if (model->getMesches()[i]->hasTextureCoords()){
+		if (model->hasTextureCoords()){
 
 			glDisableVertexAttribArray(texCoordID);
 			glBindTexture(GL_TEXTURE_2D, 0);

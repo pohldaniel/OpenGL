@@ -76,13 +76,11 @@ public:
 	
 	Mesh();
 
-	Mesh(std::string mltName, std::string mltPath, int numberTriangles);
+	Mesh(std::string mltName, int numberTriangles);
 
 	~Mesh();
 
-	bool loadObject(const char* filename);
-	bool loadObject(const char* filename, Vector3f& translate, float scale);
-
+	
 	bool readMaterial(const char* filename);
 
 	const int *getIndexBuffer() const;
@@ -94,11 +92,9 @@ public:
 	int getNumberOfTriangles() const;
 	
 
-	bool hasTextureCoords() const;
-	bool hasNormals() const;
 	
 	std::string getMltName();
-	std::string getMltPath();
+	
 
 	Material getMaterial();
 
@@ -120,20 +116,16 @@ private:
 	std::map<int, int > m_vertexCache;
 	std::vector<int> m_indexBuffer;
 	
-
-	bool m_hasTextureCoords;
-	bool m_hasNormals;
-
 	
 	int m_numberTriangles;
-	int m_numberMeshes;
+	
 
 	int addVertex(int hash, const float *pVertex, int n);
 	bool mltCompare(std::string* mltName);
 
 	
 	std::string m_mltName;
-	std::string m_mltPath;
+	
 
 	Material m_material;
 
