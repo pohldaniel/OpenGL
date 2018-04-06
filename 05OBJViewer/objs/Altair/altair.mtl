@@ -1,0 +1,198 @@
+# 
+# Wavefront material file
+# Converted by the DEEP Exploration  Deep Exploration 6.0 6.0.0.5908 Release
+# Right Hemisphere, LTD
+# http://www.righthemisphere.com/
+# 
+
+newmtl Material_0008f1
+Ka 0.498039 0.498039 0.498039
+Kd 1 1 1
+Ks 0.803922 0.803922 0.803922
+illum 2
+Ns 64
+map_Kd ACRobeShirt.bmp
+map_bump ACRobeShirt_n.bmp
+bump ACRobeShirt_n.bmp
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material
+Ka 0.498039 0.498039 0.498039
+Kd 1 1 1
+Ks 0.886275 0.886275 0.886275
+illum 2
+Ns 64
+map_Kd ACshortsword.bmp
+map_bump ACshortsword_n.bmp
+bump ACshortsword_n.bmp
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material_1
+Ka 0.498039 0.498039 0.498039
+Kd 1 1 1
+Ks 0.764706 0.764706 0.764706
+illum 2
+Ns 64
+map_Kd ACRobePants.bmp
+map_bump ACRobePants_n.bmp
+bump ACRobePants_n.bmp
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl wireframe_color_0xC458E1
+Ka 0.117647 0.117647 0.117647
+Kd 0.768627 0.345098 0.882353
+Ks 0.752941 0.752941 0.752941
+illum 2
+Ns 8
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material1
+Ka 0.498039 0.498039 0.498039
+Kd 1 1 1
+Ks 0.498039 0.498039 0.498039
+illum 2
+Ns 64
+map_Kd ACswordsaber.bmp
+map_bump ACswordsaber_n.bmp
+bump ACswordsaber_n.bmp
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material125
+Ka 0.498039 0.498039 0.498039
+Kd 1 1 1
+Ks 0.498039 0.498039 0.498039
+illum 2
+Ns 64
+map_Kd ACboots.bmp
+map_bump ACboots_n.bmp
+bump ACboots_n.bmp
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material_00041e
+Ka 0.498039 0.498039 0.498039
+Kd 1 1 1
+Ks 0.498039 0.498039 0.498039
+illum 2
+Ns 64
+map_Kd ACgloves.bmp
+map_bump ACgloves_n.bmp
+bump ACgloves_n.bmp
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material123
+Ka 0.498039 0.498039 0.498039
+Kd 1 1 1
+Ks 0.498039 0.498039 0.498039
+illum 2
+Ns 64
+map_Kd rai.bmp
+map_bump rai_NRM.bmp
+bump rai_NRM.bmp
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material12
+Ka 0.498039 0.498039 0.498039
+Kd 1 1 1
+Ks 0.796079 0.796079 0.796079
+illum 2
+Ns 64
+map_Kd AChood.bmp
+map_bump AChood_n.bmp
+bump AChood_n.bmp
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material124
+Ka 0.498039 0.498039 0.498039
+Kd 1 1 1
+Ks 0.498039 0.498039 0.498039
+illum 2
+Ns 64
+map_Kd AChood.bmp
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Mat1
+Ka 0.498039 0.498039 0.498039
+Kd 1 1 1
+Ks 0.803922 0.803922 0.803922
+illum 2
+Ns 45.2548
+map_Kd rai.bmp
+map_bump rai_NRM.bmp
+bump rai_NRM.bmp
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Mat
+Ka 0.498039 0.498039 0.498039
+Kd 1 1 1
+Ks 1 1 1
+illum 2
+Ns 675.588
+map_Kd mata.bmp
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 

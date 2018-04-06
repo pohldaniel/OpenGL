@@ -219,7 +219,7 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 				assign = iter->second;
 
 			}
-
+			//std::cout << assign << "  " << buffer << std::endl;
 			
 
 		}else if ((*coord[i])[0] == 'f'){
@@ -256,6 +256,13 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 
 		}
 	}
+	for (int i = 0; i < face.size(); i++){
+		
+		
+
+		//if (face[i][9] == 1) std::cout << face[i][9] << "  " << i << std::endl;
+	}
+
 
 	std::sort(face.begin(), face.end(), compare);
 
@@ -267,14 +274,26 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 
 	m_numberOfMeshes = dup.size();
 
-	std::map<std::string, int >::const_iterator iterName = name.begin();
 	std::map<int, int>::const_iterator iterDup = dup.begin();
-	
-	for (iterDup; iterDup != dup.end(); iterDup++, iterName++) {
-		
-		mesh.push_back(new Mesh("newmtl " + iterName->first,  iterDup->second));
 
+	for (iterDup; iterDup != dup.end(); iterDup++){
+
+		std::map<std::string, int >::const_iterator iterName = name.begin();
+
+		for (iterName; iterName != name.end(); iterName++){
+
+			if (iterDup->first == iterName->second){
+
+				
+
+				mesh.push_back(new Mesh("newmtl " + iterName->first, iterDup->second));
+			}
+		}
+
+		
 	}
+
+	
 
 	
 	dup.clear();
