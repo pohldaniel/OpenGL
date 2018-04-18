@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "04Terrain", "04Terrain\04Te
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "05OBJViewer", "05OBJViewer\05OBJViewer.vcxproj", "{8717D0FC-D8AE-4FC3-9D54-3080C1212638}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "06OBJViewer-phong", "06OBJViewer-phong\06OBJViewer-phong.vcxproj", "{6DB4D315-6D75-4D99-845E-DB73BE2964D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -45,6 +47,10 @@ Global
 		{8717D0FC-D8AE-4FC3-9D54-3080C1212638}.Debug|Win32.Build.0 = Debug|Win32
 		{8717D0FC-D8AE-4FC3-9D54-3080C1212638}.Release|Win32.ActiveCfg = Release|Win32
 		{8717D0FC-D8AE-4FC3-9D54-3080C1212638}.Release|Win32.Build.0 = Release|Win32
+		{6DB4D315-6D75-4D99-845E-DB73BE2964D8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6DB4D315-6D75-4D99-845E-DB73BE2964D8}.Debug|Win32.Build.0 = Debug|Win32
+		{6DB4D315-6D75-4D99-845E-DB73BE2964D8}.Release|Win32.ActiveCfg = Release|Win32
+		{6DB4D315-6D75-4D99-845E-DB73BE2964D8}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
