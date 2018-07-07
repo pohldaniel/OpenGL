@@ -236,7 +236,7 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 
 				sscanf(coord[i]->c_str(), "f %d//%d %d//%d %d//%d", &a, &n1, &b, &n2, &c, &n3);
 
-				face.push_back({ { a, b, c, n1, n2, n2, 0, 0, 0, assign } });
+				face.push_back({ { a, b, c, n1, n2, n3, 0, 0, 0, assign } });
 
 
 			}else if (!textureCoords.empty()){
