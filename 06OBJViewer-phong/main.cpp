@@ -297,7 +297,7 @@ void initApp(HWND hWnd)
 	
 
 	model = new Model();
-	model->loadObject("objs/teapot.obj");
+	model->loadObject("objs/face.obj");
 
 	
 	

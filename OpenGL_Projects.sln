@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OBJViewer", "OBJViewer\OBJViewer.vcxproj", "{68772BF1-E3D8-480A-91F9-3D8E4CA90A1A}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01Cube", "01Cube\01Cube.vcxproj", "{B7FFCDA1-2926-4C5D-B067-BD44A0710C0C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02Cube-glsl", "02Cube-glsl\02Cube-glsl.vcxproj", "{3514859D-A1C0-4DC4-A14C-2A2A5AFB373F}"
@@ -23,10 +21,6 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{68772BF1-E3D8-480A-91F9-3D8E4CA90A1A}.Debug|Win32.ActiveCfg = Debug|Win32
-		{68772BF1-E3D8-480A-91F9-3D8E4CA90A1A}.Debug|Win32.Build.0 = Debug|Win32
-		{68772BF1-E3D8-480A-91F9-3D8E4CA90A1A}.Release|Win32.ActiveCfg = Release|Win32
-		{68772BF1-E3D8-480A-91F9-3D8E4CA90A1A}.Release|Win32.Build.0 = Release|Win32
 		{B7FFCDA1-2926-4C5D-B067-BD44A0710C0C}.Debug|Win32.ActiveCfg = Debug|Win32
 		{B7FFCDA1-2926-4C5D-B067-BD44A0710C0C}.Debug|Win32.Build.0 = Debug|Win32
 		{B7FFCDA1-2926-4C5D-B067-BD44A0710C0C}.Release|Win32.ActiveCfg = Release|Win32
