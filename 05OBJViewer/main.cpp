@@ -297,7 +297,7 @@ void initApp(HWND hWnd)
 	
 
 	model = new Model();
-	model->loadObject("objs/Altair/Altair.obj");
+	model->loadObject("objs/Dragon/dragon.obj");
 
 	
 	
