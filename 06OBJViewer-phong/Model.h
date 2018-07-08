@@ -80,6 +80,8 @@ public:
 
 	Mesh(std::string mltName, int numberTriangles);
 
+	Mesh(int numberTriangles);
+
 	~Mesh();
 
 	

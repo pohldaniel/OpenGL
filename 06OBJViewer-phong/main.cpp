@@ -27,7 +27,21 @@ enum DIRECTION {
 	DIR_FORCE_32BIT = 0x7FFFFFFF
 };
 
-GLuint u_projection, u_modelView, u_normalMatrix, u_color, u_texture, u_hasTexture, positionID, colorID, texCoordID, normalID;
+struct LightSource{
+	Vector3f ambient;
+	Vector3f diffuse;
+	Vector3f specular;
+	Vector3f position;
+};
+
+struct Material{
+	Vector3f ambient;
+	Vector3f diffuse;
+	Vector3f specular;
+	float specularShininesse;
+};
+
+GLuint u_projection, u_modelView, u_normalMatrix, u_lightPos, positionID, colorID, texCoordID, normalID;
 GLuint  g_texture, g_vertexBuffer, g_indexBuffer;
 GLuint program;
 
@@ -36,7 +50,9 @@ GLuint program;
 Camera *camera;
 float time = 90;
 Model* model;
-
+LightSource light;
+Material mat;
+Matrix4f modelView;
 //prototype funktions
 LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParma, LPARAM lParam);
 void setCursortoMiddle(HWND hwnd);
@@ -55,7 +71,7 @@ GLuint loadIndexBuffer(const int indexBufferSize, const int * indexBuffer);
 GLuint loadTexture(const char *pszFilename);
 
 Matrix4f &getNormalMatrix(const Matrix4f &modelViewMatrix);
-Matrix4f modelView;
+
 
 GLuint createProgram();
 void cleanup();
@@ -332,35 +348,47 @@ void initApp(HWND hWnd)
 	}
 
 	
-
-	//model->rotate(Vector3f(1.0, 0.0, 0.0), 0);
-	//model->translate(0.0, 0.0, 2.0);
+	model->rotate(Vector3f(0.0, 1.0, 0.0), 180);
+	//model->rotate(Vector3f(1.0, 0.0, 0.0), 45);
+	//model->translate(0.0, -0.7, 0.0);
 	//model->scale(1.0, 3.0, 1.0);
+
+	mat.ambient = Vector3f(0.1, 0.1, 0.1);
+	mat.diffuse = Vector3f(1.0, 0.0, 0.0);
+	mat.specular = Vector3f(1.0, 1.0, 1.0);
+	mat.specularShininesse = 15;
+
+	light.ambient = Vector3f(1.0, 0.0, 0.0);
+	light.diffuse = Vector3f(1.0, 0.0, 0.0);
+	light.specular = Vector3f(1.0, 1.0, 1.0);
+	light.position = Vector3f(20.0, 0.0, 40.0);
 
 	program = createProgram();
 	u_projection = glGetUniformLocation(program, "u_projection");
 	u_modelView = glGetUniformLocation(program, "u_modelView");
 	u_normalMatrix = glGetUniformLocation(program, "u_normalMatrix");
-	u_texture = glGetUniformLocation(program, "u_texture");
-	u_hasTexture = glGetUniformLocation(program, "u_hasTexture");
-	u_color = glGetUniformLocation(program, "u_color");
+
 	positionID = glGetAttribLocation(program, "position");
 	colorID = glGetAttribLocation(program, "color");
-	normalID = glGetAttribLocation(program, "a_normal");
+	normalID = glGetAttribLocation(program, "normal");
 	texCoordID = glGetAttribLocation(program, "texCoords");
+
+
 
 	glUseProgram(program);
 	glUniformMatrix4fv(u_projection, 1, true, &camera->getProjectionMatrix()[0][0]);
-	glUniform1i(u_texture, 0);
-	glUniform1i(u_hasTexture, false);
 
+	glUniform3fv(glGetUniformLocation(program, "light.ambient"), 1, &light.ambient[0]);
+	glUniform3fv(glGetUniformLocation(program, "light.diffuse"), 1, &light.diffuse[0]);
+	glUniform3fv(glGetUniformLocation(program, "light.specular"), 1, &light.specular[0]);
+	glUniform3fv(glGetUniformLocation(program, "light.position"), 1, &light.position[0]);
+	glUniform3fv(glGetUniformLocation(program, "u_lightPos"), 1, &light.position[0]);
 
-
-	if (model->hasMaterial()){
-		glUniform1i(u_hasTexture, true);
-	}
+	glUniform3fv(glGetUniformLocation(program, "material.ambient"), 1, &mat.ambient[0]);
+	glUniform3fv(glGetUniformLocation(program, "material.diffuse"), 1, &mat.diffuse[0]);
+	glUniform3fv(glGetUniformLocation(program, "material.specular"), 1, &mat.specular[0]);
+	glUniform1f(glGetUniformLocation(program, "material.specularShininesse"), mat.specularShininesse);
 	glUseProgram(0);
-
 }
 
 void setCursortoMiddle(HWND hwnd){

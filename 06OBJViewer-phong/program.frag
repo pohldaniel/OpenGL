@@ -1,36 +1,75 @@
 #version 410 core
 
-uniform sampler2D u_texture;
-uniform bool u_hasTexture;
+struct LightSource{
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+	vec3 position;
+};
 
-const vec4 Ca = vec4 ( 0,  0, .3, 0);
-const vec4 Ce = vec4 ( 0,  0,  0, 0);
-const vec4 Cd = vec4 ( 0, .5,  0, 0);
-const vec4 Cs = vec4 (.8, .8, .8, 0);
-const float kse = 30;
+struct Material{
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+	float specularShininesse;
+};
 
-// Direktionales Licht (im Unendlichen)
-const vec3 light = normalize (vec3 (2, 1, 3));	
 
-in vec3 v_color;
 in vec3 v_normal;
-in vec3 v_halfway;
-in vec2 v_texCoord;
+in vec3 v_lightDirection;
+in vec3 v_viewDirection;
+
 
 out vec4 color;
+
+
+uniform LightSource light;
+uniform Material material;
+
+
 
 void main(void){
 
 	
+	vec3 E = normalize(v_viewDirection);
+	vec3 N = normalize(v_normal);
+	vec3 L = normalize(v_lightDirection);
 	
-	 vec3  n  = normalize (v_normal);
-    vec3  h  = normalize (v_halfway);
-    float Id = max (dot (light, n), 0);
-    float Is = pow (max (dot (h, n), 0), kse);
-    color = Ca + Ce + Cd * Id + Cs * Is;
+	//phong 
+	vec3 V = N * 2.0 * dot(N, L) - L;
 	
-	color = Ca + Ce + Cd * Id + Cs * Is;
+	//blinn phong
+	vec3 H = normalize(E + L);
 	
+	vec3 ambient  = vec3(0.0, 0.0, 0.0);
+	vec3 diffuse  = vec3(0.0, 0.0, 0.0);
+	vec3 specular = vec3(0.0, 0.0, 0.0);
 	
+	ambient += light.ambient;
+	diffuse += light.diffuse * max(dot(L,N),0.0);
+	
+	//phong
+	specular += light.specular * pow(max(dot(E,V),0.0),material.specularShininesse);
+	
+	//blinn phong
+	//specular += light.specular * pow(max(dot(H,N),0.0),material.specularShininesse);
+	
+	ambient *= material.ambient;
+	diffuse *= material.diffuse;
+	specular *= material.specular;
+	
+	color = vec4(ambient + diffuse + specular, 1.0);
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+

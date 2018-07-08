@@ -290,22 +290,28 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 	std::map<int, int>::const_iterator iterDup = dup.begin();
 
 	for (iterDup; iterDup != dup.end(); iterDup++){
-
-		std::map<std::string, int >::const_iterator iterName = name.begin();
-
-		for (iterName; iterName != name.end(); iterName++){
-
-			if (iterDup->first == iterName->second){
-
-				
-
-				mesh.push_back(new Mesh("newmtl " + iterName->first, iterDup->second));
-			}
-		}
-
 		
-	}
+		
+		if (name.empty()){
 
+			mesh.push_back(new Mesh( iterDup->second));
+
+		}else{
+
+			std::map<std::string, int >::const_iterator iterName = name.begin();
+			for (iterName; iterName != name.end(); iterName++){
+
+				if (iterDup->first == iterName->second){
+
+
+
+					mesh.push_back(new Mesh("newmtl " + iterName->first, iterDup->second));
+				}
+			}
+
+		}
+	}
+	
 	
 
 	
@@ -466,7 +472,7 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 
 	}
 
-
+	
 	
 
 
@@ -609,6 +615,14 @@ Mesh::Mesh(std::string mltName, int numberTriangles){
 	m_color = Vector3f(1.0, 1.0, 1.0);
 	m_numberTriangles = numberTriangles;
 	m_mltName = mltName;
+
+}
+
+Mesh::Mesh( int numberTriangles){
+
+	m_color = Vector3f(1.0, 1.0, 1.0);
+	m_numberTriangles = numberTriangles;
+
 
 }
 
