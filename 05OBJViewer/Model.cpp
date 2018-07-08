@@ -2,8 +2,10 @@
 
 Model::Model() {
 
+	m_hasMaterial = false;
 	m_hasTextureCoords = false;
 	m_hasNormals = false;
+	m_mltPath = "";
 	T.identity();
 	invT.identity();
 }
@@ -100,6 +102,10 @@ bool Model::hasNormals() const{
 	return m_hasNormals;
 }
 
+bool Model::hasMaterial() const{
+
+	return  m_hasMaterial;
+}
 
 bool Model::loadObject(const char* filename){
 
@@ -135,6 +141,7 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 
 	std::map<std::string, int> name;
 
+	
 	int countMesh = 0;
 	int assign = 0;
 	char buffer[250];
@@ -165,7 +172,7 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 			sscanf(coord[i]->c_str(), "%s %s", buffer, buffer);
 			m_mltPath = buffer;
 		
-			
+			m_hasMaterial = true;
 			
 		}else if ((*coord[i])[0] == 'v' && (*coord[i])[1] == ' '){
 
@@ -197,7 +204,7 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 			normalCoords.push_back(tmpy);
 			normalCoords.push_back(tmpz);
 
-		}else if ((*coord[i])[0] == 'u'){
+		}else if ((*coord[i])[0] == 'u' &&  m_hasMaterial){
 
 			sscanf(coord[i]->c_str(), "%s %s", buffer, buffer);
 
@@ -221,6 +228,16 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 			}
 			//std::cout << assign << "  " << buffer << std::endl;
 			
+
+		}else if ((*coord[i])[0] == 'g' && !m_hasMaterial){
+
+			
+
+			sscanf(coord[i]->c_str(), "%s %s", buffer, buffer);
+
+			countMesh++;
+			assign = countMesh;
+			name[buffer] = countMesh;
 
 		}else if ((*coord[i])[0] == 'f'){
 
@@ -256,13 +273,9 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 
 		}
 	}
-	for (int i = 0; i < face.size(); i++){
-		
-		
+	
 
-		//if (face[i][9] == 1) std::cout << face[i][9] << "  " << i << std::endl;
-	}
-
+	
 
 	std::sort(face.begin(), face.end(), compare);
 
@@ -273,26 +286,32 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 	}
 
 	m_numberOfMeshes = dup.size();
-
+	
 	std::map<int, int>::const_iterator iterDup = dup.begin();
 
 	for (iterDup; iterDup != dup.end(); iterDup++){
-
-		std::map<std::string, int >::const_iterator iterName = name.begin();
-
-		for (iterName; iterName != name.end(); iterName++){
-
-			if (iterDup->first == iterName->second){
-
-				
-
-				mesh.push_back(new Mesh("newmtl " + iterName->first, iterDup->second));
-			}
-		}
-
 		
-	}
+		
+		if (name.empty()){
 
+			mesh.push_back(new Mesh( iterDup->second));
+
+		}else{
+
+			std::map<std::string, int >::const_iterator iterName = name.begin();
+			for (iterName; iterName != name.end(); iterName++){
+
+				if (iterDup->first == iterName->second){
+
+
+
+					mesh.push_back(new Mesh("newmtl " + iterName->first, iterDup->second));
+				}
+			}
+
+		}
+	}
+	
 	
 
 	
@@ -350,7 +369,7 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 	
 	
 	}else if (!normalCoords.empty()){
-
+	
 		m_hasNormals = true;
 
 		for (int j = 0; j < m_numberOfMeshes; j++){
@@ -453,7 +472,7 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 
 	}
 
-
+	
 	
 
 
@@ -469,7 +488,7 @@ bool Mesh::mltCompare(std::string* mltName){
 }
 
 bool Mesh::readMaterial(const char* filename){
-
+	
 
 	std::vector<std::string*>lines;
 	int start = -1;
@@ -491,7 +510,7 @@ bool Mesh::readMaterial(const char* filename){
 	}
 	in.close();
 
-	
+
 	for (int i = 0; i < lines.size(); i++){
 
 		if (strcmp((*lines[i]).c_str(), m_mltName.c_str()) == 0){
@@ -511,7 +530,7 @@ bool Mesh::readMaterial(const char* filename){
 		}
 
 	}
-
+	
 	if (start < 0 || end < 0) return false;
 
 	for (int i = start; i < end; i++){
@@ -546,13 +565,17 @@ bool Mesh::readMaterial(const char* filename){
 
 		}
 		else if ((*lines[i])[0] == 'm'){
+
+		
+		
 			char identifierBuffer[20], valueBuffer[250];;
 			sscanf(lines[i]->c_str(), "%s %s", identifierBuffer, valueBuffer);
-
+			
 			if (strstr(identifierBuffer, "map_Kd") != 0){
 
 				m_material.colorMapPath = valueBuffer;
 
+				
 			}else if (strstr(identifierBuffer, "map_bump") != 0){
 
 				m_material.bumpMapPath = valueBuffer;
@@ -589,8 +612,17 @@ Mesh::Mesh() {
 
 Mesh::Mesh(std::string mltName, int numberTriangles){
 
+	m_color = Vector3f(1.0, 1.0, 1.0);
 	m_numberTriangles = numberTriangles;
 	m_mltName = mltName;
+
+}
+
+Mesh::Mesh( int numberTriangles){
+
+	m_color = Vector3f(1.0, 1.0, 1.0);
+	m_numberTriangles = numberTriangles;
+
 
 }
 
@@ -653,6 +685,11 @@ unsigned int Mesh::getTextureName(){
 	return m_textureName;
 }
 
+const Vector3f &Mesh::getColor() const {
+	return m_color;
+}
+
+
 
 void Mesh::setVertexName(unsigned int a_vertexName){
 
@@ -668,6 +705,11 @@ void Mesh::setIndexName(unsigned int a_indexName){
 void Mesh::setTextureName(unsigned int a_textureName){
 
 	m_textureName = a_textureName;
+}
+
+void Mesh::setColor(const Vector3f &color){
+	m_color = color;
+
 }
 
 int Mesh::addVertex(int hash, const float *pVertex, int n){

@@ -27,7 +27,7 @@ enum DIRECTION {
 	DIR_FORCE_32BIT = 0x7FFFFFFF
 };
 
-GLuint u_projection, u_view, u_model, u_time, u_texture, positionID, colorID, texCoordID;
+GLuint u_projection, u_modelView, u_texture, positionID, colorID, texCoordID;
 GLuint  g_texture, g_vertexBuffer, g_indexBuffer;
 GLuint program;
 
@@ -36,6 +36,7 @@ GLuint program;
 Camera *camera;
 float time = 90;
 Model* model;
+Matrix4f modelView;
 
 //prototype funktions
 LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParma, LPARAM lParam);
@@ -330,9 +331,8 @@ void initApp(HWND hWnd)
 
 	program = createProgram();
 	u_projection = glGetUniformLocation(program, "u_projection");
-	u_view = glGetUniformLocation(program, "u_view");
-	u_model = glGetUniformLocation(program, "u_model");
-	u_time = glGetUniformLocation(program, "u_time");
+	u_modelView = glGetUniformLocation(program, "u_modelView");
+	
 	u_texture = glGetUniformLocation(program, "u_texture");
 	positionID = glGetAttribLocation(program, "position");
 	colorID = glGetAttribLocation(program, "color");
@@ -614,19 +614,13 @@ void processInput(HWND hWnd )
 
 void renderFrame(){
 
-	time = time + 0.5;
+	modelView = camera->getViewMatrix() * model->getTransformationMatrix();
 	
-	if (time > 360) time = 0;
-	
-	//model->rotate(Vector3f(1.0, 0.0, 0.0),  0.5);
-	//model->translate(0.5, 0.0, 0.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glUseProgram(program);
 
-	glUniformMatrix4fv(u_view, 1, true, &camera->getViewMatrix()[0][0]);
-	glUniformMatrix4fv(u_model, 1, true, &model->getTransformationMatrix()[0][0]);
-	//glUniform1f(u_time, time);
+	glUniformMatrix4fv(u_modelView, 1, true, &modelView[0][0]);
 
 	for (int i = 0; i < model->numberOfMeshes(); i++){
 

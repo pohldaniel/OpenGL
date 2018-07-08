@@ -32,7 +32,7 @@ public:
 	int numberOfMeshes();
 	bool hasTextureCoords() const;
 	bool hasNormals() const;
-
+	bool hasMaterial() const;
 
 	const Matrix4f &getTransformationMatrix() const;
 	const Matrix4f &getInvTransformationMatrix() const;
@@ -41,15 +41,17 @@ public:
 	void translate(float dx, float dy, float dz);
 	void scale(float a, float b, float c);
 
+	
 private:
 
 	bool m_hasTextureCoords;
 	bool m_hasNormals;
+	bool m_hasMaterial;
 	int m_numberOfMeshes;
 
 	std::string m_mltPath;
 	std::string m_modelDirectory;
-
+	
 	
 
 	std::vector<Mesh*> mesh;
@@ -78,6 +80,8 @@ public:
 
 	Mesh(std::string mltName, int numberTriangles);
 
+	Mesh(int numberTriangles);
+
 	~Mesh();
 
 	
@@ -105,6 +109,9 @@ public:
 	void setVertexName(unsigned int a_vertexName);
 	void setIndexName(unsigned int a_indexName);
 	void setTextureName(unsigned int a_textureName);
+	void setColor(const Vector3f &position);
+
+	const Vector3f &getColor() const;
 
 private:
 
@@ -122,10 +129,9 @@ private:
 
 	int addVertex(int hash, const float *pVertex, int n);
 	bool mltCompare(std::string* mltName);
-
+	Vector3f m_color;
 	
 	std::string m_mltName;
-	
 
 	Material m_material;
 
