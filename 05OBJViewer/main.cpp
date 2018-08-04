@@ -27,7 +27,7 @@ enum DIRECTION {
 	DIR_FORCE_32BIT = 0x7FFFFFFF
 };
 
-GLuint u_projection, u_modelView, u_texture, positionID, colorID, texCoordID;
+GLuint u_projection, u_modelView, u_texture, positionID, colorID, texCoordID, normalID;
 GLuint  g_texture, g_vertexBuffer, g_indexBuffer;
 GLuint program;
 
@@ -336,6 +336,7 @@ void initApp(HWND hWnd)
 	u_texture = glGetUniformLocation(program, "u_texture");
 	positionID = glGetAttribLocation(program, "position");
 	colorID = glGetAttribLocation(program, "color");
+	normalID = glGetAttribLocation(program, "normal");
 	texCoordID = glGetAttribLocation(program, "texCoords");
 
 	glUseProgram(program);
@@ -639,6 +640,17 @@ void renderFrame(){
 				8 * sizeof(float),			 // stride
 				(void*)0      // array buffer offset
 				);
+
+			glEnableVertexAttribArray(normalID);
+			glVertexAttribPointer(
+				normalID,					 // attribute
+				3,						     // size
+				GL_FLOAT,					 // type
+				GL_FALSE,					 // normalized?
+				8 * sizeof(float),			 // stride
+				(void*)(3 * sizeof(float))   // array buffer offset
+				);
+
 
 			glEnableVertexAttribArray(texCoordID);
 			glActiveTexture(GL_TEXTURE0);
