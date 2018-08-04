@@ -1,6 +1,6 @@
 # OpenGL_Projects
 
-Move the camera with 'w' 'a' 's' 'd' 'q' 'e' and mouse, release the capture with space.
+Move the camera with 'w' 'a' 's' 'd' 'q' 'e' and mouse, release the capture with space. Activate lighspot with '1' and '2'.
 
 Out from 07OBJViewer-normalMap
 
