@@ -4,5 +4,6 @@ Move the camera with 'w' 'a' 's' 'd' 'q' 'e' and mouse, release the capture with
 
 Out from 07OBJViewer-normalMap
 
-![unbenannt](https://user-images.githubusercontent.com/30089026/43672004-6ba97cd8-97a5-11e8-99a9-bbf2bce36527.jpg)
+![unbenannt1](https://user-images.githubusercontent.com/30089026/43673297-cea307bc-97c0-11e8-8418-d84cd3f4a1b3.jpg)
+
 
