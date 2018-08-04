@@ -342,7 +342,7 @@ void initApp(HWND hWnd)
 	
 	object = new Object();
 	object->initModel("objs/Plane/plane.obj");
-	object->initShader("shader/phongColor.vert", "shader/phongColor.frag", SelectedShader::PHONG);
+	object->initShader("shader/custom.vert", "shader/custom.frag", SelectedShader::NORMAL);
 	
 	object->m_model->scale(0.05, 0.05, 0.03);
 	object->m_model->rotate(Vector3f(0.0, 1.0, 0.0), 180);
