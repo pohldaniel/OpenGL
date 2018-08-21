@@ -656,6 +656,7 @@ void Mesh::generateTangents(){
 				tmpVertex.push_back(0.0);
 				tmpVertex.push_back(0.0);
 				tmpVertex.push_back(0.0);
+				tmpVertex.push_back(0.0);
 			}
 		}
 
@@ -712,32 +713,35 @@ void Mesh::generateTangents(){
 			}
 
 			// Accumulate the tangents and bitangents.
-			tmpVertex[pTriangle[0] * 14 + 8] = tmpVertex[pTriangle[0] * 14 + 8] + tangent[0];
-			tmpVertex[pTriangle[0] * 14 + 9] = tmpVertex[pTriangle[0] * 14 + 9] + tangent[1];
-			tmpVertex[pTriangle[0] * 14 + 10] = tmpVertex[pTriangle[0] * 14 + 10] + tangent[2];
-			tmpVertex[pTriangle[0] * 14 + 11] = tmpVertex[pTriangle[0] * 14 + 8] + bitangent[0];
-			tmpVertex[pTriangle[0] * 14 + 12] = tmpVertex[pTriangle[0] * 14 + 9] + bitangent[1];
-			tmpVertex[pTriangle[0] * 14 + 13] = tmpVertex[pTriangle[0] * 14 + 10] + bitangent[2];
+			tmpVertex[pTriangle[0] * 15 + 8] = tmpVertex[pTriangle[0] * 15 + 8] + tangent[0];
+			tmpVertex[pTriangle[0] * 15 + 9] = tmpVertex[pTriangle[0] * 15 + 9] + tangent[1];
+			tmpVertex[pTriangle[0] * 15 + 10] = tmpVertex[pTriangle[0] * 15 + 10] + tangent[2];
 
-			tmpVertex[pTriangle[1] * 14 + 8] = tmpVertex[pTriangle[1] * 14 + 8] + tangent[0];
-			tmpVertex[pTriangle[1] * 14 + 9] = tmpVertex[pTriangle[1] * 14 + 9] + tangent[1];
-			tmpVertex[pTriangle[1] * 14 + 10] = tmpVertex[pTriangle[1] * 14 + 10] + tangent[2];
-			tmpVertex[pTriangle[1] * 14 + 11] = tmpVertex[pTriangle[1] * 14 + 8] + bitangent[0];
-			tmpVertex[pTriangle[1] * 14 + 12] = tmpVertex[pTriangle[1] * 14 + 9] + bitangent[1];
-			tmpVertex[pTriangle[1] * 14 + 13] = tmpVertex[pTriangle[1] * 14 + 10] + bitangent[2];
+			tmpVertex[pTriangle[0] * 15 + 12] = tmpVertex[pTriangle[0] * 15 + 12] + bitangent[0];
+			tmpVertex[pTriangle[0] * 15 + 13] = tmpVertex[pTriangle[0] * 15 + 13] + bitangent[1];
+			tmpVertex[pTriangle[0] * 15 + 14] = tmpVertex[pTriangle[0] * 15 + 14] + bitangent[2];
 
-			tmpVertex[pTriangle[2] * 14 + 8] = tmpVertex[pTriangle[2] * 14 + 8] + tangent[0];
-			tmpVertex[pTriangle[2] * 14 + 9] = tmpVertex[pTriangle[2] * 14 + 9] + tangent[1];
-			tmpVertex[pTriangle[2] * 14 + 10] = tmpVertex[pTriangle[2] * 14 + 10] + tangent[2];
-			tmpVertex[pTriangle[2] * 14 + 11] = tmpVertex[pTriangle[2] * 14 + 8] + bitangent[0];
-			tmpVertex[pTriangle[2] * 14 + 12] = tmpVertex[pTriangle[2] * 14 + 9] + bitangent[1];
-			tmpVertex[pTriangle[2] * 14 + 13] = tmpVertex[pTriangle[2] * 14 + 10] + bitangent[2];
+			tmpVertex[pTriangle[1] * 15 + 8] = tmpVertex[pTriangle[1] * 15 + 8] + tangent[0];
+			tmpVertex[pTriangle[1] * 15 + 9] = tmpVertex[pTriangle[1] * 15 + 9] + tangent[1];
+			tmpVertex[pTriangle[1] * 15 + 10] = tmpVertex[pTriangle[1] * 15 + 10] + tangent[2];
+
+			tmpVertex[pTriangle[1] * 15 + 12] = tmpVertex[pTriangle[1] * 15 + 12] + bitangent[0];
+			tmpVertex[pTriangle[1] * 15 + 13] = tmpVertex[pTriangle[1] * 15 + 13] + bitangent[1];
+			tmpVertex[pTriangle[1] * 15 + 14] = tmpVertex[pTriangle[1] * 15 + 14] + bitangent[2];
+
+			tmpVertex[pTriangle[2] * 15 + 8] = tmpVertex[pTriangle[2] * 15 + 8] + tangent[0];
+			tmpVertex[pTriangle[2] * 15 + 9] = tmpVertex[pTriangle[2] * 15 + 9] + tangent[1];
+			tmpVertex[pTriangle[2] * 15 + 10] = tmpVertex[pTriangle[2] * 15 + 10] + tangent[2];
+
+			tmpVertex[pTriangle[2] * 15 + 12] = tmpVertex[pTriangle[2] * 15 + 12] + bitangent[0];
+			tmpVertex[pTriangle[2] * 15 + 13] = tmpVertex[pTriangle[2] * 15 + 13] + bitangent[1];
+			tmpVertex[pTriangle[2] * 15 + 14] = tmpVertex[pTriangle[2] * 15 + 14] + bitangent[2];
 
 
 		}
 
 		// Orthogonalize and normalize the vertex tangents.
-		for (int i = 0; i < tmpVertex.size(); i = i + 14){
+		for (int i = 0; i < tmpVertex.size(); i = i + 15){
 
 			pVertex0 = &tmpVertex[i];
 
@@ -793,11 +797,12 @@ void Mesh::generateTangents(){
 				bitangent[1] * pVertex0[12] +
 				bitangent[2] * pVertex0[13];
 
-			pVertex0[10] = (bDotB < 0.0f) ? 1.0f : -1.0f;
+			// Calculate handedness
+			pVertex0[11] = (bDotB < 0.0f) ? 1.0f : -1.0f;
 
-			pVertex0[11] = bitangent[0];
-			pVertex0[12] = bitangent[1];
-			pVertex0[13] = bitangent[2];
+			pVertex0[12] = bitangent[0];
+			pVertex0[13] = bitangent[1];
+			pVertex0[14] = bitangent[2];
 		}
 
 

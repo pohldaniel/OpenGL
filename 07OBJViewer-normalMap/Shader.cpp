@@ -48,7 +48,7 @@ void Shader::bindAttributes(Mesh *a_mesh){
 			3,						     // size
 			GL_FLOAT,					 // type
 			GL_FALSE,					 // normalized?
-			14 * sizeof(float),			 // stride
+			15 * sizeof(float),			 // stride
 			(void*)0      // array buffer offset
 			);
 
@@ -64,7 +64,7 @@ void Shader::bindAttributes(Mesh *a_mesh){
 			2,                                // size
 			GL_FLOAT,                         // type
 			GL_FALSE,                         // normalized?
-			14 * sizeof(float),	              // stride
+			15 * sizeof(float),	              // stride
 			(void*)(3 * sizeof(float))        // array buffer offset
 			);
 
@@ -74,7 +74,7 @@ void Shader::bindAttributes(Mesh *a_mesh){
 			3,						    // size
 			GL_FLOAT,					// type
 			GL_FALSE,					// normalized?
-			14 * sizeof(float),			// stride
+			15 * sizeof(float),			// stride
 			(void*)(5 * sizeof(float))	// array buffer offset
 			);
 
@@ -85,7 +85,7 @@ void Shader::bindAttributes(Mesh *a_mesh){
 			3,						    // size
 			GL_FLOAT,					// type
 			GL_FALSE,					// normalized?
-			14 * sizeof(float),			// stride
+			15 * sizeof(float),			// stride
 			(void*)(8 * sizeof(float))	// array buffer offset
 			);
 
@@ -96,8 +96,8 @@ void Shader::bindAttributes(Mesh *a_mesh){
 			3,						    // size
 			GL_FLOAT,					// type
 			GL_FALSE,					// normalized?
-			14 * sizeof(float),			// stride
-			(void*)(11 * sizeof(float))	// array buffer offset
+			15 * sizeof(float),			// stride
+			(void*)(12 * sizeof(float))	// array buffer offset
 			);
 
 	}else if (a_mesh->m_hasTextureCoords && a_mesh->m_hasNormals){

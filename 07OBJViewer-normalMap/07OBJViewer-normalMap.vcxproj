@@ -10,6 +10,27 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Bitmap.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Extension.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelMatrix.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Vector.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Bitmap.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Extension.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="ModelMatrix.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="Vector.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9D55913F-46A1-4044-8191-B243F3032EF9}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -81,27 +102,6 @@
       <AdditionalDependencies>OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Bitmap.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Extension.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="ModelMatrix.cpp" />
-    <ClCompile Include="Object.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="Vector.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Bitmap.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Extension.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="ModelMatrix.h" />
-    <ClInclude Include="Object.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="Vector.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
