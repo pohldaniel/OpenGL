@@ -73,7 +73,7 @@ void main(void){
 		color = vec4(0.0, 0.0, 0.4, 1.0);
 	
 	}else{
-		color = vec4(ambient + diffuse + specular, 1.0);
+		color =  vec4(ambient + diffuse + specular, 1.0);
 	}
 	
 	//color = texture2D( u_textureNormal, v_texCoord );

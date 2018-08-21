@@ -30,7 +30,7 @@ void main(void){
 	
 	
 	//v_normal = (transpose(inverse(u_modelView)) * vec4(i_normal, 0.0)).xyz;
-	v_normal = (u_normalMatrix * vec4(i_normal, 0.0)).xyz;
+	v_normal = normalize((u_normalMatrix * vec4(i_normal, 0.0)).xyz);
 	
 	//v_normal = i_normal;
 	

@@ -36,9 +36,9 @@ void main(void){
 	//v_normal = (transpose(inverse(u_modelView)) * vec4(i_normal, 0.0)).xyz;
 	
 	
-	vec3 normal = (u_normalMatrix * vec4(i_normal, 0.0)).xyz;
-	vec3 tangent = (u_normalMatrix * vec4(i_tangent, 0.0)).xyz;
-	vec3 bitangent = (u_normalMatrix * vec4(i_bitangent, 0.0)).xyz;
+	vec3 normal = normalize((u_normalMatrix * vec4(i_normal, 0.0)).xyz);
+	vec3 tangent = normalize((u_normalMatrix * vec4(i_tangent, 0.0)).xyz);
+	vec3 bitangent = normalize((u_normalMatrix * vec4(i_bitangent, 0.0)).xyz);
 	
 	gl_Position =   u_projection * u_modelView * vec4(i_position, 1.0);
 	//v_normal = normal;
