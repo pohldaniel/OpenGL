@@ -117,6 +117,7 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 	std::vector<float> vertexCoords;
 	std::vector<float> normalCoords;
 	std::vector<float> textureCoords;
+	std::vector <float> tmpVertexBuffer;
 
 	std::ifstream in(a_filename);
 
@@ -294,7 +295,7 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 	}
 	
 	
-
+	
 	
 	dup.clear();
 	name.clear();
@@ -326,38 +327,38 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 			for (int i = start, k = 0; i < end; i++, k++){
 
 
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 2]);
-				mesh[j]->m_vertexBuffer.push_back(textureCoords[((face[i])[6] - 1) * 2]);
-				mesh[j]->m_vertexBuffer.push_back(textureCoords[((face[i])[6] - 1) * 2 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(textureCoords[((face[i])[6] - 1) * 2]);
+				tmpVertexBuffer.push_back(textureCoords[((face[i])[6] - 1) * 2 + 1]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3 + 2]);
 				
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 2]);
-				mesh[j]->m_vertexBuffer.push_back(textureCoords[((face[i])[7] - 1) * 2]);
-				mesh[j]->m_vertexBuffer.push_back(textureCoords[((face[i])[7] - 1) * 2 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(textureCoords[((face[i])[7] - 1) * 2]);
+				tmpVertexBuffer.push_back(textureCoords[((face[i])[7] - 1) * 2 + 1]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3 + 2]);
 				
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 2]);
-				mesh[j]->m_vertexBuffer.push_back(textureCoords[((face[i])[8] - 1) * 2]);
-				mesh[j]->m_vertexBuffer.push_back(textureCoords[((face[i])[8] - 1) * 2 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(textureCoords[((face[i])[8] - 1) * 2]);
+				tmpVertexBuffer.push_back(textureCoords[((face[i])[8] - 1) * 2 + 1]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3 + 2]);
 				
 			}
-
-			indexVBO_PTN(mesh[j]->m_vertexBuffer, mesh[j]->m_indexBuffer, mesh[j]->m_vertexBuffer);
-
-
+		
+			indexVBO_PTN(tmpVertexBuffer, mesh[j]->m_indexBuffer, mesh[j]->m_vertexBuffer);
+			tmpVertexBuffer.clear();
+			
 		}
 	
 	
@@ -377,30 +378,31 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 
 			for (int i = start, k = 0; i < end; i++, k++){
 			
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 2]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3 + 2]);
 
 
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 2]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3 + 2]);
 
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 2]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3 + 2]);
 			
 			}
-			indexVBO_PN(mesh[j]->m_vertexBuffer, mesh[j]->m_indexBuffer, mesh[j]->m_vertexBuffer);
+			indexVBO_PN(tmpVertexBuffer, mesh[j]->m_indexBuffer, mesh[j]->m_vertexBuffer);
+			tmpVertexBuffer.clear();
 		}
 
 	}else if (!textureCoords.empty()){
@@ -436,27 +438,28 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 
 				mesh[j]->m_indexBuffer[k * 3 + 2] = mesh[j]->addVertex((face[i])[2] - 1, vert3, 5);*/
 
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 2]);
-				mesh[j]->m_vertexBuffer.push_back(textureCoords[((face[i])[6] - 1) * 2]);
-				mesh[j]->m_vertexBuffer.push_back(textureCoords[((face[i])[6] - 1) * 2 + 1]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(textureCoords[((face[i])[6] - 1) * 2]);
+				tmpVertexBuffer.push_back(textureCoords[((face[i])[6] - 1) * 2 + 1]);
 
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 2]);
-				mesh[j]->m_vertexBuffer.push_back(textureCoords[((face[i])[7] - 1) * 2]);
-				mesh[j]->m_vertexBuffer.push_back(textureCoords[((face[i])[7] - 1) * 2 + 1]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(textureCoords[((face[i])[7] - 1) * 2]);
+				tmpVertexBuffer.push_back(textureCoords[((face[i])[7] - 1) * 2 + 1]);
 
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 2]);
-				mesh[j]->m_vertexBuffer.push_back(textureCoords[((face[i])[8] - 1) * 2]);
-				mesh[j]->m_vertexBuffer.push_back(textureCoords[((face[i])[8] - 1) * 2 + 1]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(textureCoords[((face[i])[8] - 1) * 2]);
+				tmpVertexBuffer.push_back(textureCoords[((face[i])[8] - 1) * 2 + 1]);
 			
 			}
 
-			indexVBO_PT(mesh[j]->m_vertexBuffer, mesh[j]->m_indexBuffer, mesh[j]->m_vertexBuffer);
+			indexVBO_PT(tmpVertexBuffer, mesh[j]->m_indexBuffer, mesh[j]->m_vertexBuffer);
+			tmpVertexBuffer.clear();
 		}
 
 	}else {
@@ -484,21 +487,22 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 
 				mesh[j]->m_indexBuffer[k * 3 + 2] = mesh[j]->addVertex((face[i])[2] - 1, vert3, 3);*/
 
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 2]);
 
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 2]);
 
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 1]);
-				mesh[j]->m_vertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 2]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 1]);
+				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 2]);
 			
 			}
 
-			indexVBO_P(mesh[j]->m_vertexBuffer, mesh[j]->m_indexBuffer, mesh[j]->m_vertexBuffer);
+			indexVBO_P(tmpVertexBuffer, mesh[j]->m_indexBuffer, mesh[j]->m_vertexBuffer);
+			tmpVertexBuffer.clear();
 		}
 
 	}
@@ -641,8 +645,8 @@ void Mesh::generateTangents(){
 
 
 
-		int totalVertices = getNumberOfVertices();
-		int totalTriangles = getNumberOfTriangles();
+	int totalVertices = getNumberOfVertices();
+	int totalTriangles = getNumberOfTriangles();
 
 		for (int i = 0; i < m_vertexBuffer.size(); i++){
 
@@ -712,6 +716,7 @@ void Mesh::generateTangents(){
 				bitangent[2] = (-texEdge2[0] * edge1[2] + texEdge1[0] * edge2[2]) * det;
 			}
 
+	
 			// Accumulate the tangents and bitangents.
 			tmpVertex[pTriangle[0] * 15 + 8] = tmpVertex[pTriangle[0] * 15 + 8] + tangent[0];
 			tmpVertex[pTriangle[0] * 15 + 9] = tmpVertex[pTriangle[0] * 15 + 9] + tangent[1];
@@ -737,8 +742,10 @@ void Mesh::generateTangents(){
 			tmpVertex[pTriangle[2] * 15 + 13] = tmpVertex[pTriangle[2] * 15 + 13] + bitangent[1];
 			tmpVertex[pTriangle[2] * 15 + 14] = tmpVertex[pTriangle[2] * 15 + 14] + bitangent[2];
 
-
+			
 		}
+
+		
 
 		// Orthogonalize and normalize the vertex tangents.
 		for (int i = 0; i < tmpVertex.size(); i = i + 15){
@@ -765,6 +772,7 @@ void Mesh::generateTangents(){
 			pVertex0[9] *= length;
 			pVertex0[10] *= length;
 
+			
 			// Calculate the handedness of the local tangent space.
 			// The bitangent vector is the cross product between the triangle face
 			// normal vector and the calculated tangent vector. The resulting
@@ -793,9 +801,9 @@ void Mesh::generateTangents(){
 			bitangent[2] = (pVertex0[5] * pVertex0[9]) -
 				(pVertex0[6] * pVertex0[8]);
 
-			bDotB = bitangent[0] * pVertex0[11] +
-				bitangent[1] * pVertex0[12] +
-				bitangent[2] * pVertex0[13];
+			bDotB = bitangent[0] * pVertex0[12] +
+				bitangent[1] * pVertex0[13] +
+				bitangent[2] * pVertex0[14];
 
 			// Calculate handedness
 			pVertex0[11] = (bDotB < 0.0f) ? 1.0f : -1.0f;
