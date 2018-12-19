@@ -808,8 +808,8 @@ Matrix4f &getNormalMatrix(const Matrix4f &modelViewMatrix){
 	float det;
 	float invDet;
 
-	det = modelViewMatrix[0][0] * (modelViewMatrix[1][1] * modelViewMatrix[2][2] - modelViewMatrix[2][1] * modelViewMatrix[2][1]) +
-		modelViewMatrix[0][1] * (modelViewMatrix[1][2] * modelViewMatrix[0][2] - modelViewMatrix[2][2] * modelViewMatrix[1][0]) +
+	det = modelViewMatrix[0][0] * (modelViewMatrix[1][1] * modelViewMatrix[2][2] - modelViewMatrix[1][2] * modelViewMatrix[2][1]) +
+		modelViewMatrix[0][1] * (modelViewMatrix[1][2] * modelViewMatrix[2][0] - modelViewMatrix[2][2] * modelViewMatrix[1][0]) +
 		modelViewMatrix[0][2] * (modelViewMatrix[1][0] * modelViewMatrix[2][1] - modelViewMatrix[1][1] * modelViewMatrix[2][0]);
 
 	invDet = 1.0 / det;
