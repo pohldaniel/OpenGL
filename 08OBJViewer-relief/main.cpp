@@ -303,7 +303,19 @@ LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 						 
 			glViewport(0, 0, width2, height2);
-						
+			camera->perspective(45.0f, (GLfloat)width2 / (GLfloat)height2, 1.0f, 2000.0f);
+
+			for (int j = 0; j < objects.size(); j++){
+
+				for (int i = 0; i < objects[j]->m_model->numberOfMeshes(); i++){
+
+					glUseProgram(objects[j]->m_shader[i]->m_program);
+					objects[j]->m_shader[i]->loadMatrix("u_projection", camera->getProjectionMatrix());
+					glUseProgram(0);
+				}
+			}
+
+
 			return 0;
 		}break;
 	
