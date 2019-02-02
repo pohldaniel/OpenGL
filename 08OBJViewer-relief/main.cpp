@@ -395,9 +395,9 @@ void initApp(HWND hWnd)
 	lights.push_back(light);
 
 	// sometimes the iamges from the box have to be flipped vertical, horizontal
-	skyBox = new SkyBox("skyboxes/sor_sea", 500, camera, true, false);
-	//skyBox = new SkyBox("skyboxes/sea", 500, camera, true, true);
-	//skyBox = new SkyBox("skyboxes/hw_morning", 500, camera, true, false);
+	skyBox = new SkyBox("../skyboxes/sor_sea", 500, camera, true, false);
+	//skyBox = new SkyBox("../skyboxes/sea", 500, camera, true, true);
+	//skyBox = new SkyBox("../skyboxes/hw_morning", 500, camera, true, false);
 
 	Object *object;
 

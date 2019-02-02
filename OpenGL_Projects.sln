@@ -19,6 +19,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "07OBJViewer-normalMap", "07
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08OBJViewer-relief", "08OBJViewer-relief\08OBJViewer-relief.vcxproj", "{1DA01EF7-60B1-40B4-8AF2-2531F23C9B65}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "09OBJViewer-depthmap", "09OBJViewer-depthmap\09OBJViewer-depthmap.vcxproj", "{56498454-30DC-48F1-A7FE-D4D401F09B1C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "10OBJViewer-subsurface-scattering", "10OBJViewer-subsurface-scattering\10OBJViewer-subsurface-scattering.vcxproj", "{920DBB01-AAEC-42CB-A349-5EAD37215D38}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -57,6 +61,14 @@ Global
 		{1DA01EF7-60B1-40B4-8AF2-2531F23C9B65}.Debug|Win32.Build.0 = Debug|Win32
 		{1DA01EF7-60B1-40B4-8AF2-2531F23C9B65}.Release|Win32.ActiveCfg = Release|Win32
 		{1DA01EF7-60B1-40B4-8AF2-2531F23C9B65}.Release|Win32.Build.0 = Release|Win32
+		{56498454-30DC-48F1-A7FE-D4D401F09B1C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{56498454-30DC-48F1-A7FE-D4D401F09B1C}.Debug|Win32.Build.0 = Debug|Win32
+		{56498454-30DC-48F1-A7FE-D4D401F09B1C}.Release|Win32.ActiveCfg = Release|Win32
+		{56498454-30DC-48F1-A7FE-D4D401F09B1C}.Release|Win32.Build.0 = Release|Win32
+		{920DBB01-AAEC-42CB-A349-5EAD37215D38}.Debug|Win32.ActiveCfg = Debug|Win32
+		{920DBB01-AAEC-42CB-A349-5EAD37215D38}.Debug|Win32.Build.0 = Debug|Win32
+		{920DBB01-AAEC-42CB-A349-5EAD37215D38}.Release|Win32.ActiveCfg = Release|Win32
+		{920DBB01-AAEC-42CB-A349-5EAD37215D38}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
