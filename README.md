@@ -10,4 +10,6 @@ Output from 07OBJViewer-normalMap
 Output from 08OBJViewer-relief
 ![relief](https://user-images.githubusercontent.com/30089026/50221719-63737700-0396-11e9-90e0-15082469de94.jpg)
 
+Output from 10OBJViewer-subsurface-scattering
+![subsurface](https://user-images.githubusercontent.com/30089026/52162957-2a3f5e00-26db-11e9-9b06-6e2df81fe6a5.jpg)
 
