@@ -11,6 +11,6 @@ out vec4 color;
 void main(void)
 {
 	//color = vec4 (1.0, 0.0, 0.0, 0.0);
-	color = texture2D( u_textureColor, v_texCoord );
+	color = texture2D( u_textureColor, v_texCoord ) ;
 	
 }

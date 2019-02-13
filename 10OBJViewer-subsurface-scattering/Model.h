@@ -32,6 +32,7 @@ public:
 	int numberOfMeshes();
 	bool hasMaterial() const;
 
+	const Vector3f &getCenter() const;
 	const Matrix4f &getTransformationMatrix() const;
 	const Matrix4f &getInvTransformationMatrix() const;
 
@@ -63,7 +64,7 @@ private:
 	std::vector<Mesh*> mesh;
 
 	ModelMatrix *modelMatrix;
-
+	Vector3f m_center;
 	
 };
 

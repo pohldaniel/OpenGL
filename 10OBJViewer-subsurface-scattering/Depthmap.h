@@ -22,10 +22,14 @@ public:
 	void setProjectionMatrix(float fovx, float aspect, float znear, float zfar);
 	void setDepthViewport(unsigned int widht, unsigned int height);
 	void renderToDepthTexture(Object const* object);
-	void render();
+	
+
+	void render(unsigned int texture);
 
 	const Matrix4f &getDepthPassMatrix() const;
 	const Matrix4f &getTransformation() const;
+	const Matrix4f &getProjectionMatrix() const;
+	const Matrix4f &getViewMatrix() const;
 	const Vector3f &getPosition() const;
 
 private :
@@ -37,14 +41,15 @@ private :
 	unsigned int viewportWidth = 640;
 	unsigned int viewportHeight = 480;
 
-	unsigned int depthViewportWidth = viewportWidth * 2;
-	unsigned int depthViewportHeight = viewportHeight * 2;
+	unsigned int depthViewportWidth = 4096;
+	unsigned int depthViewportHeight = 4096;
 
 	unsigned int m_quadVBO;
 	unsigned int m_indexQuad;
 	int m_size = 25;
 	std::vector<float> m_vertex;
 
+	
 
 	ModelMatrix m_modelMatrix;
 	Matrix4f m_viewMatrix;

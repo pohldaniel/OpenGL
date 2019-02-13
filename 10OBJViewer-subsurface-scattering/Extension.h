@@ -33,6 +33,9 @@ extern "C" {
 #define GL_TEXTURE_CUBE_MAP_POSITIVE_Z    0x8519
 #define GL_TEXTURE_CUBE_MAP_NEGATIVE_Z    0x851A
 #define GL_DEPTH_COMPONENT32F             0x8CAC
+#define GL_TEXTURE_COMPARE_MODE           0x884C
+#define GL_COMPARE_REF_TO_TEXTURE         0x884E
+#define GL_TEXTURE_COMPARE_FUNC           0x884D
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // OpenGL 1.5
 //

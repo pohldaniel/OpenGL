@@ -1,5 +1,5 @@
 #include "vector.h"
-
+#include <iostream>
 
 Matrix4f::Matrix4f(){}
 Matrix4f::~Matrix4f(){}
@@ -73,6 +73,29 @@ void Matrix4f::invRotate(const Vector3f &axis, float degrees){
 	mtx[3][3] = 1.0f;
 }
 
+void Matrix4f::translate(float dx, float dy, float dz){
+
+	mtx[0][0] = 1.0f;
+	mtx[1][0] = 0.0f;
+	mtx[2][0] = 0.0f;
+	mtx[3][0] = dx;
+
+	mtx[0][1] = 0.0f;
+	mtx[1][1] = 1.0f;
+	mtx[2][1] = 0.0f;
+	mtx[3][1] = dy;
+
+	mtx[0][2] = 0.0f;
+	mtx[1][2] = 0.0f;
+	mtx[2][2] = 1.0f;
+	mtx[3][2] = dz;
+
+	mtx[0][3] = 0.0f;
+	mtx[1][3] = 0.0f;
+	mtx[2][3] = 0.0f;
+	mtx[3][3] = 1.0f;
+}
+
 void Matrix4f::invTranslate(float dx, float dy, float dz){
 
 	mtx[0][0] = 1.0f;
@@ -96,7 +119,40 @@ void Matrix4f::invTranslate(float dx, float dy, float dz){
 	mtx[3][3] = 1.0f;
 }
 
+
+void Matrix4f::scale(float a, float b, float c){
+
+	if (a == 0) a = 1.0;
+	if (b == 0) b = 1.0;
+	if (c == 0) c = 1.0;
+
+	mtx[0][0] = 1.0f * a;
+	mtx[1][0] = 0.0f;
+	mtx[2][0] = 0.0f;
+	mtx[3][0] = 0.0f;
+
+	mtx[0][1] = 0.0f;
+	mtx[1][1] = 1.0f * b;
+	mtx[2][1] = 0.0f;
+	mtx[3][1] = 0.0f;
+
+	mtx[0][2] = 0.0f;
+	mtx[1][2] = 0.0f;
+	mtx[2][2] = 1.0f * c;
+	mtx[3][2] = 0.0f;
+
+	mtx[0][3] = 0.0f;
+	mtx[1][3] = 0.0f;
+	mtx[2][3] = 0.0f;
+	mtx[3][3] = 1.0f;
+}
+
+
 void Matrix4f::invScale(float a, float b, float c){
+
+	if (a == 0) a = 1.0;
+	if (b == 0) b = 1.0;
+	if (c == 0) c = 1.0;
 
 	mtx[0][0] = 1.0f / a;
 	mtx[1][0] = 0.0f;
@@ -130,13 +186,15 @@ void Matrix4f::lookAt(const Vector3f &eye, const Vector3f &target, const Vector3
 	Vector3f yAxis = Vector3f::cross(zAxis, xAxis);
 	Vector3f::normalize(yAxis);
 
-	Vector3f viewDir = -zAxis;
+	
 
 
 	mtx[0][0] = xAxis[0];
 	mtx[1][0] = xAxis[1];
 	mtx[2][0] = xAxis[2];
 	mtx[3][0] = -Vector3f::dot(xAxis, eye);
+
+	
 
 	mtx[0][1] = yAxis[0];
 	mtx[1][1] = yAxis[1];
@@ -147,6 +205,8 @@ void Matrix4f::lookAt(const Vector3f &eye, const Vector3f &target, const Vector3
 	mtx[1][2] = zAxis[1];
 	mtx[2][2] = zAxis[2];
 	mtx[3][2] = -Vector3f::dot(zAxis, eye);
+
+
 
 	mtx[0][3] = 0.0f;
 	mtx[1][3] = 0.0f;
@@ -160,7 +220,7 @@ void Matrix4f::perspective(float fovx, float aspect, float znear, float zfar){
 	float e = tanf(PI*fovx / 360);
 	float xScale = (1 / e) / aspect;
 	float yScale = 1 / e;
-
+	
 
 	mtx[0][0] = xScale;
 	mtx[0][1] = 0.0f;
@@ -241,7 +301,7 @@ Matrix4f &Matrix4f::operator*=(const Matrix4f &rhs){
 	tmp.mtx[0][3] = (mtx[0][3] * rhs.mtx[0][0]) + (mtx[1][3] * rhs.mtx[0][1]) + (mtx[2][3] * rhs.mtx[0][2]) + (mtx[3][3] * rhs.mtx[0][3]);
 	tmp.mtx[1][3] = (mtx[0][3] * rhs.mtx[1][0]) + (mtx[1][3] * rhs.mtx[1][1]) + (mtx[2][3] * rhs.mtx[1][2]) + (mtx[3][3] * rhs.mtx[1][3]);
 	tmp.mtx[2][3] = (mtx[0][3] * rhs.mtx[2][0]) + (mtx[1][3] * rhs.mtx[2][1]) + (mtx[2][3] * rhs.mtx[2][2]) + (mtx[3][3] * rhs.mtx[2][3]);
-	tmp.mtx[3][3] = (mtx[0][3] * rhs.mtx[3][0]) + (mtx[1][3] * rhs.mtx[3][1]) + (mtx[2][3] * rhs.mtx[3][3]) + (mtx[3][3] * rhs.mtx[3][3]);
+	tmp.mtx[3][3] = (mtx[0][3] * rhs.mtx[3][0]) + (mtx[1][3] * rhs.mtx[3][1]) + (mtx[2][3] * rhs.mtx[3][2]) + (mtx[3][3] * rhs.mtx[3][3]);
 
 	*this = tmp;
 	return *this;
@@ -516,6 +576,14 @@ Vector3f operator*(const Vector4f &lhs, const Matrix4f &rhs){
 
 //friend operator
 Vector3f operator*(const Matrix4f &rhs, const Vector4f &lhs){
+
+	return Vector3f((lhs[0] * rhs.mtx[0][0]) + (lhs[1] * rhs.mtx[0][1]) + (lhs[2] * rhs.mtx[0][2]) + (lhs[3] * rhs.mtx[0][3]),
+		(lhs[0] * rhs.mtx[1][0]) + (lhs[1] * rhs.mtx[1][1]) + (lhs[2] * rhs.mtx[1][2]) + (lhs[3] * rhs.mtx[1][3]),
+		(lhs[0] * rhs.mtx[2][0]) + (lhs[1] * rhs.mtx[2][1]) + (lhs[2] * rhs.mtx[2][2]) + (lhs[3] * rhs.mtx[2][3]));
+}
+
+//friend operator
+Vector3f operator*(const Matrix4f &rhs, const Vector3f &lhs){
 
 	return Vector3f((lhs[0] * rhs.mtx[0][0]) + (lhs[1] * rhs.mtx[0][1]) + (lhs[2] * rhs.mtx[0][2]) + (lhs[3] * rhs.mtx[0][3]),
 		(lhs[0] * rhs.mtx[1][0]) + (lhs[1] * rhs.mtx[1][1]) + (lhs[2] * rhs.mtx[1][2]) + (lhs[3] * rhs.mtx[1][3]),

@@ -53,6 +53,11 @@ const Matrix4f &Model::getInvTransformationMatrix() const{
 
 }
 
+const Vector3f &Model::getCenter() const{
+
+	return m_center;
+}
+
 std::vector<Mesh*> Model::getMesches(){
 
 	return mesh;	
@@ -132,6 +137,13 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 	int assign = 0;
 	int countFacesWithTexture = 0;
 
+	float xmin = FLT_MAX;
+	float ymin = FLT_MAX;
+	float zmin = FLT_MAX;
+	float xmax = -FLT_MAX;
+	float ymax = -FLT_MAX;
+	float zmax = -FLT_MAX;
+
 	char buffer[250];
 
 	if (!in.is_open()){
@@ -172,9 +184,24 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 			vertexCoords.push_back((translate.getVec()[1] + tmpy) * scale);
 			vertexCoords.push_back((translate.getVec()[2] + tmpz) * scale);*/
 
-			vertexCoords.push_back(tmpx * scale);
-			vertexCoords.push_back(tmpy * scale);
-			vertexCoords.push_back(tmpz * scale);
+			
+
+			tmpx = tmpx * scale + translate[0];
+			tmpy = tmpy * scale + translate[0];
+			tmpz = tmpz * scale + translate[0];
+
+			vertexCoords.push_back(tmpx);
+			vertexCoords.push_back(tmpy);
+			vertexCoords.push_back(tmpz);
+
+			xmin = std::min(tmpx, xmin);
+			ymin = std::min(tmpy, ymin);
+			zmin = std::min(tmpz, zmin);
+
+			xmax = std::max(tmpx, xmax);
+			ymax = std::max(tmpy, ymax);
+			zmax = std::max(tmpz, zmax);
+
 
 		}else if ((*coord[i])[0] == 'v' && (*coord[i])[1] == 't'){
 
@@ -248,6 +275,8 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 		}
 	}
 	
+	m_center = Vector3f((xmin + xmax) / 2.0f, (ymin + ymax) / 2.0f, (zmin + zmax) / 2.0f);
+
 	std::sort(face.begin(), face.end(), compare);
 
 	std::map<int, int> dup;

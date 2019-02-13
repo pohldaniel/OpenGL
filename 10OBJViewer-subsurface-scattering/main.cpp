@@ -40,13 +40,16 @@ Camera* camera;
 
 bool rotate = false;
 float degree = 0.0;
-
+Matrix4f rot;
+Vector3f lightPos = Vector3f(0.0, 15.0, 40.0);
 //prototype funktions
 LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParma, LPARAM lParam);
 void setCursortoMiddle(HWND hwnd);
 void processInput(HWND hWnd );
 
 void render();
+
+
 void initApp(HWND hWnd);
 void enableVerticalSync(bool enableVerticalSync);
 
@@ -56,16 +59,17 @@ Matrix4f &getNormalMatrix(const Matrix4f &modelViewMatrix);
 
 
 
+
 // the main windows entry point
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-
 	
-	Vector3f camPos(-10.0, 5.0, 45.0);
+	
+	Vector3f camPos(0.0, 0.0, 5.0);
 	Vector3f xAxis(1, 0, 0);
 	Vector3f yAxis(0, 1, 0);
 	Vector3f zAxis(0, 0, 1);
-	Vector3f target(1.0, -0.1, 0.1);
+	Vector3f target(0.0, 0.0, -5.0);
 
 	Vector3f up(0.0, 1.0, 0.0);
 
@@ -135,16 +139,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	while (true) 
     {
         // Did we recieve a message, or are we idling ?
-		if ( PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) ) 
-        {
+		if ( PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) ) {
 			// test if this is a quit
 			if (msg.message == WM_QUIT) break;
 			// translate and dispatch message
 			TranslateMessage( &msg );
 			DispatchMessage ( &msg );
 		} 
-        else 
-        {
+        else {
 			
 			
 			processInput(hwnd);
@@ -307,7 +309,7 @@ void initApp(HWND hWnd)
 	hRC = wglCreateContext(hDC);
 	wglMakeCurrent(hDC, hRC);
 	enableVerticalSync(true);
-
+	
 	
 	camera->perspective(45.0f, (GLfloat)width / (GLfloat)height, 1.0f, 2000.0f);
 	camera->orthographic(-2.0, 2.0, -2.0, 2.0, 0.0, 2000);
@@ -317,33 +319,30 @@ void initApp(HWND hWnd)
 	glEnable(GL_DEPTH_TEST);					// hidden surface removal
 	//glEnable(GL_CULL_FACE);						// do not calculate inside of poly's
 
-	
-
-	
+	rot.identity();
 
 	skyBox = new SkyBox("../skyboxes/sor_sea", 500, camera, true, false);
 	
-	
+	depthmap = new Depthmap(camera);
+	depthmap->setProjectionMatrix(45.0f, (GLfloat)width / (GLfloat)height, 1.0f, 2000.0f);
+
 	dragon = new Object();
 	dragon->initModel("objs/Dragon/dragon.obj");
 	dragon->initShader(new Subsurfacehader("shader/subsurface.vert", "shader/subsurface.frag"));
-	dragon->m_model->rotate(Vector3f(0.0, 1.0, 0.0), -45.0);
-	dragon->m_model->scale(5.0, 5.0, 5.0);
-	
+	dragon->m_model->scale(1.0, 1.0, 1.0);
 
 	for (int i = 0; i < dragon->m_model->numberOfMeshes(); i++){
 
 		glUseProgram(dragon->m_shader[i]->m_program);
 		dragon->m_shader[i]->loadMatrix("u_projection", camera->getProjectionMatrix());
+		dragon->m_shader[i]->loadMatrix("u_projectionShadow", depthmap->getDepthPassMatrix());
+		
+
 		glUseProgram(0);
 	}
 	
 
-	
-	depthmap = new Depthmap(camera);
-	depthmap->setProjectionMatrix(45.0f, (GLfloat)width / (GLfloat)height, 1.0f, 2000.0f);
-	depthmap->setViewMatrix(Vector3f(40.0, 50.0, 600.0), Vector3f(1.0, 0.0, 0.0), Vector3f(0.0, 1.0, 0.0));
-	
+
 }
 
 void setCursortoMiddle(HWND hwnd){
@@ -437,32 +436,40 @@ void processInput(HWND hWnd ){
 }
 
 
-
-
 void render(){
+
 	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	depthmap->renderToDepthTexture(dragon);
 
 	if (rotate){
-		depthmap->rotate(Vector3f(0.0, 1.0, 0.0), 0.5);
+		degree = degree - 0.5;
+		rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
 	}
+
+	/////////////////////draw shadow pass/////////////////////////////
+
+	depthmap->setViewMatrix(rot * lightPos, dragon->m_model->getTransformationMatrix()*dragon->m_model->getCenter(), Vector3f(0.0, 1.0, 0.0));
+	depthmap->renderToDepthTexture(dragon);
+
+
+	/////////////////////draw normal pass/////////////////////////////
+
+	glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
 	for (int i = 0; i < dragon->m_model->numberOfMeshes(); i++){
 
-	
+
 
 		glUseProgram(dragon->m_shader[i]->m_program);
 
-		dragon->m_shader[i]->loadMatrix("u_normalMatrix", getNormalMatrix(camera->getViewMatrix() * dragon->m_model->getTransformationMatrix()));
 
-		dragon->m_shader[i]->loadMatrix("u_viewMatrix", camera->getViewMatrix());
-		dragon->m_shader[i]->loadMatrix("u_modelMatrix", dragon->m_model->getTransformationMatrix());
-		dragon->m_shader[i]->loadMatrix("u_depthPassMatrix", depthmap->getDepthPassMatrix());
-		dragon->m_shader[i]->loadMatrix("u_modelLight", depthmap->getTransformation());
-
-		dragon->m_shader[i]->loadVector("u_lightPos", depthmap->getPosition());
+		dragon->m_shader[i]->loadVector("lightPos", depthmap->getPosition());
+		dragon->m_shader[i]->loadMatrix("u_model", dragon->m_model->getTransformationMatrix());
+		dragon->m_shader[i]->loadMatrix("u_view", camera->getViewMatrix());
+		dragon->m_shader[i]->loadMatrix("u_viewShadow", depthmap->getViewMatrix());
+		dragon->m_shader[i]->loadMatrix("u_normalMatrix", camera->getViewMatrix() * dragon->m_model->getTransformationMatrix());
 
 		glBindBuffer(GL_ARRAY_BUFFER, dragon->m_model->getMesches()[i]->getVertexName());
 
@@ -470,6 +477,7 @@ void render(){
 
 		dragon->m_shader[i]->bindAttributes(dragon->m_model->getMesches()[i], depthmap->depthmapTexture);
 
+	
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dragon->m_model->getMesches()[i]->getIndexName());
 		glDrawElements(GL_TRIANGLES, dragon->m_model->getMesches()[i]->getNumberOfTriangles() * 3, GL_UNSIGNED_INT, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -481,9 +489,8 @@ void render(){
 		glUseProgram(0);
 	}
 	
-	skyBox->render();
 
-	
+	skyBox->render();
 }
 
 
@@ -521,6 +528,6 @@ Matrix4f &getNormalMatrix(const Matrix4f &modelViewMatrix){
 	normalMatrix[3][3] = 1.0;
 
 	return normalMatrix;
-
-
 }
+
+

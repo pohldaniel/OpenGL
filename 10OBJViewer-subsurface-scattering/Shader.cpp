@@ -34,7 +34,7 @@ void Shader::getAttributeGetAttribLocation(){
 }
 
 void Shader::loadSampler(){
-
+	
 	glUseProgram(m_program);
 	glUniform1i(glGetUniformLocation(m_program, "u_textureColor"), 0);
 	glUniform1i(glGetUniformLocation(m_program, "u_textureNormal"), 1);
@@ -48,7 +48,7 @@ void Shader::bindAttributes(Mesh *a_mesh, GLuint texture){
 
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, texture);
-
+	
 	if (a_mesh->m_hasTangents){
 
 		glEnableVertexAttribArray(positionID);

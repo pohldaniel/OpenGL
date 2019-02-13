@@ -1,41 +1,42 @@
 #version 410 core
 
+
+
 layout(location = 0) in vec3 i_position;
 layout(location = 1) in vec2 i_texCoord;
-layout(location = 2) in vec3 i_color;
-layout(location = 3) in vec3 i_normal;
-layout(location = 4) in vec3 i_tangent;
-layout(location = 5) in vec3 i_bitangent;
+layout(location = 2) in vec3 i_normal;
 
 uniform mat4 u_projection;
-
-
-uniform mat4 u_viewMatrix;
-uniform mat4 u_modelMatrix;
+uniform mat4 u_model;
+uniform mat4 u_view;
 uniform mat4 u_normalMatrix;
+uniform mat4 u_modelView;
 
-uniform mat4 u_depthPassMatrix;
 
-uniform vec3 u_lightPos;
-uniform mat4 u_modelLight;
+uniform mat4 u_projectionShadow;
+uniform mat4 u_viewShadow;
+uniform mat4 u_modelViewShadow;
+
+
+
+
+
 
 out vec3 v_normal;
-out vec4 v_projCoord;
-out vec3 v_lightdirection;
+out vec4 v_peye;
+out vec4 sc;
+
+
 
 void main(void){
 
-	v_lightdirection = (u_projection * u_viewMatrix *(vec4(i_position, 1.0) - u_modelLight * vec4(u_lightPos, 1.0))).xyz;
 
-	vec4 vertex = u_modelMatrix * vec4(i_position, 1.0);
-
-	// Bring the vertex to the light / depth pass coordinate system.
-	v_projCoord = u_depthPassMatrix * vertex;
-
-	vertex = u_viewMatrix * vertex;
-
-	v_normal = (u_normalMatrix * vec4(i_normal, 0.0)).xyz;
-
-	gl_Position = u_projection*vertex;
-	
+   gl_Position =   u_projection * u_view * u_model * vec4(i_position, 1.0);
+  
+   //gl_Position =  u_projectionShadow * u_viewShadow * u_model * vec4(i_position, 1.0f);
+   
+   v_normal = (u_normalMatrix * vec4(i_normal, 0.0)).xyz;
+   v_peye = u_view * u_model * vec4(i_position, 1.0);
+   sc = u_projectionShadow * u_viewShadow * u_model * vec4(i_position, 1.0f);
+   
 }
