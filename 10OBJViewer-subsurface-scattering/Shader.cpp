@@ -40,15 +40,19 @@ void Shader::loadSampler(){
 	glUniform1i(glGetUniformLocation(m_program, "u_textureNormal"), 1);
 	glUniform1i(glGetUniformLocation(m_program, "u_displace"), 2);
 	glUniform1i(glGetUniformLocation(m_program, "u_texture"), 3);
+	glUniform1i(glGetUniformLocation(m_program, "u_texture2"), 4);
 	glUseProgram(0);
 }
 
 
 void Shader::bindAttributes(Mesh *a_mesh, GLuint texture){
-
+	
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, textureB);
+
 	if (a_mesh->m_hasTangents){
 
 		glEnableVertexAttribArray(positionID);
@@ -651,7 +655,7 @@ DepthShader::~DepthShader(){
 }
 
 void DepthShader::bindAttributes(Mesh *a_mesh, GLuint texture){
-
+	
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -751,7 +755,7 @@ TextureShader::~TextureShader(){
 
 
 void TextureShader::bindAttributes(GLuint texture){
-
+	
 	glEnableVertexAttribArray(positionID);
 	glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 

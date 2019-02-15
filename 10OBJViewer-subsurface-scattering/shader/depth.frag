@@ -1,8 +1,10 @@
 #version 410 core
 
-out vec4 color;
+in vec4 vPosLS;
+
+
 
 void main(void){
 
-   //color = vec4(0.0, 1.0, 0.0, 1.0);
+    gl_FragColor =  vec4(vec3(vPosLS.z* 0.5 + 0.5), -sign(abs(vPosLS.x)) );
 }

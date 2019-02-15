@@ -138,9 +138,12 @@ public:
 	void scale(float a, float b, float c);
 	void invScale(float a, float b, float c);
 	void perspective(float fovx, float aspect, float znear, float zfar);
+	void invPerspective(float fovx, float aspect, float znear, float zfar);
+
 	void lookAt(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
-
-
+	void invLookAt(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
+	void lookAt2(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
+	static Matrix4f &getNormalMatrix(const Matrix4f &modelViewMatrix);
 
 private:
 	float mtx[4][4];

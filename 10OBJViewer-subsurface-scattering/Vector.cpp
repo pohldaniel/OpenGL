@@ -215,10 +215,92 @@ void Matrix4f::lookAt(const Vector3f &eye, const Vector3f &target, const Vector3
 
 }
 
+void Matrix4f::invLookAt(const Vector3f &eye, const Vector3f &target, const Vector3f &up){
+
+	Vector3f zAxis = eye - target;
+	Vector3f::normalize(zAxis);
+
+	Vector3f xAxis = Vector3f::cross(up, zAxis);
+	Vector3f::normalize(xAxis);
+
+	Vector3f yAxis = Vector3f::cross(zAxis, xAxis);
+	Vector3f::normalize(yAxis);
+
+
+
+
+	mtx[0][0] = xAxis[0];
+	mtx[1][0] = yAxis[0];
+	mtx[2][0] = zAxis[0];
+	mtx[3][0] = eye[0];
+
+
+
+	mtx[0][1] = xAxis[1];
+	mtx[1][1] = yAxis[1];
+	mtx[2][1] = zAxis[1];
+	mtx[3][1] = eye[1];
+
+	mtx[0][2] = xAxis[2];
+	mtx[1][2] = yAxis[2];
+	mtx[2][2] = zAxis[2];
+	mtx[3][2] = eye[2];
+
+
+
+	mtx[0][3] = 0.0f;
+	mtx[1][3] = 0.0f;
+	mtx[2][3] = 0.0f;
+	mtx[3][3] = 1.0f;
+}
+
+void Matrix4f::lookAt2(const Vector3f &eye, const Vector3f &target, const Vector3f &up){
+
+	Vector3f zAxis = eye - target;
+	Vector3f::normalize(zAxis);
+
+	Vector3f xAxis = -Vector3f::cross(up, zAxis);
+	Vector3f::normalize(xAxis);
+
+	Vector3f yAxis = -Vector3f::cross(zAxis, xAxis);
+	Vector3f::normalize(yAxis);
+
+
+
+
+	mtx[0][0] = xAxis[0];
+	mtx[1][0] = xAxis[1];
+	mtx[2][0] = xAxis[2];
+	mtx[3][0] = -Vector3f::dot(xAxis, eye);
+
+
+
+	mtx[0][1] = yAxis[0];
+	mtx[1][1] = yAxis[1];
+	mtx[2][1] = yAxis[2];
+	mtx[3][1] = -Vector3f::dot(yAxis, eye);
+
+	mtx[0][2] = zAxis[0];
+	mtx[1][2] = zAxis[1];
+	mtx[2][2] = zAxis[2];
+	mtx[3][2] = -Vector3f::dot(zAxis, eye);
+
+
+
+	mtx[0][3] = 0.0f;
+	mtx[1][3] = 0.0f;
+	mtx[2][3] = 0.0f;
+	mtx[3][3] = 1.0f;
+
+}
+
+
+
+
 void Matrix4f::perspective(float fovx, float aspect, float znear, float zfar){
 
 	float e = tanf(PI*fovx / 360);
-	float xScale = (1 / e) / aspect;
+	float xScale = 1 / (e * aspect);
 	float yScale = 1 / e;
 	
 
@@ -244,6 +326,32 @@ void Matrix4f::perspective(float fovx, float aspect, float znear, float zfar){
 
 }
 
+void Matrix4f::invPerspective(float fovx, float aspect, float znear, float zfar){
+
+	float e = tanf(PI*fovx / 360);
+	
+
+	mtx[0][0] = e * aspect;
+	mtx[0][1] = 0.0f;
+	mtx[0][2] = 0.0f;
+	mtx[0][3] = 0.0f;
+
+	mtx[1][0] = 0.0f;
+	mtx[1][1] = e;
+	mtx[1][2] = 0.0f;
+	mtx[1][3] = 0.0f;
+
+	mtx[2][0] = 0.0f;
+	mtx[2][1] = 0.0f;
+	mtx[2][2] = 0.0;
+	mtx[2][3] = (znear - zfar) / (2.0f * zfar * znear);
+
+	mtx[3][0] = 0.0f;
+	mtx[3][1] = 0.0f;
+	mtx[3][2] = -1.0f;
+	mtx[3][3] = (zfar + znear) / (2.0f * zfar * znear);
+}
+
 
 Matrix4f::Matrix4f(float m11, float m12, float m13, float m14,
 	float m21, float m22, float m23, float m24,
@@ -255,6 +363,44 @@ Matrix4f::Matrix4f(float m11, float m12, float m13, float m14,
 	mtx[2][0] = m31, mtx[2][1] = m32, mtx[2][2] = m33, mtx[2][3] = m34;
 	mtx[3][0] = m41, mtx[3][1] = m42, mtx[3][2] = m43, mtx[3][3] = m44;
 }
+
+Matrix4f &Matrix4f::getNormalMatrix(const Matrix4f &modelViewMatrix){
+
+	Matrix4f normalMatrix;
+	float det;
+	float invDet;
+
+	det = modelViewMatrix[0][0] * (modelViewMatrix[1][1] * modelViewMatrix[2][2] - modelViewMatrix[2][1] * modelViewMatrix[1][2]) +
+		modelViewMatrix[1][0] * (modelViewMatrix[2][1] * modelViewMatrix[0][2] - modelViewMatrix[2][2] * modelViewMatrix[0][1]) +
+		modelViewMatrix[2][0] * (modelViewMatrix[0][1] * modelViewMatrix[1][2] - modelViewMatrix[1][1] * modelViewMatrix[0][2]);
+
+	invDet = 1.0 / det;
+
+
+	normalMatrix[0][0] = (modelViewMatrix[1][1] * modelViewMatrix[2][2] - modelViewMatrix[2][1] * modelViewMatrix[1][2]) * invDet;
+	normalMatrix[1][0] = (modelViewMatrix[2][1] * modelViewMatrix[0][2] - modelViewMatrix[2][2] * modelViewMatrix[0][1]) * invDet;
+	normalMatrix[2][0] = (modelViewMatrix[0][1] * modelViewMatrix[1][2] - modelViewMatrix[1][1] * modelViewMatrix[0][2]) * invDet;
+	normalMatrix[3][0] = 0.0;
+
+	normalMatrix[0][1] = (modelViewMatrix[2][0] * modelViewMatrix[1][2] - modelViewMatrix[1][0] * modelViewMatrix[2][2]) * invDet;
+	normalMatrix[1][1] = (modelViewMatrix[0][0] * modelViewMatrix[2][2] - modelViewMatrix[2][0] * modelViewMatrix[0][2]) * invDet;
+	normalMatrix[2][1] = (modelViewMatrix[1][0] * modelViewMatrix[0][2] - modelViewMatrix[1][2] * modelViewMatrix[0][0]) * invDet;
+	normalMatrix[3][1] = 0.0;
+
+	normalMatrix[0][2] = (modelViewMatrix[1][0] * modelViewMatrix[2][1] - modelViewMatrix[1][1] * modelViewMatrix[2][0]) * invDet;
+	normalMatrix[1][2] = (modelViewMatrix[2][0] * modelViewMatrix[0][1] - modelViewMatrix[0][0] * modelViewMatrix[2][1]) * invDet;
+	normalMatrix[2][2] = (modelViewMatrix[0][0] * modelViewMatrix[1][1] - modelViewMatrix[0][1] * modelViewMatrix[1][0]) * invDet;
+	normalMatrix[3][2] = 0.0;
+
+	normalMatrix[0][3] = 0.0;
+	normalMatrix[1][3] = 0.0;
+	normalMatrix[2][3] = 0.0;
+	normalMatrix[3][3] = 1.0;
+
+	return normalMatrix;
+}
+
+
 
 float *Matrix4f::operator[](int row){
 

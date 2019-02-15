@@ -3,14 +3,16 @@
 uniform sampler2D u_textureColor;
 uniform sampler2D u_texture2;
 
-in vec3 v_color;
+
 in vec2 v_texCoord;
+in vec3 v_normal;
+in vec4 vPosLS;
 
 out vec4 color;
 
 void main(void){
 
-	color = texture2D( u_textureColor, v_texCoord ) ;
-	//color = texture2D( u_texture2, v_texCoord ) ;
-	
+	 gl_FragColor =  vec4(v_normal * 0.5 + 0.5, 1.0 );
+	 
+	//gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }

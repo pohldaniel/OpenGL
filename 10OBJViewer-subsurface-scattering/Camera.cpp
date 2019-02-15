@@ -110,7 +110,25 @@ void Camera::updateViewMatrix(bool orthogonalizeAxes)
     m_viewMatrix[3][3] = 1.0f;
 
 
-	
+	m_invViewMatrix[0][0] = m_xAxis[0];
+	m_invViewMatrix[1][0] = m_yAxis[0];
+	m_invViewMatrix[2][0] = m_zAxis[0];
+	m_invViewMatrix[3][0] =  m_eye[0];
+
+	m_invViewMatrix[0][1] = m_xAxis[1];
+	m_invViewMatrix[1][1] = m_yAxis[1];
+	m_invViewMatrix[2][1] = m_zAxis[1];
+	m_invViewMatrix[3][1] = m_eye[1];
+
+	m_invViewMatrix[0][2] = m_xAxis[2];
+	m_invViewMatrix[1][2] = m_yAxis[2];
+	m_invViewMatrix[2][2] = m_zAxis[2];
+	m_invViewMatrix[3][2] = m_eye[2];
+
+	m_invViewMatrix[0][3] = 0.0f;
+	m_invViewMatrix[1][3] = 0.0f;
+	m_invViewMatrix[2][3] = 0.0f;
+	m_invViewMatrix[3][3] = 1.0f;
 
 }
 
@@ -154,9 +172,9 @@ void Camera::updateViewMatrix(const Vector3f &eye, const Vector3f &target, const
 	m_viewMatrix[3][3] = 1.0f;
 
 
-
-
-	
+	Matrix4f invView;
+	invView.invLookAt(eye, target, up);
+	m_invViewMatrix = invView;
 
 }
 
@@ -166,7 +184,7 @@ void Camera::perspective(float fovx, float aspect, float znear, float zfar)
     // 'fovx' rather than the more traditional vertical field of view 'fovy'.
 
 	float e = tanf(PI*fovx/360 );
-	float xScale = (1/e)/aspect;
+	float xScale = 1 / (e *aspect);
     float yScale = 1/e;
 
 	
@@ -195,6 +213,10 @@ void Camera::perspective(float fovx, float aspect, float znear, float zfar)
     m_aspectRatio = aspect;
     m_znear = znear;
     m_zfar = zfar;
+
+	Matrix4f invProjection;
+	invProjection.invPerspective(fovx, aspect, znear, zfar);
+	m_invProjMatrix = invProjection;
 }
 
 void Camera::orthographic(float left, float right, float bottom, float top, float znear, float zfar){
@@ -369,10 +391,18 @@ const Matrix4f &Camera::getOrthographicMatrix() const{
 	return m_orthMatrix;
 }
 
+const Matrix4f &Camera::getInvProjectionMatrix() const{
+
+	return  m_invProjMatrix;
+}
+
 const Matrix4f &Camera::getViewMatrix() const{
 
 	return m_viewMatrix;
 }
 
+const Matrix4f &Camera::getInvViewMatrix() const{
 
+	return m_invViewMatrix;
+}
 

@@ -24,6 +24,7 @@ extern "C" {
 #define GL_TEXTURE1						  0x84C1
 #define GL_TEXTURE2						  0x84C2
 #define	GL_TEXTURE3						  0x84C3
+#define GL_TEXTURE4						  0x84C4
 #define GL_TEXTURE_CUBE_MAP               0x8513
 #define GL_TEXTURE_BINDING_CUBE_MAP       0x8514
 #define GL_TEXTURE_CUBE_MAP_POSITIVE_X    0x8515
