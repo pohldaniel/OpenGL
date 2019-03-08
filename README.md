@@ -11,7 +11,7 @@ Output from 08OBJViewer-relief
 ![relief](https://user-images.githubusercontent.com/30089026/50221719-63737700-0396-11e9-90e0-15082469de94.jpg)
 
 Output from 10OBJViewer-subsurface-scattering
-![subsurface](https://user-images.githubusercontent.com/30089026/52832581-71fdb680-30d9-11e9-9a7f-a6a521e19f20.jpg)
+![subsurface](https://user-images.githubusercontent.com/30089026/53997889-48670680-413e-11e9-8418-e8360c457477.jpg)
 
 
 
