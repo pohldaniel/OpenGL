@@ -16,9 +16,9 @@ Model::~Model(){
 	delete modelMatrix;
 }
 
-void Model::setRotPos(const Vector3f &axis, float degrees, float dx, float dy, float dz){
+void Model::setPosRot(const Vector3f &axis, float degrees, float dx, float dy, float dz){
 
-	modelMatrix->setRotPos(axis, degrees, dx, dy, dz);
+	modelMatrix->setPosRot(axis, degrees, dx, dy, dz);
 }
 
 void Model::rotate(const Vector3f &axis, float degrees){
@@ -187,8 +187,8 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 			
 
 			tmpx = tmpx * scale + translate[0];
-			tmpy = tmpy * scale + translate[0];
-			tmpz = tmpz * scale + translate[0];
+			tmpy = tmpy * scale + translate[1];
+			tmpz = tmpz * scale + translate[2];
 
 			vertexCoords.push_back(tmpx);
 			vertexCoords.push_back(tmpy);
@@ -806,7 +806,7 @@ bool Mesh::readMaterial(const char* filename){
 
 	if (!in.is_open()){
 
-		std::cout << "File not found" << std::endl;
+		std::cout << "mlt file not found" << std::endl;
 		return false;
 	}
 

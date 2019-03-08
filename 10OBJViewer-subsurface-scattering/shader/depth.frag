@@ -1,10 +1,18 @@
 #version 410 core
 
-in vec4 vPosLS;
+out vec3 color ;
 
+uniform float near = 1.0; 
+uniform float far  = 100.0; 
+  
+float LinearizeDepth(float depth) {
 
+    float z = depth * 2.0 - 1.0; // back to NDC 
+    return (2.0 * near * far) / (far + near + z * (near - far));	
+}
 
-void main(void){
-
-    gl_FragColor =  vec4(vec3(vPosLS.z* 0.5 + 0.5), -sign(abs(vPosLS.x)) );
+void main(){         
+    
+    float depth = LinearizeDepth(gl_FragCoord.z/gl_FragCoord.w); 
+    color = vec3(depth);
 }

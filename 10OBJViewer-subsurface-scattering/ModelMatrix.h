@@ -16,7 +16,7 @@ public:
 	void rotate(const Vector3f &axis, float degrees);
 	void translate(float dx, float dy, float dz);
 	void scale(float a, float b, float c);
-	void setRotPos(const Vector3f &axis, float degrees, float dx, float dy, float dz);
+	void setPosRot(const Vector3f &axis, float degrees, float dx, float dy, float dz);
 
 	Matrix4f orientation;
 	Vector3f position;

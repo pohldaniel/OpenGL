@@ -256,8 +256,7 @@ void Shader::unbindAttributes(Mesh *a_mesh){
 	
 	glDisableVertexAttribArray(positionID);
 
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	
 }
 
 
@@ -268,9 +267,11 @@ void Shader::loadSampler(const char* location, int sampler){
 	glUseProgram(0);
 }
 
+//OpenGL specifies matrices as column-major to get row-major just transpose it
+
 void Shader::loadMatrix(const char* location, const Matrix4f matrix){
 
-	glUniformMatrix4fv(glGetUniformLocation(m_program, location), 1, false, &matrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(m_program, location), 1, true, &matrix[0][0]);
 
 }
 

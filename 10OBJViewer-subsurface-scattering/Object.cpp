@@ -25,7 +25,7 @@ Object::~Object(){
 
 void Object::initModel(const char* a_objPath){
 	m_model = new Model();
-	m_model->loadObject(a_objPath,Vector3f(0.0, 0.0, 0.0), 1.0);
+	m_model->loadObject(a_objPath,Vector3f(0.0, 0.0, 0.0), 0.3);
 	Bitmap* bitmap;
 	for (int i = 0; i < m_model->numberOfMeshes(); i++){
 

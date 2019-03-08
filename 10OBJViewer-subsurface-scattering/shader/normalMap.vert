@@ -12,19 +12,31 @@ uniform mat4 mvp;
 
 out vec2 v_texCoord;
 out vec3 v_normal;
+out vec4 v_position;
 
 out vec4 vPosLS;
 
+const mat4 bias = mat4(	0.5, 0.0, 0.0, 0.0,
+						0.0, 0.5, 0.0, 0.0,
+						0.0, 0.0, 0.5, 0.0,
+						0.5, 0.5, 0.5, 1.0);
+
 void main(void){
 	
-   vPosLS = u_projection  * u_modelView * vec4(i_position, 1.0);
-  vPosLS /= vPosLS.wwww;
-  
-  gl_Position =  vPosLS;
+	v_normal = i_normal;
 	
-   v_normal = normalize((u_normalMatrix * vec4(i_normal, 0.0)).xyz);
+	gl_Position = u_projection  * u_modelView * vec4(i_position, 1.0);
+	
+v_position = gl_Position;
+	
+   vPosLS = bias * u_projection  * u_modelView * vec4(i_position, 1.0);
+   //vPosLS /= vPosLS.wwww;
+  
+   //gl_Position =  vPosLS;
+	
+   //v_normal = normalize((u_normalMatrix * vec4(i_normal, 0.0)).xyz);
    
     
   
-   v_texCoord = i_texCoord;
+   //v_texCoord = i_texCoord;
 }

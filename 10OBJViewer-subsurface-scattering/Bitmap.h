@@ -1,6 +1,6 @@
 #ifndef __bitmapH__
 #define __bitmapH__
-
+#include <fstream>
 #include <Windows.h>
 
 class Bitmap {
@@ -15,7 +15,11 @@ public:
 	bool loadBitmap24(const char *filename);
 	bool loadBitmap24B(const char *filename);
 	bool readMonochrome(const char *filename);
-
+	static bool saveBitmap24(LPCTSTR lpszFileName, unsigned char *data, int width, int height);
+	static bool saveBitmap32(LPCTSTR lpszFileName, unsigned char *data, int width, int height);
+	static bool saveBitmap8(LPCTSTR lpszFileName, unsigned char *data, int width, int height);
+	static bool saveBitmap1(LPCTSTR lpszFileName, unsigned char *data, int width, int height);
+	
 	BYTE *getPixels() const
 	{
 		return data;

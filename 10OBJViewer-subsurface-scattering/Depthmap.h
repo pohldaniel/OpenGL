@@ -12,9 +12,20 @@ public:
 	Depthmap(Camera* camera);
 	~Depthmap();
 
+	unsigned char *normalData;
+	unsigned char *depthData;
+	unsigned char *depthData2;
+	unsigned char *depthData3;
+	unsigned char *depthData4;
+	unsigned char *depthData5;
+
 	unsigned int depthmapTexture;
 	unsigned int depthmapTexture2;
+	unsigned int depthmapTexture3;
+	unsigned int depthmapTexture4;
+	unsigned int singleChannel;
 	
+
 	unsigned int irradianceMap;
 	unsigned int normalMap;
 
@@ -24,6 +35,8 @@ public:
 	void setProjectionMatrix(float fovx, float aspect, float znear, float zfar);	
 	void renderToDepthTexture(Object const* object);
 	void renderToDepthTexture2(Object const* object);
+	void renderToDepthTexture3(Object const* object);
+	void renderToDepthTexture4(Object const* object);
 	void renderNormalMap(Object const* object);
 	void renderIrradianceMap(Object const* object);
 
@@ -36,16 +49,26 @@ public:
 
 private :
 
-	unsigned int depthmapFBOMSAA;
-	unsigned int depthmapFBO;
+	unsigned int fboCDepthMSAA;
+	unsigned int fboCDepth;
 
 	unsigned int depthmapFBO2;
 	
 	unsigned int normalFBO;
 	unsigned int normalFBOMSAA;
 
-	unsigned int irradianceFBO;
-	unsigned int irradianceFBOMSAA;
+	unsigned int fboIrradianceMSAA;
+	unsigned int fboCIrradiance;
+
+	unsigned int fboNormalMSAA;
+	unsigned int fboCNormal;
+	unsigned int fboDNormal;
+
+	unsigned int fboDDepthMSAA;
+	unsigned int fboDDepth;
+
+	unsigned int fboSingleChannelMSAA;
+	unsigned int fboCSingleChannel;
 
 	unsigned int depthmapWidth = 512;
 	unsigned int depthmapHeight = 512;
@@ -75,6 +98,8 @@ private :
 
 	Shader *m_normalShader;
 	Shader* m_depthShader;
+	Shader* m_depthMapShader;
+	Shader* m_depthMapShader2;
 	Shader *m_irradianceShader;
 
 	Camera* m_camera;

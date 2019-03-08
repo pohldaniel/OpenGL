@@ -36,7 +36,7 @@ public:
 	const Matrix4f &getTransformationMatrix() const;
 	const Matrix4f &getInvTransformationMatrix() const;
 
-	void setRotPos(const Vector3f &axis, float degrees, float dx, float dy, float dz);
+	void setPosRot(const Vector3f &axis, float degrees, float dx, float dy, float dz);
 	void rotate(const Vector3f &axis, float degrees);
 	void translate(float dx, float dy, float dz);
 	void scale(float a, float b, float c);

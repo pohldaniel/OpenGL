@@ -5,15 +5,15 @@
 #include <vector>
 #include "Bitmap.h"
 
-Bitmap::Bitmap()
-{
+Bitmap::Bitmap(){
+
 	Bitmap::data = NULL;
 	Bitmap::dataMatrix = NULL;
 }
 
  
-Bitmap::~Bitmap()
-{
+Bitmap::~Bitmap(){
+
 	if(Bitmap::data){
 		free(Bitmap::data);
 		Bitmap::data = NULL;
@@ -31,14 +31,14 @@ Bitmap::~Bitmap()
 }
 
 
-void Bitmap::selectObject()
-{
+void Bitmap::selectObject(){
+
 	if (dc)
 		m_hPrevObj = SelectObject(dc, hBitmap);
 }
 
-void Bitmap::deselectObject()
-{
+void Bitmap::deselectObject(){
+
 	if (dc && m_hPrevObj)
 	{
 		SelectObject(dc, m_hPrevObj);
@@ -47,6 +47,7 @@ void Bitmap::deselectObject()
 }
 
 void Bitmap::destroy(){
+
 	deselectObject();
 
 	if (hBitmap)
@@ -67,6 +68,7 @@ void Bitmap::destroy(){
 }
 
 bool Bitmap::create(int widthPixels, int heightPixels){
+
 	destroy();
 
 	width = widthPixels;
@@ -99,8 +101,8 @@ bool Bitmap::create(int widthPixels, int heightPixels){
 	return true;
 }
 
-bool Bitmap::loadPicture(LPCTSTR pszFilename)
-{
+bool Bitmap::loadPicture(LPCTSTR pszFilename){
+
 	// Loads an image using the IPicture COM interface.
 	// Supported image formats: BMP, EMF, GIF, ICO, JPG, WMF, TGA.
 	//
@@ -122,8 +124,8 @@ bool Bitmap::loadPicture(LPCTSTR pszFilename)
 
 	
 
-	if (!m_logpixelsx && !m_logpixelsy)
-	{
+	if (!m_logpixelsx && !m_logpixelsy){
+
 		HDC hScreenDC = CreateCompatibleDC(GetDC(0));
 
 		if (!hScreenDC)
@@ -140,27 +142,27 @@ bool Bitmap::loadPicture(LPCTSTR pszFilename)
 	if (hFile == INVALID_HANDLE_VALUE)
 		return false;
 
-	if (!(dwFileSize = GetFileSize(hFile, 0)))
-	{
+	if (!(dwFileSize = GetFileSize(hFile, 0))){
+
 		CloseHandle(hFile);
 		return false;
 	}
 
-	if (!(hGlobal = GlobalAlloc(GMEM_MOVEABLE | GMEM_NODISCARD, dwFileSize)))
-	{
+	if (!(hGlobal = GlobalAlloc(GMEM_MOVEABLE | GMEM_NODISCARD, dwFileSize))){
+
 		CloseHandle(hFile);
 		return false;
 	}
 
-	if (!(pBuffer = reinterpret_cast<BYTE*>(GlobalLock(hGlobal))))
-	{
+	if (!(pBuffer = reinterpret_cast<BYTE*>(GlobalLock(hGlobal)))){
+
 		GlobalFree(hGlobal);
 		CloseHandle(hFile);
 		return false;
 	}
 
-	if (!ReadFile(hFile, pBuffer, dwFileSize, &dwBytesRead, 0))
-	{
+	if (!ReadFile(hFile, pBuffer, dwFileSize, &dwBytesRead, 0)){
+
 		GlobalUnlock(hGlobal);
 		GlobalFree(hGlobal);
 		CloseHandle(hFile);
@@ -170,15 +172,15 @@ bool Bitmap::loadPicture(LPCTSTR pszFilename)
 	GlobalUnlock(hGlobal);
 	CloseHandle(hFile);
 
-	if (FAILED(CreateStreamOnHGlobal(hGlobal, FALSE, &pIStream)))
-	{
+	if (FAILED(CreateStreamOnHGlobal(hGlobal, FALSE, &pIStream))){
+
 		GlobalFree(hGlobal);
 		return false;
 	}
 
 	if (FAILED(OleLoadPicture(pIStream, 0, FALSE, IID_IPicture,
-		reinterpret_cast<LPVOID*>(&pIPicture))))
-	{
+		reinterpret_cast<LPVOID*>(&pIPicture)))){
+
 		pIStream->Release();
 		GlobalFree(hGlobal);
 		return false;
@@ -195,8 +197,8 @@ bool Bitmap::loadPicture(LPCTSTR pszFilename)
 	width = MulDiv(lWidth, m_logpixelsx, HIMETRIC_INCH);
 	height = MulDiv(lHeight, m_logpixelsy, HIMETRIC_INCH);
 
-	if (!create(width, height))
-	{
+	if (!create(width, height)){
+
 		pIPicture->Release();
 		return false;
 	}
@@ -214,13 +216,13 @@ void Bitmap::flipHorizontal(){
 	BYTE *pBack = 0;
 	BYTE pixel[3] = { 0 };
 
-	for (int i = 0; i < height; ++i)
-	{
+	for (int i = 0; i < height; ++i){
+
 		pFront = &data[i * padWidth];
 		pBack = &pFront[padWidth - 3];
 
-		while (pFront < pBack)
-		{
+		while (pFront < pBack){
+
 			// Save current pixel at position pFront.
 			pixel[0] = pFront[0];
 			pixel[1] = pFront[1];
@@ -245,8 +247,8 @@ void Bitmap::flipHorizontal(){
 	}
 }
 
-void Bitmap::flipVertical()
-{
+void Bitmap::flipVertical(){
+
 	std::vector<BYTE> srcPixels(padWidth * height);
 
 	memcpy(&srcPixels[0], data, padWidth * height);
@@ -268,8 +270,8 @@ void Bitmap::flipVertical()
 // desc: Returns a pointer to the bitmap image of the bitmap specified
 //       by filename. Also returns the bitmap header information.
 //		 No support for 8-bit bitmaps.
-bool Bitmap::loadBitmap24(const char *filename)
-{
+bool Bitmap::loadBitmap24(const char *filename){
+
 	FILE 				*filePtr;				// the file pointer
 	unsigned char		tempRGB;				// swap variable
 	//int					padWidth;				// widht of a padded row
@@ -349,8 +351,8 @@ bool Bitmap::loadBitmap24(const char *filename)
 
 
 
-bool Bitmap::readMonochrome(const char *filename)
-{
+bool Bitmap::readMonochrome(const char *filename){
+
     FILE *filePtr = fopen(filename,"rb");
 
     // BMP header is 54 bytes
@@ -405,8 +407,8 @@ bool Bitmap::readMonochrome(const char *filename)
 }
 
 
-bool Bitmap::loadBitmap24B(const char *filename)
-{
+bool Bitmap::loadBitmap24B(const char *filename){
+
 	FILE *filePtr;								// the file pointer
 	//int					padWidth;				// widht of a padded row
 	int					paddingByte;			// number of Bytes to fill up the row to a multiple of four
@@ -487,3 +489,280 @@ bool Bitmap::loadBitmap24B(const char *filename)
 
 	return true;
 }
+
+
+bool Bitmap::saveBitmap24(LPCTSTR lpszFileName, unsigned char *data, int a_width, int a_height){
+
+	std::ofstream bmpfile;
+	bmpfile.open(lpszFileName, std::ios::out | std::ios::binary | std::ios::trunc);
+	if (!bmpfile.is_open()){
+
+		std::cout << "ERROR: FILE COULD NOT BE OPENED" << std::endl;
+		return 1;
+	}
+
+	int width = a_width;
+	int height = a_height;
+
+	int padWidth = 3 * a_width;
+
+
+	while (padWidth % 4 != 0) {
+		padWidth++;
+	}
+
+	int paddingByte = padWidth - 3 * width;
+
+	BITMAPFILEHEADER fHeader;   //File Header 
+	fHeader.bfType = 19778;    //BM
+	fHeader.bfSize = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+padWidth*height;   //File Size info
+	fHeader.bfReserved1 = 0;
+	fHeader.bfReserved2 = 0;
+	fHeader.bfOffBits = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER);    //Where we actually start writing the Bitmap data/image
+
+
+	bmpfile.write((char*)(&fHeader.bfType), sizeof(fHeader.bfType));     //Let's start writing the file
+	bmpfile.write((char*)(&fHeader.bfSize), sizeof(fHeader.bfSize));   //Header information
+	bmpfile.write((char*)(&fHeader.bfReserved1), sizeof(fHeader.bfReserved1));
+	bmpfile.write((char*)(&fHeader.bfReserved2), sizeof(fHeader.bfReserved2));
+	bmpfile.write((char*)(&fHeader.bfOffBits), sizeof(fHeader.bfOffBits));
+
+	BITMAPINFOHEADER iHeader;
+	iHeader.biSize = sizeof(BITMAPINFOHEADER);
+	iHeader.biWidth = width;
+	iHeader.biHeight = height;
+	iHeader.biPlanes = 1;
+	iHeader.biBitCount = 24;
+	iHeader.biCompression = 0; //Uncompressed
+	iHeader.biSizeImage = padWidth * height;
+	iHeader.biXPelsPerMeter = 0;
+	iHeader.biYPelsPerMeter = 0;
+	iHeader.biClrUsed = 0;
+	iHeader.biClrImportant = 0;
+
+	bmpfile.write((char*)&iHeader, sizeof(BITMAPINFOHEADER));   //More Header information being placed in the file
+
+
+	bmpfile.write((char*)data, sizeof(unsigned char)*iHeader.biSizeImage);
+
+	/*for (int i = 0; i < padWidth * height; i++){
+		data[i] = 256 - data[i];
+	}*/
+
+
+	/*int min = 300;
+
+	for (int i = 0; i < padWidth * height; i++){
+		
+		//min = (int)std::fmin(min, (int)data[i]);
+		if ((int)data[i] > 100)
+		std::cout << (int)data[i] << std::endl;
+	}
+
+	std::cout << min << std::endl;*/
+
+	// close the file
+
+	bmpfile.close();
+
+	return 0;
+}
+
+bool Bitmap::saveBitmap32(LPCTSTR lpszFileName, unsigned char *data, int a_width, int a_height){
+
+	std::ofstream bmpfile;
+	bmpfile.open(lpszFileName, std::ios::out | std::ios::binary | std::ios::trunc);
+	if (!bmpfile.is_open()){
+
+		std::cout << "ERROR: FILE COULD NOT BE OPENED" << std::endl;
+		return 1;
+	}
+
+	int width = a_width;
+	int height = a_height;
+
+	int padWidth = 4 * a_width;
+
+
+	BITMAPFILEHEADER fHeader;   //File Header 
+	fHeader.bfType = 19778;    //BM
+	fHeader.bfSize = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+padWidth*height;   //File Size info
+	fHeader.bfReserved1 = 0;
+	fHeader.bfReserved2 = 0;
+	fHeader.bfOffBits = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER);    //Where we actually start writing the Bitmap data/image
+
+
+	bmpfile.write((char*)(&fHeader.bfType), sizeof(fHeader.bfType));     //Let's start writing the file
+	bmpfile.write((char*)(&fHeader.bfSize), sizeof(fHeader.bfSize));   //Header information
+	bmpfile.write((char*)(&fHeader.bfReserved1), sizeof(fHeader.bfReserved1));
+	bmpfile.write((char*)(&fHeader.bfReserved2), sizeof(fHeader.bfReserved2));
+	bmpfile.write((char*)(&fHeader.bfOffBits), sizeof(fHeader.bfOffBits));
+
+	BITMAPINFOHEADER iHeader;
+	iHeader.biSize = sizeof(BITMAPINFOHEADER);
+	iHeader.biWidth = width;
+	iHeader.biHeight = height;
+	iHeader.biPlanes = 1;
+	iHeader.biBitCount = 32;
+	iHeader.biCompression = 0; //Uncompressed
+	iHeader.biSizeImage = padWidth * height;
+	iHeader.biXPelsPerMeter = 0;
+	iHeader.biYPelsPerMeter = 0;
+	iHeader.biClrUsed = 0;
+	iHeader.biClrImportant = 0;
+
+	bmpfile.write((char*)&iHeader, sizeof(BITMAPINFOHEADER));   //More Header information being placed in the file
+
+
+	bmpfile.write((char*)data, sizeof(unsigned char)*iHeader.biSizeImage);
+
+
+	// close the file
+
+	bmpfile.close();
+
+	return 0;
+}
+
+bool Bitmap::saveBitmap8(LPCTSTR lpszFileName, unsigned char *data, int a_width, int a_height){
+
+	std::ofstream bmpfile;
+	bmpfile.open(lpszFileName, std::ios::out | std::ios::binary | std::ios::trunc);
+	if (!bmpfile.is_open()){
+
+		std::cout << "ERROR: FILE COULD NOT BE OPENED" << std::endl;
+		return 1;
+	}
+
+	int width = a_width;
+	int height = a_height;
+
+	
+	int padWidth = a_width;
+
+
+	while (padWidth % 4 != 0) {
+		padWidth++;
+	}
+
+	int paddingByte = padWidth - width;
+	
+	BITMAPFILEHEADER fHeader;   //File Header 
+	fHeader.bfType = 0x4d42;    //BM
+	fHeader.bfSize = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+padWidth*height + 1024;   //File Size info
+	fHeader.bfReserved1 = 0;
+	fHeader.bfReserved2 = 0;
+	fHeader.bfOffBits = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER) + 1024;    //Where we actually start writing the Bitmap data/image
+
+
+	bmpfile.write((char*)(&fHeader.bfType), sizeof(fHeader.bfType));     //Let's start writing the file
+	bmpfile.write((char*)(&fHeader.bfSize), sizeof(fHeader.bfSize));   //Header information
+	bmpfile.write((char*)(&fHeader.bfReserved1), sizeof(fHeader.bfReserved1));
+	bmpfile.write((char*)(&fHeader.bfReserved2), sizeof(fHeader.bfReserved2));
+	bmpfile.write((char*)(&fHeader.bfOffBits), sizeof(fHeader.bfOffBits));
+
+	BITMAPINFOHEADER iHeader;
+	iHeader.biSize = sizeof(BITMAPINFOHEADER);
+	iHeader.biWidth = width;
+	iHeader.biHeight = height;
+	iHeader.biPlanes = 1;
+	iHeader.biBitCount = 8;
+	iHeader.biCompression = BI_RGB; //Uncompressed
+	iHeader.biSizeImage = padWidth * height;
+	iHeader.biXPelsPerMeter = 0;
+	iHeader.biYPelsPerMeter = 0;
+	iHeader.biClrUsed = 0;
+	iHeader.biClrImportant = 0;
+
+	bmpfile.write((char*)&iHeader, sizeof(BITMAPINFOHEADER));   //More Header information being placed in the file
+
+	//write a grayscale colorpalette
+	unsigned char* palette = (unsigned char *)malloc(1024);
+
+	for (int i = 0; i < 1024; i = i + 1){
+
+		palette[i] = i;
+		palette[i + 1] = i;
+		palette[i + 2] = i;
+		palette[i + 3] = 0;
+	}
+
+	bmpfile.write((char*)palette, sizeof(unsigned char)*1024);
+
+	/*int min = 300;
+
+	for (int i = 0; i < padWidth * height; i++){
+
+		min = (int)std::fmin(min, (int)data[i]);
+	}
+
+	std::cout << min << std::endl;*/
+
+	bmpfile.write((char*)data, sizeof(unsigned char)*iHeader.biSizeImage);
+
+	bmpfile.close();
+
+	
+
+	return 0;
+}
+
+
+bool Bitmap::saveBitmap1(LPCTSTR lpszFileName, unsigned char *data, int width, int height){
+
+	int bitmap_dx = width; // Width of image
+	int bitmap_dy = height; // Height of Image
+
+	// create file
+	std::ofstream file(lpszFileName, std::ios::binary | std::ios::trunc);
+	if (!file) return 0;
+
+	// save bitmap file headers
+	BITMAPFILEHEADER fileHeader;
+	BITMAPINFOHEADER * infoHeader;
+	infoHeader = (BITMAPINFOHEADER*)malloc(sizeof(BITMAPINFOHEADER));
+	RGBQUAD bl = { 0, 0, 0, 0 };  //black color
+	RGBQUAD wh = { 255, 255, 255, 0 }; // white color
+
+	fileHeader.bfType = 0x4d42;
+	fileHeader.bfSize = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+ (width/8)*height;
+	fileHeader.bfReserved1 = 0;
+	fileHeader.bfReserved2 = 0;
+	fileHeader.bfOffBits = sizeof(BITMAPFILEHEADER)+(sizeof(BITMAPINFOHEADER));
+
+	file.write((char*)(&fileHeader.bfType), sizeof(fileHeader.bfType));     //Let's start writing the file
+	file.write((char*)(&fileHeader.bfSize), sizeof(fileHeader.bfSize));   //Header information
+	file.write((char*)(&fileHeader.bfReserved1), sizeof(fileHeader.bfReserved1));
+	file.write((char*)(&fileHeader.bfReserved2), sizeof(fileHeader.bfReserved2));
+	file.write((char*)(&fileHeader.bfOffBits), sizeof(fileHeader.bfOffBits));
+
+	infoHeader->biSize = (sizeof(BITMAPINFOHEADER));
+	infoHeader->biWidth = bitmap_dx;
+	infoHeader->biHeight = bitmap_dy;
+	infoHeader->biPlanes = 1;
+	infoHeader->biBitCount = 1;
+	infoHeader->biCompression = BI_RGB; //no compression needed
+	infoHeader->biSizeImage = (width / 8) * width;
+	infoHeader->biXPelsPerMeter = 0;
+	infoHeader->biYPelsPerMeter = 0;
+	infoHeader->biClrUsed = 0;
+	infoHeader->biClrImportant = 0;
+
+	file.write((char*)&infoHeader, sizeof(BITMAPINFOHEADER));   //More Header information being placed in the file
+
+
+	file.write((char*)&bl, sizeof(bl)); //write RGBQUAD for black
+	file.write((char*)&wh, sizeof(wh)); //write RGBQUAD for white
+
+
+	int bytes = (width / 8) * height; //for example for 32X64 image = (32/8)bytes X 64 = 256;
+
+	
+	file.write((const char*)data, bytes);
+
+	file.close();
+
+	return 0;
+}
+
+
