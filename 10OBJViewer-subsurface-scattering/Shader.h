@@ -51,7 +51,9 @@ public:
 	void loadLightSource(LightSource &lightsource, int index);
 	void loadLightSources(std::vector<LightSource> lights);
 	
-	unsigned int textureB;
+	unsigned int normal;
+	unsigned int depth;
+	unsigned int irradiance;
 
 protected:
 

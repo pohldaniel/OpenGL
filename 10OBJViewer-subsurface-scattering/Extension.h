@@ -14,6 +14,7 @@ extern "C" {
 #define GL_BGRA                           0x80E1
 #define GL_CLAMP_TO_EDGE                  0x812F
 #define GL_R8                             0x8229
+#define GL_RGB32F_ARB					  0x8815
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // OpenGL 1.4
 //
@@ -26,6 +27,9 @@ extern "C" {
 #define GL_TEXTURE2						  0x84C2
 #define	GL_TEXTURE3						  0x84C3
 #define GL_TEXTURE4						  0x84C4
+#define GL_TEXTURE5                       0x84C5
+#define GL_TEXTURE6                       0x84C6
+#define GL_TEXTURE7                       0x84C7
 #define GL_TEXTURE_CUBE_MAP               0x8513
 #define GL_TEXTURE_BINDING_CUBE_MAP       0x8514
 #define GL_TEXTURE_CUBE_MAP_POSITIVE_X    0x8515

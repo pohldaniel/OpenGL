@@ -51,7 +51,7 @@ void ModelMatrix::rotate(const Vector3f &axis, float degrees){
 	Matrix4f rotMtx;
 	rotMtx.rotate(axis, degrees);
 
-	orientation = rotMtx * orientation;
+	//orientation = rotMtx * orientation;
 
 	Matrix4f invRotMtx = Matrix4f(rotMtx[0][0], rotMtx[1][0], rotMtx[2][0], rotMtx[3][0],
 		rotMtx[0][1], rotMtx[1][1], rotMtx[2][1], rotMtx[3][1],
@@ -60,9 +60,9 @@ void ModelMatrix::rotate(const Vector3f &axis, float degrees){
 
 	if (startPosition.zero()){
 		
-		T = rotMtx * T;
-		invT = invT * invRotMtx;
-
+		T =  rotMtx ^ T ;
+		invT = invT * rotMtx;
+		
 	}else{
 		
 		
@@ -84,6 +84,8 @@ void ModelMatrix::rotate(const Vector3f &axis, float degrees){
 		invRotMtx[3][3] = startPosition[0] * (tmp1 - invRotMtx[3][0]) + startPosition[1] * (tmp2 - invRotMtx[3][1]) + startPosition[2] * (tmp3 - invRotMtx[3][2]) + tmp4;
 
 		invT = invT * invRotMtx;
+
+		std::cout << "jjjjjjjjjjjjjjj" << std::endl;
 	}
 }
 
@@ -92,15 +94,15 @@ void ModelMatrix::translate(float dx, float dy, float dz){
 	position = position + Vector3f(dx, dy, dz);
 
 	//T = Translate * T
-	T[0][3] = T[0][3] + dx*T[0][0] + dz*T[0][2] + dy*T[0][1];
-	T[1][3] = T[1][3] + dx*T[1][0] + dz*T[1][2] + dy*T[1][1];
-	T[2][3] = T[2][3] + dx*T[2][0] + dz*T[2][2] + dy*T[2][1];
+	invT[0][3] = invT[0][3] - dx*invT[0][0] - dz*invT[0][2] - dy*invT[0][1];
+	invT[1][3] = invT[1][3] - dx*invT[1][0] - dz*invT[1][2] - dy*invT[1][1];
+	invT[2][3] = invT[2][3] - dx*invT[2][0] - dz*invT[2][2] - dy*invT[2][1];
 
 	//T^-1 = T^-1 * Translate^-1
-	invT[0][0] = invT[0][0] - invT[3][0] * dx; invT[1][0] = invT[1][0] - invT[3][0] * dz; invT[2][0] = invT[2][0] - invT[3][0] * dy;
-	invT[0][1] = invT[0][1] - invT[3][1] * dx; invT[1][1] = invT[1][1] - invT[3][1] * dz; invT[2][1] = invT[2][1] - invT[3][1] * dy;
-	invT[0][2] = invT[0][2] - invT[3][2] * dx; invT[1][2] = invT[1][2] - invT[3][2] * dz; invT[2][2] = invT[2][2] - invT[3][2] * dy;
-	invT[0][3] = invT[0][3] - dx; invT[1][3] = invT[1][3] - dy; invT[2][3] = invT[2][3] - dz;
+	T[0][0] = T[0][0] + T[3][0] * dx; T[1][0] = T[1][0] + T[3][0] * dz; T[2][0] = T[2][0] + T[3][0] * dy;
+	T[0][1] = T[0][1] + T[3][1] * dx; T[1][1] = T[1][1] + T[3][1] * dz; T[2][1] = T[2][1] + T[3][1] * dy;
+	T[0][2] = T[0][2] + T[3][2] * dx; T[1][2] = T[1][2] + T[3][2] * dz; T[2][2] = T[2][2] + T[3][2] * dy;
+	T[0][3] = T[0][3] + dx; T[1][3] = T[1][3] + dy; T[2][3] = T[2][3] + dz;
 
 }
 

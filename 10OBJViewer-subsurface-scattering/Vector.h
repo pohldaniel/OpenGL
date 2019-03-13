@@ -128,7 +128,9 @@ public:
 	float *operator[](int row);
 	const float *operator[](int row) const;
 	Matrix4f &operator*=(const Matrix4f &rhs);
+	Matrix4f &operator^=(const Matrix4f &rhs);
 	Matrix4f operator*(const Matrix4f &rhs) const;
+	Matrix4f operator^(const Matrix4f &rhs) const;
 	Matrix4f transpose();
 
 	void identity();
@@ -139,6 +141,7 @@ public:
 	void scale(float a, float b, float c);
 	void invScale(float a, float b, float c);
 	void perspective(float fovx, float aspect, float znear, float zfar);
+	void orthographic(float left, float right, float bottom, float top, float znear, float zfar);
 	void perspectiveD3D(float fovx, float aspect, float znear, float zfar);
 	void linearPerspective(float fovx, float aspect, float znear, float zfar);
 	void invPerspective(float fovx, float aspect, float znear, float zfar);
