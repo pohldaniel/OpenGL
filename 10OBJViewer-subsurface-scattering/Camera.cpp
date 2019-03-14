@@ -206,14 +206,7 @@ void Camera::perspective(float fovx, float aspect, float znear, float zfar){
 	m_znear = znear;
 	m_zfar = zfar;
 
-	Matrix4f invProjection;
-	invProjection.invPerspective(fovx, aspect, znear, zfar);
-	m_invProjMatrix = invProjection;
-
-	Matrix4f perspectiveD3D;
-	perspectiveD3D.perspectiveD3D(45.0f, 640.0 / 480.0, 1.0f, 2000.0f);
-
-	m_projMatrix = perspectiveD3D;
+	
 }
 
 void Camera::orthographic(float left, float right, float bottom, float top, float znear, float zfar){

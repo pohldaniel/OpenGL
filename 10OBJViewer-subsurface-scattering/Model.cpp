@@ -16,23 +16,30 @@ Model::~Model(){
 	delete modelMatrix;
 }
 
-void Model::setPosRot(const Vector3f &axis, float degrees, float dx, float dy, float dz){
+void Model::setRotPos(const Vector3f &axis, float degrees, float dx, float dy, float dz){
 
-	modelMatrix->setPosRot(axis, degrees, dx, dy, dz);
+	modelMatrix->setRotPos(axis, degrees, dx, dy, dz);
+}
+
+void Model::setRotXYZPos(const Vector3f &axisX, float degreesX,
+	const Vector3f &axisY, float degreesY,
+	const Vector3f &axisZ, float degreesZ,
+	float dx, float dy, float dz){
+
+	modelMatrix->setRotXYZPos(axisX, degreesX, 
+							  axisY, degreesY,
+						      axisZ, degreesZ,
+							  dx, dy, dz);
 }
 
 void Model::rotate(const Vector3f &axis, float degrees){
 
 	modelMatrix->rotate(axis, degrees);
-
-	
-
 }
 
 void Model::translate(float dx, float dy, float dz){
 
 	modelMatrix->translate(dx, dy, dz);
-
 }
 
 void Model::scale(float a, float b, float c){

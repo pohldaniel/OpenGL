@@ -48,7 +48,7 @@ Matrix4f rot;
 Vector3f lightPos = Vector3f(0.0, 0.0, 7.0);
 //Vector3f lightPos2 = Vector3f(-0.6f, 0.7f, -8.4f);
 
-Vector3f lightPos2 = Vector3f(0.0, 0.0, -7.0);
+Vector3f lightPos2 = Vector3f(0.0, 0.0, -9.0);
 
 //prototype funktions
 LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParma, LPARAM lParam);
@@ -322,36 +322,30 @@ void initApp(HWND hWnd)
 	
 
 
-	camera->perspective(90.0f, (GLfloat)width / (GLfloat)height, 1.0f, 2000.0f);
+	camera->perspective(45.0f, (GLfloat)width / (GLfloat)height, 1.0f, 2000.0f);
 	
 
 	glEnable(GL_DEPTH_TEST);					// hidden surface removal
 	//glEnable(GL_CULL_FACE);						// do not calculate inside of poly's
 
 	
-	
-	
 	depthmap = new Depthmap(camera);
 	depthmap->setProjectionMatrix(45.0f, 1.0, 1.0f, 100.0f);
-	
-
 	
 	degree = degree - 0.05;
 	rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
 	depthmap->setViewMatrix(rot * lightPos2, Vector3f(0.0, 0.0, -5.0), Vector3f(0.0, 1.0, 0.0));
 	
-	
 
-	
 	buddha = new Object();
 	buddha->initModel("objs/buddha.obj");
 
-	buddha->m_model->rotate(Vector3f(0.0, 1.0, 0.0), 45);
-	buddha->m_model->rotate(Vector3f(1.0, 0.0, 0.0), 270);
-	//buddha->m_model->translate(-0.6f, -0.2f, -2.0f);
+	buddha->m_model->setRotXYZPos(Vector3f(0.0, 1.0, 0.0), 45.0,
+		Vector3f(1.0, 0.0, 0.0), 270.0,
+		Vector3f(1.0, 0.0, 0.0), 0.0,
+		0.0, 0.0, 0.0);
+
 	buddha->m_model->scale(8.0, 8.0, 8.0);
-	
-	
 
 	sss = new Shader("shader/sss.vsh", "shader/sss.fsh");
 

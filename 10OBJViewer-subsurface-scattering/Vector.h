@@ -143,7 +143,7 @@ public:
 	void perspective(float fovx, float aspect, float znear, float zfar);
 	void orthographic(float left, float right, float bottom, float top, float znear, float zfar);
 	void perspectiveD3D(float fovx, float aspect, float znear, float zfar);
-	void linearPerspective(float fovx, float aspect, float znear, float zfar);
+	void linearPerspectiveD3D(float fovx, float aspect, float znear, float zfar);
 	void invPerspective(float fovx, float aspect, float znear, float zfar);
 	void lookAt(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
 	void invLookAt(const Vector3f &eye, const Vector3f &target, const Vector3f &up);

@@ -44,7 +44,7 @@ void main()
     frag_eye_light_pos2 = (u_view * vec4(light_pos2, 1.0)).xyz; 
     
 	
-    gl_Position = u_projection * u_modelView  * vec4(i_position, 1.0);
+    gl_Position = u_projection *  u_modelView  * vec4(i_position, 1.0);
 	
 	vec3 shrinkedPos = i_position - 0.001 * normalize(i_normal);
 	sc = u_projectionShadow   * u_viewShadow * u_model * vec4(shrinkedPos, 1.0);

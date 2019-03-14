@@ -36,7 +36,12 @@ public:
 	const Matrix4f &getTransformationMatrix() const;
 	const Matrix4f &getInvTransformationMatrix() const;
 
-	void setPosRot(const Vector3f &axis, float degrees, float dx, float dy, float dz);
+	void setRotPos(const Vector3f &axis, float degrees, float dx, float dy, float dz);
+	void setRotXYZPos(const Vector3f &axisX, float degreesX,
+					  const Vector3f &axisY, float degreesY,
+					  const Vector3f &axisZ, float degreesZ,
+					  float dx, float dy, float dz);
+
 	void rotate(const Vector3f &axis, float degrees);
 	void translate(float dx, float dy, float dz);
 	void scale(float a, float b, float c);
@@ -44,6 +49,8 @@ public:
 	bool m_hasTextureCoords;
 	bool m_hasNormals;
 	bool m_hasTangents;
+
+	ModelMatrix *modelMatrix;
 
 private:
 
@@ -63,7 +70,7 @@ private:
 
 	std::vector<Mesh*> mesh;
 
-	ModelMatrix *modelMatrix;
+	
 	Vector3f m_center;
 	
 };

@@ -17,7 +17,7 @@ uniform float shininess = 200.0;
 uniform float ambient = 2.0;
 uniform int   power = 1;
 uniform float distortion = 0.4;
-uniform float scale = 5.0;
+uniform float scale = 8.0;
 uniform float light_radius = 40.0;
 
 
@@ -94,15 +94,15 @@ float getDepthPassSpaceZ2(float zWC){
 void main(){
 
    float zIn =  textureProj(u_texture, sc ).r;
-   float zOut = sc.z/sc.w;
+   float zOut = sc.z;
 
-   zIn = getDepthPassSpaceZ2(zIn);
-   zOut = getDepthPassSpaceZ2(zOut);
-   float thickness = clamp(abs(zOut - zIn)*10.0, 0.0, 1.0);
+   //zIn = getDepthPassSpaceZ2(zIn);
+   //zOut = getDepthPassSpaceZ2(zOut);
+   float thickness = (zOut - zIn)*0.115;
    
   
    
-   thickness = ((1.0 - thickness) *0.08);
+   thickness = clamp((1.0 - thickness), 0.0, 1.0);
         
    vec3 light_dir = (frag_eye_light_pos - frag_eye_pos) / light_radius;
    float light_attentuation = max(1.0 - dot(light_dir, light_dir), 0.0); //1.0 / (CONSTANT_ATTENUATION + LINEAR_ATTENUATION * d + QUADRATIC_ATTENUATION * d * d);
