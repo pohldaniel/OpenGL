@@ -12,6 +12,7 @@ Output from 08OBJViewer-relief
 
 I expand the sss shader form https://github.com/jhaberstro/subsurface-scattering for the project 10OBJViewer-subsurface-scattering and do not own the copyright. In particular I add projective texture mapping to use the shader in relation with perspective projection. Output:
 
-![Subsurface](https://user-images.githubusercontent.com/30089026/54270829-92a61880-4580-11e9-8444-549a16cef52f.jpg)
+![Subsurface](https://user-images.githubusercontent.com/30089026/54387008-9332d200-469a-11e9-81ea-933f0d85d670.jpg)
+
 
 
