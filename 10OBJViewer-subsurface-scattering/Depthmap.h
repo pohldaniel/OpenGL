@@ -98,6 +98,7 @@ private :
 	Matrix4f m_viewMatrix;
 	Matrix4f m_projMatrix;
 	Matrix4f m_projMatrixD3D;
+	Matrix4f m_linearProjMatrixD3D;
 	Matrix4f m_orthMatrix;
 
 	Vector3f m_eye;

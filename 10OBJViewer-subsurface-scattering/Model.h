@@ -50,7 +50,7 @@ public:
 	bool m_hasNormals;
 	bool m_hasTangents;
 
-	ModelMatrix *modelMatrix;
+	
 
 private:
 
@@ -66,7 +66,7 @@ private:
 	std::string m_mltPath;
 	std::string m_modelDirectory;
 	
-	
+	ModelMatrix *modelMatrix;
 
 	std::vector<Mesh*> mesh;
 

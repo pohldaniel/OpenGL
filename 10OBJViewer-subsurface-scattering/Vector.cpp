@@ -20,7 +20,42 @@ void Matrix4f::rotate(const Vector3f &axis, float degrees){
 	float c = cosf(rad);
 	float s = sinf(rad);
 
+	mtx[0][0] = (x * x) * (1.0f - c) + c;
+	mtx[1][0] = (x * y) * (1.0f - c) + (z * s);
+	mtx[2][0] = (x * z) * (1.0f - c) - (y * s);
+	mtx[3][0] = 0.0f;
+
+	mtx[0][1] = (y * x) * (1.0f - c) - (z * s);
+	mtx[1][1] = (y * y) * (1.0f - c) + c;
+	mtx[2][1] = (y * z) * (1.0f - c) + (x * s);
+	mtx[3][1] = 0.0f;
+
+	mtx[0][2] = (z * x) * (1.0f - c) + (y * s);
+	mtx[1][2] = (z * y) * (1.0f - c) - (x * s);
+	mtx[2][2] = (z * z) * (1.0f - c) + c;
+	mtx[3][2] = 0.0f;
+
+	mtx[0][3] = 0.0f;
+	mtx[1][3] = 0.0f;
+	mtx[2][3] = 0.0f;
+	mtx[3][3] = 1.0f;
+
 	
+}
+
+void Matrix4f::invRotate(const Vector3f &axis, float degrees){
+
+	
+	float rad = (degrees * PI) / 180.0f;
+	float magnitude = axis.magnitude();
+
+	float x = axis[0] * (1.0 / magnitude);
+	float y = axis[1] * (1.0 / magnitude);
+	float z = axis[2] * (1.0 / magnitude);
+	float c = cosf(rad);
+	float s = sinf(rad);
+
+
 
 	mtx[0][0] = (x * x) * (1.0f - c) + c;
 	mtx[0][1] = (x * y) * (1.0f - c) + (z * s);
@@ -40,38 +75,6 @@ void Matrix4f::rotate(const Vector3f &axis, float degrees){
 	mtx[3][0] = 0.0f;
 	mtx[3][1] = 0.0f;
 	mtx[3][2] = 0.0f;
-	mtx[3][3] = 1.0f;
-}
-
-void Matrix4f::invRotate(const Vector3f &axis, float degrees){
-
-	float rad = (degrees * PI) / 180.0f;
-	float magnitude = axis.magnitude();
-
-	float x = axis[0] * (1.0 / magnitude);
-	float y = axis[1] * (1.0 / magnitude);
-	float z = axis[2] * (1.0 / magnitude);
-	float c = cosf(rad);
-	float s = sinf(rad);
-
-	mtx[0][0] = (x * x) * (1.0f - c) + c;
-	mtx[1][0] = (x * y) * (1.0f - c) + (z * s);
-	mtx[2][0] = (x * z) * (1.0f - c) - (y * s);
-	mtx[3][0] = 0.0f;
-
-	mtx[0][1] = (y * x) * (1.0f - c) - (z * s);
-	mtx[1][1] = (y * y) * (1.0f - c) + c;
-	mtx[2][1] = (y * z) * (1.0f - c) + (x * s);
-	mtx[3][1] = 0.0f;
-
-	mtx[0][2] = (z * x) * (1.0f - c) + (y * s);
-	mtx[1][2] = (z * y) * (1.0f - c) - (x * s);
-	mtx[2][2] = (z * z) * (1.0f - c) + c;
-	mtx[3][2] = 0.0f;
-
-	mtx[0][3] = 0.0f;
-	mtx[1][3] = 0.0f;
-	mtx[2][3] = 0.0f;
 	mtx[3][3] = 1.0f;
 }
 
@@ -402,18 +405,14 @@ Matrix4f &Matrix4f::getNormalMatrix(const Matrix4f &modelViewMatrix){
 	float det;
 	float invDet;
 
-	/*det = modelViewMatrix[0][0] * (modelViewMatrix[1][1] * modelViewMatrix[2][2] - modelViewMatrix[2][1] * modelViewMatrix[1][2]) +
-		modelViewMatrix[1][0] * (modelViewMatrix[2][1] * modelViewMatrix[0][2] - modelViewMatrix[2][2] * modelViewMatrix[0][1]) +
-		modelViewMatrix[2][0] * (modelViewMatrix[0][1] * modelViewMatrix[1][2] - modelViewMatrix[1][1] * modelViewMatrix[0][2]);*/
-
-	det = modelViewMatrix[0][0] * (modelViewMatrix[1][1] * modelViewMatrix[2][2] - modelViewMatrix[1][2] * modelViewMatrix[2][1]) +
+	det = modelViewMatrix[0][0] * (modelViewMatrix[1][1] * modelViewMatrix[2][2] - modelViewMatrix[2][1] * modelViewMatrix[1][2]) +
 		modelViewMatrix[0][1] * (modelViewMatrix[1][2] * modelViewMatrix[2][0] - modelViewMatrix[2][2] * modelViewMatrix[1][0]) +
 		modelViewMatrix[0][2] * (modelViewMatrix[1][0] * modelViewMatrix[2][1] - modelViewMatrix[1][1] * modelViewMatrix[2][0]);
 
 	invDet = 1.0 / det;
 
 
-	/*normalMatrix[0][0] = (modelViewMatrix[1][1] * modelViewMatrix[2][2] - modelViewMatrix[2][1] * modelViewMatrix[1][2]) * invDet;
+	normalMatrix[0][0] = (modelViewMatrix[1][1] * modelViewMatrix[2][2] - modelViewMatrix[2][1] * modelViewMatrix[1][2]) * invDet;
 	normalMatrix[1][0] = (modelViewMatrix[2][1] * modelViewMatrix[0][2] - modelViewMatrix[2][2] * modelViewMatrix[0][1]) * invDet;
 	normalMatrix[2][0] = (modelViewMatrix[0][1] * modelViewMatrix[1][2] - modelViewMatrix[1][1] * modelViewMatrix[0][2]) * invDet;
 	normalMatrix[3][0] = 0.0;
@@ -431,26 +430,6 @@ Matrix4f &Matrix4f::getNormalMatrix(const Matrix4f &modelViewMatrix){
 	normalMatrix[0][3] = 0.0;
 	normalMatrix[1][3] = 0.0;
 	normalMatrix[2][3] = 0.0;
-	normalMatrix[3][3] = 1.0;*/
-
-	normalMatrix[0][0] = (modelViewMatrix[1][1] * modelViewMatrix[2][2] - modelViewMatrix[1][2] * modelViewMatrix[2][1]) * invDet;
-	normalMatrix[0][1] = (modelViewMatrix[1][2] * modelViewMatrix[2][0] - modelViewMatrix[2][2] * modelViewMatrix[1][0]) * invDet;
-	normalMatrix[0][2] = (modelViewMatrix[1][0] * modelViewMatrix[2][1] - modelViewMatrix[1][1] * modelViewMatrix[2][0]) * invDet;
-	normalMatrix[0][3] = 0.0;
-
-	normalMatrix[1][0] = (modelViewMatrix[0][2] * modelViewMatrix[2][1] - modelViewMatrix[0][1] * modelViewMatrix[2][2]) * invDet;
-	normalMatrix[1][1] = (modelViewMatrix[0][0] * modelViewMatrix[2][2] - modelViewMatrix[0][2] * modelViewMatrix[2][0]) * invDet;
-	normalMatrix[1][2] = (modelViewMatrix[0][1] * modelViewMatrix[2][0] - modelViewMatrix[2][1] * modelViewMatrix[0][0]) * invDet;
-	normalMatrix[1][3] = 0.0;
-
-	normalMatrix[2][0] = (modelViewMatrix[0][1] * modelViewMatrix[1][2] - modelViewMatrix[1][1] * modelViewMatrix[0][2]) * invDet;
-	normalMatrix[2][1] = (modelViewMatrix[0][2] * modelViewMatrix[1][0] - modelViewMatrix[0][0] * modelViewMatrix[1][2]) * invDet;
-	normalMatrix[2][2] = (modelViewMatrix[0][0] * modelViewMatrix[1][1] - modelViewMatrix[1][0] * modelViewMatrix[0][1]) * invDet;
-	normalMatrix[2][3] = 0.0;
-
-	normalMatrix[3][0] = 0.0;
-	normalMatrix[3][1] = 0.0;
-	normalMatrix[3][2] = 0.0;
 	normalMatrix[3][3] = 1.0;
 
 

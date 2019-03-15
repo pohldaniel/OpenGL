@@ -9,6 +9,7 @@ uniform mat4 u_projection;
 uniform mat4 u_modelView;
 uniform mat4 u_view;
 uniform mat4 u_model;
+uniform mat4 u_normalMatrix;
 
 uniform mat4 u_projectionShadow;
 uniform mat4 u_viewShadow;
@@ -36,7 +37,7 @@ void main()
 
     frag_eye_pos = (u_modelView * vec4(i_position, 1.0)).xyz;
     frag_eye_dir = normalize(-frag_eye_pos);
-    frag_eye_normal = normalize((u_modelView * vec4(i_normal, 0.0)).xyz); 
+    frag_eye_normal = normalize((u_normalMatrix * vec4(i_normal, 0.0)).xyz); 
     
     frag_eye_light_pos = (u_view * vec4(light_pos, 1.0)).xyz; // <-- assumes view matrix == identity matrix   //(modelview * light_pos).xyz;
     frag_eye_light_normal = normalize(frag_eye_light_pos - frag_eye_pos);

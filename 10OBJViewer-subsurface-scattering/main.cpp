@@ -45,10 +45,8 @@ bool rotate = false;
 float degree = 0.0;
 
 Matrix4f rot;
-Vector3f lightPos = Vector3f(0.0, 0.0, 7.0);
-//Vector3f lightPos2 = Vector3f(-0.6f, 0.7f, -8.4f);
+Vector3f lightPos = Vector3f(0.0, 0.0, -9.0);
 
-Vector3f lightPos2 = Vector3f(0.0, 0.0, -9.0);
 
 //prototype funktions
 LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParma, LPARAM lParam);
@@ -328,15 +326,6 @@ void initApp(HWND hWnd)
 	glEnable(GL_DEPTH_TEST);					// hidden surface removal
 	//glEnable(GL_CULL_FACE);						// do not calculate inside of poly's
 
-	
-	depthmap = new Depthmap(camera);
-	depthmap->setProjectionMatrix(45.0f, 1.0, 1.0f, 100.0f);
-	
-	degree = degree - 0.05;
-	rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
-	depthmap->setViewMatrix(rot * lightPos2, Vector3f(0.0, 0.0, -5.0), Vector3f(0.0, 1.0, 0.0));
-	
-
 	buddha = new Object();
 	buddha->initModel("objs/buddha.obj");
 
@@ -347,10 +336,19 @@ void initApp(HWND hWnd)
 
 	buddha->m_model->scale(8.0, 8.0, 8.0);
 
+	depthmap = new Depthmap(camera);
+	depthmap->setProjectionMatrix(45.0f, 1.0, 1.0f, 100.0f);
+	
+	
+	rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
+	depthmap->setViewMatrix(rot * lightPos, buddha->m_model->getTransformationMatrix() * buddha->m_model->getCenter(), Vector3f(0.0, 1.0, 0.0));
+	//depthmap->renderToDepthTexture(buddha);
+	depthmap->renderToDepthTexture3(buddha);
+
+	
 	sss = new Shader("shader/sss.vsh", "shader/sss.fsh");
 
-	depthmap->renderToDepthTexture(buddha);
-	depthmap->renderToDepthTexture3(buddha);
+	
 	
 }
 
@@ -449,14 +447,14 @@ void render(){
 	
 
 	if (rotate){
-		degree = degree - 0.05;
+		degree = degree + 0.05;
 		rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
-		depthmap->setViewMatrix(rot * lightPos2, Vector3f(0.0, 0.0, -5.0), Vector3f(0.0, 1.0, 0.0));
+		depthmap->setViewMatrix(rot * lightPos, buddha->m_model->getTransformationMatrix() * buddha->m_model->getCenter(), Vector3f(0.0, 1.0, 0.0));
 		//depthmap->renderToDepthTexture(buddha);
 		depthmap->renderToDepthTexture3(buddha);
 		//depthmap->renderNormalMap(buddha);
 		//depthmap->renderIrradianceMap(buddha);
-		depthmap->renderSSS(buddha);
+		//depthmap->renderSSS(buddha);
 	}
 	
 	glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
@@ -470,6 +468,7 @@ void render(){
 	sss->loadMatrix("u_model", buddha->m_model->getTransformationMatrix());
 	sss->loadMatrix("u_view", camera->getViewMatrix());
 	sss->loadMatrix("u_modelView", buddha->m_model->getTransformationMatrix() * camera->getViewMatrix());
+	sss->loadMatrix("u_normalMatrix",Matrix4f::getNormalMatrix( buddha->m_model->getTransformationMatrix() * camera->getViewMatrix()));
 	sss->loadMatrix("u_viewShadow", depthmap->getViewMatrix());
 	sss->loadMatrix("u_projectionShadow", depthmap->getProjectionMatrixD3D());
 	sss->loadVector("light_pos", depthmap->getPosition());

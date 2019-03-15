@@ -85,21 +85,6 @@ int Model::numberOfMeshes(){
 	return m_numberOfMeshes;
 }
 
-/*bool Model::hasTextureCoords() const{
-
-	return m_hasTextureCoords;
-}
-
-bool Model::hasNormals() const{
-
-	return m_hasNormals;
-}
-
-bool Model::hasTangents() const{
-
-	return m_hasTangents;
-}*/
-
 bool Model::hasMaterial() const{
 
 	return  m_hasMaterial;

@@ -560,7 +560,7 @@ Matrix4f &getNormalMatrix(const Matrix4f &modelViewMatrix){
 
 
 	normalMatrix[0][0] = (modelViewMatrix[1][1] * modelViewMatrix[2][2] - modelViewMatrix[1][2] * modelViewMatrix[2][1]) * invDet;
-	normalMatrix[0][1] = (modelViewMatrix[1][2] * modelViewMatrix[0][2] - modelViewMatrix[2][2] * modelViewMatrix[1][0]) * invDet;
+	normalMatrix[0][1] = (modelViewMatrix[1][2] * modelViewMatrix[2][0] - modelViewMatrix[2][2] * modelViewMatrix[1][0]) * invDet;
 	normalMatrix[0][2] = (modelViewMatrix[1][0] * modelViewMatrix[2][1] - modelViewMatrix[1][1] * modelViewMatrix[2][0]) * invDet;
 	normalMatrix[0][3] = 0.0;
 

@@ -34,7 +34,7 @@ float saturate(float val) {
 }
 
 vec3 phong_shade(vec3 light_pos, vec3 eye, vec3 normal, float attentuation) {
-    vec3 L = normalize(light_pos - eye);  
+    vec3 L = normalize(frag_eye_light_normal);  
     vec3 N = normalize(normal);
     vec3 R = reflect(-L, N);
     vec3 E = normalize(-eye);
@@ -111,15 +111,5 @@ void main(){
    vec3 blinn_color = blinn_shade(frag_eye_light_pos, frag_eye_pos, frag_eye_normal, light_attentuation);
    gl_FragColor = (vec4(blinn_color, 1.0)) + sss(thickness, light_attentuation);
    
-    //gl_FragColor = sss(thickness, light_attentuation);
-   
-   //vec3 blinn_color2 = blinn_shade2(frag_eye_light_pos2, frag_eye_pos, frag_eye_normal, 0.5);
-   
-   
-   
-  // gl_FragColor = vec4(blinn_color, 1.0);
-   
-    //gl_FragColor = vec4(phong_color, 1.0) * light_diffuse * lt;
-	
    //gl_FragColor = vec4(thickness);
 }

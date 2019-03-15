@@ -322,7 +322,7 @@ void Camera::rotateFirstPerson(float pitch, float yaw){
 	// Rotate camera's existing x and z axes about the world y axis.
 	if (yaw != 0.0f){
 
-		rotMtx.invRotate(WORLD_YAXIS, yaw);
+		rotMtx.rotate(WORLD_YAXIS, yaw);
 		m_xAxis = rotMtx * m_xAxis;
 		m_zAxis = rotMtx * m_zAxis;
 	}
@@ -330,7 +330,7 @@ void Camera::rotateFirstPerson(float pitch, float yaw){
 	// Rotate camera's existing y and z axes about its existing x axis.
 	if (pitch != 0.0f){
 
-		rotMtx.invRotate(m_xAxis, pitch);
+		rotMtx.rotate(m_xAxis, pitch);
 		m_yAxis = rotMtx * m_yAxis;
 		m_zAxis = rotMtx * m_zAxis;
 	}

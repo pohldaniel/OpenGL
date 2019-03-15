@@ -326,13 +326,13 @@ void Depthmap::createDepthmapFBO(){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8, depthmapWidth, depthmapHeight, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8, depthmapWidth, depthmapHeight, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	unsigned int colorBuf3;
 	glGenRenderbuffers(1, &colorBuf3);
 	glBindRenderbuffer(GL_RENDERBUFFER, colorBuf3);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_LUMINANCE, depthmapWidth, depthmapHeight);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RED, depthmapWidth, depthmapHeight);
 	//glRenderbufferStorage(GL_RENDERBUFFER, GL_LUMINANCE, depthmapWidth, depthmapHeight);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
@@ -415,7 +415,9 @@ void Depthmap::setProjectionMatrix(float fovx, float aspect, float znear, float 
 	projection.perspective(fovx, (GLfloat)depthmapWidth / (GLfloat)depthmapHeight, znear, zfar);
 	m_projMatrix = projection;
 
-	
+	projection.linearPerspectiveD3D(fovx, (GLfloat)depthmapWidth / (GLfloat)depthmapHeight, znear, zfar);
+	m_linearProjMatrixD3D = projection;
+
 	glUseProgram(m_depthShader->m_program);
 	m_depthShader->loadMatrix("u_projection", m_projMatrixD3D);
 	glUseProgram(0);
@@ -430,11 +432,11 @@ void Depthmap::setProjectionMatrix(float fovx, float aspect, float znear, float 
 
 
 	glUseProgram(m_depthMapShader->m_program);
-	m_depthMapShader->loadMatrix("u_projection", m_projMatrix);
+	m_depthMapShader->loadMatrix("u_projection", m_linearProjMatrixD3D);
 	glUseProgram(0);
 
 	glUseProgram(m_depthMapShader2->m_program);
-	m_depthMapShader2->loadMatrix("u_projection", m_projMatrix);
+	m_depthMapShader2->loadMatrix("u_projection", m_projMatrixD3D);
 	glUseProgram(0);
 
 	glUseProgram(thickness->m_program);
@@ -524,7 +526,7 @@ void Depthmap::renderToDepthTexture(Object const* object){
 
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, fboCDepthMSAA);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboCDepth);
-	glBlitFramebuffer(0, 0, depthmapWidth, depthmapHeight, 0, 0, depthmapWidth, depthmapHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);                          
+	glBlitFramebuffer(0, 0, depthmapWidth, depthmapHeight, 0, 0, depthmapWidth, depthmapHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);   
 
 	/*glBindFramebuffer(GL_FRAMEBUFFER, fboCDepth);
 	glReadPixels(0, 0, depthmapWidth, depthmapHeight, GL_BGR, GL_UNSIGNED_BYTE, depthData);
@@ -669,12 +671,12 @@ void Depthmap::renderToDepthTexture4(Object const* object){
 
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, fboSingleChannelMSAA);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboCSingleChannel);
-	glBlitFramebuffer(0, 0, depthmapWidth, depthmapHeight, 0, 0, depthmapWidth, depthmapHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);                           
+	glBlitFramebuffer(0, 0, depthmapWidth, depthmapHeight, 0, 0, depthmapWidth, depthmapHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);                      
 
 
 	/*glBindFramebuffer(GL_FRAMEBUFFER, fboCSingleChannel);
-	glReadPixels(0, 0, depthmapWidth, depthmapHeight, GL_LUMINANCE, GL_UNSIGNED_BYTE, depthData5);
-	Bitmap::saveBitmap8("depth6.bmp", depthData5, depthmapWidth, depthmapHeight);*/
+	glReadPixels(0, 0, depthmapWidth, depthmapHeight, GL_RED, GL_UNSIGNED_BYTE, depthData5);
+	Bitmap::saveBitmap24("depth6.bmp", depthData5, depthmapWidth, depthmapHeight);*/
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }
@@ -720,7 +722,7 @@ void Depthmap::renderNormalMap(Object const* object){
 
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, fboNormalMSAA);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboCNormal);
-	glBlitFramebuffer(0, 0, depthmapWidth, depthmapHeight, 0, 0, depthmapWidth, depthmapHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);                      
+	glBlitFramebuffer(0, 0, depthmapWidth, depthmapHeight, 0, 0, depthmapWidth, depthmapHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);                           // scale filter
 
 
 	/*glBindFramebuffer(GL_FRAMEBUFFER, fboCNormal);
@@ -784,8 +786,8 @@ void Depthmap::renderIrradianceMap(Object const* object){
 
 	/*glBindFramebuffer(GL_FRAMEBUFFER, fboCIrradiance);
 	glReadPixels(0, 0, depthmapWidth, depthmapHeight, GL_BGR, GL_UNSIGNED_BYTE, irradianceData);
-	Bitmap::saveBitmap24("irradiance.bmp", irradianceData, depthmapWidth, depthmapHeight);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
+	Bitmap::saveBitmap24("irradiance.bmp", irradianceData, depthmapWidth, depthmapHeight);*/
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }
 
