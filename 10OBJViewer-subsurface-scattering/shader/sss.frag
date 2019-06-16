@@ -80,7 +80,7 @@ vec4 sss(float thickness, float attentuation) {
     float lt = attentuation * (dot2 + ambient) * thickness;
     //lt = 1.0 - lt;
 	
-    return (mat_diffuse * light_diffuse * lt);
+    return clamp((mat_diffuse * light_diffuse * lt), 0.0,1.0);
 }
 
 float getDepthPassSpaceZ2(float zWC){
@@ -93,16 +93,20 @@ float getDepthPassSpaceZ2(float zWC){
 
 void main(){
 
-   float zIn =  textureProj(u_texture, sc ).r;
-   float zOut = sc.z;
+	
+
+
+   float zIn =  (textureProj(u_texture, sc ).r*100);
+   float zOut = sc.z ;
 
    //zIn = getDepthPassSpaceZ2(zIn);
    //zOut = getDepthPassSpaceZ2(zOut);
-   float thickness = (zOut - zIn)*0.115;
-   
+   float thickness = ( zIn - zOut  )*0.001;
+  
+	
   
    
-   thickness = clamp((1.0 - thickness), 0.0, 1.0);
+   //thickness = (1.0 - thickness) *0.05;
         
    vec3 light_dir = (frag_eye_light_pos - frag_eye_pos) / light_radius;
    float light_attentuation = max(1.0 - dot(light_dir, light_dir), 0.0); //1.0 / (CONSTANT_ATTENUATION + LINEAR_ATTENUATION * d + QUADRATIC_ATTENUATION * d * d);

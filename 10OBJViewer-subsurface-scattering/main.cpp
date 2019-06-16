@@ -13,8 +13,6 @@
 #include "Skybox.h"
 #include "Depthmap.h"
 
-
-
 int height = 480;
 int width = 640;
 
@@ -34,8 +32,6 @@ enum DIRECTION {
 };
 
 
-
-
 Depthmap * depthmap;
 Camera* camera;
 Object *buddha;
@@ -45,7 +41,7 @@ bool rotate = false;
 float degree = 0.0;
 
 Matrix4f rot;
-Vector3f lightPos = Vector3f(0.0, 0.0, -9.0);
+Vector3f lightPos = Vector3f(0.0, 0.0, -16.0);
 
 
 //prototype funktions
@@ -54,26 +50,16 @@ void setCursortoMiddle(HWND hwnd);
 void processInput(HWND hWnd );
 
 void render();
-void render2();
-void render3();
-void render4();
-
 
 void initApp(HWND hWnd);
 void enableVerticalSync(bool enableVerticalSync);
 
 
-
-
-
-
-
-
-
 // the main windows entry point
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd){
 
-	Vector3f camPos(0.0, 0.0, 7.0);
+	
+	Vector3f camPos(0.0, 0.0, 6.0);
 	Vector3f xAxis(1, 0, 0);
 	Vector3f yAxis(0, 1, 0);
 	Vector3f zAxis(0, 0, 1);
@@ -83,6 +69,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	camera = new Camera(camPos, xAxis, yAxis, zAxis, target, up);
 
+	//camera = new Camera(Vector3f(4.0, 3.0, 3.0), xAxis, yAxis, zAxis, Vector3f(0.0, 0.0, 0.0), up);
 	
 	AllocConsole();
 	AttachConsole(GetCurrentProcessId());
@@ -317,21 +304,18 @@ void initApp(HWND hWnd)
 	wglMakeCurrent(hDC, hRC);
 	enableVerticalSync(true);
 	
-	
-
-
 	camera->perspective(45.0f, (GLfloat)width / (GLfloat)height, 1.0f, 2000.0f);
 	
 
-	glEnable(GL_DEPTH_TEST);					// hidden surface removal
-	//glEnable(GL_CULL_FACE);						// do not calculate inside of poly's
+	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_CULL_FACE);						
 
 	buddha = new Object();
 	buddha->initModel("objs/buddha.obj");
 
 	buddha->m_model->setRotXYZPos(Vector3f(0.0, 1.0, 0.0), 45.0,
 		Vector3f(1.0, 0.0, 0.0), 270.0,
-		Vector3f(1.0, 0.0, 0.0), 0.0,
+		Vector3f(0.0, 0.0, 1.0), 0.0,
 		0.0, 0.0, 0.0);
 
 	buddha->m_model->scale(8.0, 8.0, 8.0);
@@ -339,17 +323,12 @@ void initApp(HWND hWnd)
 	depthmap = new Depthmap(camera);
 	depthmap->setProjectionMatrix(45.0f, 1.0, 1.0f, 100.0f);
 	
-	
 	rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
 	depthmap->setViewMatrix(rot * lightPos, buddha->m_model->getTransformationMatrix() * buddha->m_model->getCenter(), Vector3f(0.0, 1.0, 0.0));
-	//depthmap->renderToDepthTexture(buddha);
-	depthmap->renderToDepthTexture3(buddha);
+	depthmap->renderToSingleChannel(buddha);
 
-	
-	sss = new Shader("shader/sss.vsh", "shader/sss.fsh");
+	sss = new Shader("shader/sss.vert", "shader/sss.frag");
 
-	
-	
 }
 
 void setCursortoMiddle(HWND hwnd){
@@ -397,8 +376,8 @@ void processInput(HWND hWnd ){
     if ( pKeyBuffer['Q'] & 0xF0 ) Direction |= DIR_DOWN;
 
 	 // Now process the mouse (if the button is pressed)
-    if ( GetCapture() == hWnd )
-    {
+    if ( GetCapture() == hWnd ){
+
         // Hide the mouse pointer
         SetCursor( NULL );
 
@@ -412,11 +391,11 @@ void processInput(HWND hWnd ){
         // Reset our cursor position so we can keep going forever :)
         SetCursorPos( g_OldCursorPos.x, g_OldCursorPos.y );
 
-		if ( Direction > 0 || X != 0.0f || Y != 0.0f )
-		{
+		if ( Direction > 0 || X != 0.0f || Y != 0.0f ){
+
 			// Rotate camera
-			if ( X || Y ) 
-			{
+			if ( X || Y ) {
+
 				camera->rotate( X, Y, 0.0f );
             
         
@@ -435,7 +414,6 @@ void processInput(HWND hWnd ){
 				if (Direction & DIR_DOWN) dy = -speed;
 
 				camera->move(dx,dy,dz);
-
 			} 
 	
 		}// End if any movement
@@ -450,18 +428,12 @@ void render(){
 		degree = degree + 0.05;
 		rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
 		depthmap->setViewMatrix(rot * lightPos, buddha->m_model->getTransformationMatrix() * buddha->m_model->getCenter(), Vector3f(0.0, 1.0, 0.0));
-		//depthmap->renderToDepthTexture(buddha);
-		depthmap->renderToDepthTexture3(buddha);
-		//depthmap->renderNormalMap(buddha);
-		//depthmap->renderIrradianceMap(buddha);
-		//depthmap->renderSSS(buddha);
+		depthmap->renderToSingleChannel(buddha);
 	}
 	
 	glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-
-
 	glUseProgram(sss->m_program);
 
 	sss->loadMatrix("u_projection", camera->getProjectionMatrix());
@@ -473,13 +445,13 @@ void render(){
 	sss->loadMatrix("u_projectionShadow", depthmap->getProjectionMatrixD3D());
 	sss->loadVector("light_pos", depthmap->getPosition());
 	sss->loadVector("light_pos2", lightPos);
-
+	
 
 		for (int i = 0; i < buddha->m_model->numberOfMeshes(); i++){
 
 			glBindBuffer(GL_ARRAY_BUFFER, buddha->m_model->getMesches()[i]->getVertexName());
 
-			sss->bindAttributes(buddha->m_model->getMesches()[i], depthmap->depthmapTexture4);
+			sss->bindAttributes(buddha->m_model->getMesches()[i], depthmap->singleChannel);
 
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buddha->m_model->getMesches()[i]->getIndexName());
@@ -490,71 +462,10 @@ void render(){
 
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-
 		}
 
-	
-		//skyBox->render();
-}
-
-void render2(){
-
-	if (rotate){
-		degree = degree - 0.5;
-		rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
+	glUseProgram(0);
 		
-	}
-	
-	depthmap->setViewMatrix(rot * lightPos, Vector3f(0.0, 0.0, -5.0), Vector3f(0.0, 1.0, 0.0));
-	depthmap->renderToDepthTexture(buddha);
-	//depthmap->renderToDepthTexture2(dragon);
-	//depthmap->renderNormalMap(dragon);
-	//depthmap->renderToDepthTexture4(dragon);
-	/////////////////////draw normal pass/////////////////////////////
-
-	glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	depthmap->render(depthmap->depthmapTexture3);
 }
 
-
-void render3(){
-
-	if (rotate){
-		degree = degree - 0.5;
-		rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
-	}
-
-	depthmap->setViewMatrix(rot * lightPos, Vector3f(0.0, 0.0, -5.0), Vector3f(0.0, 1.0, 0.0));
-	depthmap->renderNormalMap(buddha);
-	
-
-	/////////////////////draw normal pass/////////////////////////////
-
-	glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	depthmap->render(depthmap->normalMap);
-}
-
-
-void render4(){
-
-	if (rotate){
-		degree = degree - 0.5;
-		rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
-	}
-
-	depthmap->setViewMatrix(rot * lightPos, Vector3f(0.0, 0.0, -5.0), Vector3f(0.0, 1.0, 0.0));
-	depthmap->renderIrradianceMap(buddha);
-
-
-	/////////////////////draw normal pass/////////////////////////////
-
-	glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	depthmap->render(depthmap->irradianceMap);
-}
 

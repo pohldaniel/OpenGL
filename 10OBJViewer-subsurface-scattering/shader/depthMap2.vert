@@ -7,13 +7,24 @@ uniform mat4 u_projection;
 uniform mat4 u_normalMatrix;
 uniform mat4 u_modelView;
 
+uniform mat4 u_mvp;
 
+uniform mat4 u_mvp2;
 
-out vec4 v_pos;
+uniform float u_float;
 
+out vec4 v_position;
+out float tmp;
+
+out float w;
+
+vec4  position;
 
 void main(void){
 
-  gl_Position =  u_projection  * u_modelView * vec4(i_position, 1.0);
-  v_pos = gl_Position;
+  position = u_mvp * vec4(i_position, 1.0);
+  v_position = position * position.w; 
+  gl_Position = position ;
+  
+  
 }

@@ -16,7 +16,7 @@ void main(void){
   vec3 normal = (u_normalMatrix * vec4(i_normal, 0.0)).xyz;
   
   gl_Position =  u_projection  * u_modelView * vec4(i_position, 1.0);
- gl_Position.xyz += normal * grow;
+ gl_Position = vec4(gl_Position.x, gl_Position.y, gl_Position.z*gl_Position.w, gl_Position.w);
   
   
   
