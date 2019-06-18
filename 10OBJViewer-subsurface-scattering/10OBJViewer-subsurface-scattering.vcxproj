@@ -10,6 +10,31 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Bitmap.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Depthmap.cpp" />
+    <ClCompile Include="Extension.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelMatrix.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Skybox.cpp" />
+    <ClCompile Include="Vector.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Bitmap.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Depthmap.h" />
+    <ClInclude Include="Extension.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="ModelMatrix.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="Skybox.h" />
+    <ClInclude Include="Vector.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{70EFF263-DA16-4263-B9EB-AD33F70F0BE5}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -81,31 +106,6 @@
       <AdditionalDependencies>OpenGl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Bitmap.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Depthmap.cpp" />
-    <ClCompile Include="Extension.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="ModelMatrix.cpp" />
-    <ClCompile Include="Object.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="Skybox.cpp" />
-    <ClCompile Include="Vector.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Bitmap.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Depthmap.h" />
-    <ClInclude Include="Extension.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="ModelMatrix.h" />
-    <ClInclude Include="Object.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="Skybox.h" />
-    <ClInclude Include="Vector.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

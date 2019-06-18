@@ -23,7 +23,7 @@ vec4  position;
 void main(void){
 
   position = u_mvp * vec4(i_position, 1.0);
-  v_position = position * position.w; 
+  v_position = position ; 
   gl_Position = position ;
   
   

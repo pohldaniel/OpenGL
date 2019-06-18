@@ -13,25 +13,26 @@ public:
 	~Depthmap();
 
 	unsigned char *irradianceData;
-	unsigned char *normalData;
+	unsigned char *normalDataColor;
+	unsigned char *normalDataDepth;
 	unsigned char *depthData;
 	unsigned char *singleChannelData;
 
+	unsigned int irradianceMapTexture;
+	unsigned int normalMapTexture;
+	unsigned int normalDepthTexture;
 	unsigned int depthmapTexture;
-	unsigned int singleChannel;
-	unsigned int irradianceMap;
-	unsigned int normalMap;
+	unsigned int singleChannelTexture;
+	unsigned int texture;
 
 	void setViewMatrix(const Vector3f &lightPos, const Vector3f &target, const Vector3f &up);
 	void setProjectionMatrix(float fovx, float aspect, float znear, float zfar);	
 	void setOrthMatrix(float left, float right, float bottom, float top, float znear, float zfar);
 	
-
+	void renderIrradianceMap(Object const* object);
+	void renderNormalMap(Object const* object);
 	void renderToDepthTexture(Object const* object);
 	void renderToSingleChannel(Object const* object);
-	void renderNormalMap(Object const* object);
-	void renderIrradianceMap(Object const* object);
-
 
 	const Matrix4f &getDepthPassMatrix() const;
 	const Matrix4f &getProjectionMatrix() const;
@@ -84,12 +85,11 @@ private :
 	Vector3f m_eye;
 	Vector3f m_target;
 	
+	Shader *m_irradianceShader;
 	Shader *m_normalShader;
 	Shader* m_depthMapShader;
 	Shader* m_depthMapShader2;
-	Shader *m_irradianceShader;
-
-
+	
 	Camera* m_camera;
 
 	void createDepthmapFBO();

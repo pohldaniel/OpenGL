@@ -4,9 +4,8 @@ Depthmap::Depthmap(Camera* camera){
 
 	m_camera = camera;
 	
-
-	m_normalShader = new Shader("shader/normalMap.vert", "shader/normalMap.frag");
 	m_irradianceShader = new Shader("shader/irradiance.vert", "shader/irradiance.frag");
+	m_normalShader = new Shader("shader/normalMap.vert", "shader/normalMap.frag");
 	m_depthMapShader = new Shader("shader/depthMap.vert", "shader/depthMap.frag");
 	m_depthMapShader2 = new Shader("shader/depthMap2.vert", "shader/depthMap2.frag");
 
@@ -18,17 +17,34 @@ Depthmap::Depthmap(Camera* camera){
 							 0.0, 0.0, 0.5, 0.5,
 							 0.0, 0.0, 0.0, 1.0 );
 
+	Bitmap *bitmap = new Bitmap();
+	if (bitmap->loadBitmap24("textures/jade.bmp")){
+
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bitmap->width, bitmap->height, 0, GL_RGB, GL_UNSIGNED_BYTE, bitmap->data);
+
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+	}
+	delete bitmap;
+	bitmap = NULL;
 
 	//char arrays for creating debug bitmaps
-	normalData = (unsigned char*)malloc(3 * depthmapWidth * depthmapHeight);
 	irradianceData = (unsigned char*)malloc(3 * depthmapWidth * depthmapHeight);
+	normalDataColor = (unsigned char*)malloc(3 * depthmapWidth * depthmapHeight);
+	normalDataDepth = (unsigned char*)malloc(depthmapWidth * depthmapHeight);
 	depthData = (unsigned char*)malloc(depthmapWidth * depthmapHeight);
 	singleChannelData = (unsigned char*)malloc(depthmapWidth * depthmapHeight);
 
 }
 
 Depthmap::~Depthmap(){
-
 
 	if (m_normalShader){
 		delete m_normalShader;
@@ -40,25 +56,29 @@ Depthmap::~Depthmap(){
 		m_irradianceShader = 0;
 	}
 
-
 	if (m_depthMapShader){
 		delete m_depthMapShader;
 		m_depthMapShader = 0;
 	}
 
 	if (m_depthMapShader2){
-		delete m_depthMapShader;
-		m_depthMapShader = 0;
-	}
-
-	if (normalData){
-		free(normalData);
-		normalData = NULL;
+		delete m_depthMapShader2;
+		m_depthMapShader2 = 0;
 	}
 
 	if (irradianceData){
 		free(irradianceData);
 		irradianceData = NULL;
+	}
+
+	if (normalDataColor){
+		free(normalDataColor);
+		normalDataColor = NULL;
+	}
+
+	if (normalDataDepth){
+		free(normalDataDepth);
+		normalDataDepth = NULL;
 	}
 
 	if (depthData){
@@ -75,13 +95,62 @@ Depthmap::~Depthmap(){
 void Depthmap::createDepthmapFBO(){
 
 	////////////////////////////irradianceMap rendertarget//////////////////////////////////////////////
-	glGenTextures(1, &irradianceMap);
-	glBindTexture(GL_TEXTURE_2D, irradianceMap);
+	glGenTextures(1, &irradianceMapTexture);
+	glBindTexture(GL_TEXTURE_2D, irradianceMapTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, depthmapWidth, depthmapHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//////////////////////////setup MSAA framebuffer///////////////////////////////////////
+	unsigned int colorBuf8;
+	glGenRenderbuffers(1, &colorBuf8);
+	glBindRenderbuffer(GL_RENDERBUFFER, colorBuf8);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGB, depthmapWidth, depthmapHeight);
+	//glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB, depthmapWidth, depthmapHeight);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	unsigned int depthBuf8;
+	glGenRenderbuffers(1, &depthBuf8);
+	glBindRenderbuffer(GL_RENDERBUFFER, depthBuf8);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT, depthmapWidth, depthmapHeight);
+	//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, depthmapWidth, depthmapHeight);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	glGenFramebuffers(1, &fboIrradianceMSAA);
+	glBindFramebuffer(GL_FRAMEBUFFER, fboIrradianceMSAA);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorBuf8);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuf8);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//////////////////////////end setup MSAA framebuffer///////////////////////////////////////
+
+	//////////////////////////setup normal (no MSAA) FBOs as blit target///////////////////////
+	glGenFramebuffers(1, &fboCIrradiance);
+	glBindFramebuffer(GL_FRAMEBUFFER, fboCIrradiance);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, irradianceMapTexture, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+	////////////////////////////normalMap rendertarget//////////////////////////////////////////////
+	glGenTextures(1, &normalMapTexture);
+	glBindTexture(GL_TEXTURE_2D, normalMapTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, depthmapWidth, depthmapHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	
+	glGenTextures(1, &normalDepthTexture);
+	glBindTexture(GL_TEXTURE_2D, normalDepthTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, depthmapWidth, depthmapHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	//////////////////////////setup MSAA framebuffer///////////////////////////////////////
@@ -92,6 +161,7 @@ void Depthmap::createDepthmapFBO(){
 	//glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB, depthmapWidth, depthmapHeight);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
+	
 	unsigned int depthBuf1;
 	glGenRenderbuffers(1, &depthBuf1);
 	glBindRenderbuffer(GL_RENDERBUFFER, depthBuf1);
@@ -99,51 +169,11 @@ void Depthmap::createDepthmapFBO(){
 	//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, depthmapWidth, depthmapHeight);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-	glGenFramebuffers(1, &fboIrradianceMSAA);
-	glBindFramebuffer(GL_FRAMEBUFFER, fboIrradianceMSAA);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorBuf1);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuf1);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//////////////////////////end setup MSAA framebuffer///////////////////////////////////////
-
-	//////////////////////////setup normal (no MSAA) FBOs as blit target///////////////////////
-	glGenFramebuffers(1, &fboCIrradiance);
-	glBindFramebuffer(GL_FRAMEBUFFER, fboCIrradiance);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, irradianceMap, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	////////////////////////////////////////////////////////////////////////////////////////////////
-
-	////////////////////////////normalMap rendertarget//////////////////////////////////////////////
-	glGenTextures(1, &normalMap);
-	glBindTexture(GL_TEXTURE_2D, normalMap);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, depthmapWidth, depthmapHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	//////////////////////////setup MSAA framebuffer///////////////////////////////////////
-	unsigned int colorBuf2;
-	glGenRenderbuffers(1, &colorBuf2);
-	glBindRenderbuffer(GL_RENDERBUFFER, colorBuf2);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGB, depthmapWidth, depthmapHeight);
-	//glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB, depthmapWidth, depthmapHeight);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-	
-	unsigned int depthBuf2;
-	glGenRenderbuffers(1, &depthBuf2);
-	glBindRenderbuffer(GL_RENDERBUFFER, depthBuf2);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT, depthmapWidth, depthmapHeight);
-	//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, depthmapWidth, depthmapHeight);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
 
 	glGenFramebuffers(1, &fboNormalMSAA);
 	glBindFramebuffer(GL_FRAMEBUFFER, fboNormalMSAA);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorBuf2);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuf2);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorBuf1);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuf1);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//////////////////////////end setup MSAA framebuffer///////////////////////////////////////
@@ -151,8 +181,15 @@ void Depthmap::createDepthmapFBO(){
 	//////////////////////////setup normal (no MSAA) FBOs as blit target///////////////////////
 	glGenFramebuffers(1, &fboCNormal);
 	glBindFramebuffer(GL_FRAMEBUFFER, fboCNormal);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, normalMap, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, normalMapTexture, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+	glGenFramebuffers(1, &fboDNormal);
+	glBindFramebuffer(GL_FRAMEBUFFER, fboDNormal);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, normalDepthTexture, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 
 	////////////////////////////depthMap rendertarget//////////////////////////////////////////////
 	glGenTextures(1, &depthmapTexture);
@@ -168,9 +205,9 @@ void Depthmap::createDepthmapFBO(){
 
 	//////////////////////////setup MSAA framebuffer///////////////////////////////////////
 
-	unsigned int depthBuf3;
-	glGenRenderbuffers(1, &depthBuf3);
-	glBindRenderbuffer(GL_RENDERBUFFER, depthBuf3);
+	unsigned int depthBuf2;
+	glGenRenderbuffers(1, &depthBuf2);
+	glBindRenderbuffer(GL_RENDERBUFFER, depthBuf2);
 	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT, depthmapWidth, depthmapHeight);
 	//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, depthmapWidth, depthmapHeight);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -178,7 +215,7 @@ void Depthmap::createDepthmapFBO(){
 
 	glGenFramebuffers(1, &fboDDepthMSAA);
 	glBindFramebuffer(GL_FRAMEBUFFER, fboDDepthMSAA);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuf3);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuf2);
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -195,8 +232,8 @@ void Depthmap::createDepthmapFBO(){
 
 
 	//////////////////////////setup MSAA lumiance framebuffer///////////////////////////////////////
-	glGenTextures(1, &singleChannel);
-	glBindTexture(GL_TEXTURE_2D, singleChannel);
+	glGenTextures(1, &singleChannelTexture);
+	glBindTexture(GL_TEXTURE_2D, singleChannelTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -204,17 +241,17 @@ void Depthmap::createDepthmapFBO(){
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8, depthmapWidth, depthmapHeight, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	unsigned int colorBuf4;
-	glGenRenderbuffers(1, &colorBuf4);
-	glBindRenderbuffer(GL_RENDERBUFFER, colorBuf4);
+	unsigned int colorBuf3;
+	glGenRenderbuffers(1, &colorBuf3);
+	glBindRenderbuffer(GL_RENDERBUFFER, colorBuf3);
 	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RED, depthmapWidth, depthmapHeight);
 	//glRenderbufferStorage(GL_RENDERBUFFER, GL_LUMINANCE, depthmapWidth, depthmapHeight);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 
-	unsigned int depthBuf4;
-	glGenRenderbuffers(1, &depthBuf4);
-	glBindRenderbuffer(GL_RENDERBUFFER, depthBuf4);
+	unsigned int depthBuf3;
+	glGenRenderbuffers(1, &depthBuf3);
+	glBindRenderbuffer(GL_RENDERBUFFER, depthBuf3);
 	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT, depthmapWidth, depthmapHeight);
 	//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, depthmapWidth, depthmapHeight);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -222,15 +259,15 @@ void Depthmap::createDepthmapFBO(){
 
 	glGenFramebuffers(1, &fboSingleChannelMSAA);
 	glBindFramebuffer(GL_FRAMEBUFFER, fboSingleChannelMSAA);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorBuf4);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuf4);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorBuf3);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuf3);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//////////////////////////end setup MSAA framebuffer///////////////////////////////////////
 
 	//////////////////////////setup normal (no MSAA) FBOs as blit target///////////////////////
 	glGenFramebuffers(1, &fboCSingleChannel);
 	glBindFramebuffer(GL_FRAMEBUFFER, fboCSingleChannel);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, singleChannel, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, singleChannelTexture, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	///////////////////////////////////////////////////////////////////////////////////////////
 }
@@ -264,14 +301,13 @@ void Depthmap::setProjectionMatrix(float fovx, float aspect, float znear, float 
 	projection.orthographic(0, (GLfloat)depthmapWidth, (GLfloat)depthmapHeight, 0, 0, 1000);
 	m_orthMatrix = projection;
 
-	glUseProgram(m_normalShader->m_program);
-	m_normalShader->loadMatrix("u_projection", m_projMatrix);
-	glUseProgram(0);
-
 	glUseProgram(m_irradianceShader->m_program);
 	m_irradianceShader->loadMatrix("u_projection", m_projMatrix);
 	glUseProgram(0);
 
+	glUseProgram(m_normalShader->m_program);
+	m_normalShader->loadMatrix("u_projection", m_projMatrix);
+	glUseProgram(0);
 
 	glUseProgram(m_depthMapShader->m_program);
 	m_depthMapShader->loadMatrix("u_projection", m_linearProjMatrixD3D);
@@ -280,6 +316,8 @@ void Depthmap::setProjectionMatrix(float fovx, float aspect, float znear, float 
 	glUseProgram(m_depthMapShader2->m_program);
 	m_depthMapShader2->loadMatrix("u_projection", m_linearProjMatrixD3D);
 	glUseProgram(0);
+
+	
 
 }
 
@@ -330,6 +368,11 @@ const Vector3f &Depthmap::getPosition() const{
 	return m_eye;
 }
 
+
+
+
+
+
 void Depthmap::renderToDepthTexture(Object const* object){
 
 	glUseProgram(m_depthMapShader->m_program);
@@ -371,21 +414,21 @@ void Depthmap::renderToDepthTexture(Object const* object){
 	glUseProgram(0);
 
 
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, fboDDepthMSAA);
+	/*glBindFramebuffer(GL_READ_FRAMEBUFFER, fboDDepthMSAA);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDDepth);
 	glBlitFramebuffer(0, 0, depthmapWidth, depthmapHeight, 0, 0, depthmapWidth, depthmapHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fboDDepth);
 	glReadPixels(0, 0, depthmapWidth, depthmapHeight, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, depthData);
-	Bitmap::saveBitmap8("depth.bmp", depthData, depthmapWidth, depthmapHeight);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	Bitmap::saveBitmap8("depth1.bmp", depthData, depthmapWidth, depthmapHeight);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
 
 }
 
 void Depthmap::renderToSingleChannel(Object const* object){
 
 	glUseProgram(m_depthMapShader2->m_program);
+
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fboSingleChannelMSAA);
 	glViewport(0, 0, depthViewportWidth, depthViewportHeight);
@@ -412,20 +455,23 @@ void Depthmap::renderToSingleChannel(Object const* object){
 	glDisable(GL_CULL_FACE);
 	glViewport(0, 0, viewportWidth, viewportHeight);
 
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glUseProgram(0);
 
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, fboSingleChannelMSAA);
+
+	/*glBindFramebuffer(GL_READ_FRAMEBUFFER, fboSingleChannelMSAA);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboCSingleChannel);
 	glBlitFramebuffer(0, 0, depthmapWidth, depthmapHeight, 0, 0, depthmapWidth, depthmapHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);                      
 
-	/*glBindFramebuffer(GL_FRAMEBUFFER, fboCSingleChannel);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, fboCSingleChannel);
 	glReadPixels(0, 0, depthmapWidth, depthmapHeight, GL_RED, GL_UNSIGNED_BYTE, singleChannelData);
-	Bitmap::saveBitmap8("single.bmp", singleChannelData, depthmapWidth, depthmapHeight);*/
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	Bitmap::saveBitmap8("depth2.bmp", singleChannelData, depthmapWidth, depthmapHeight);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
 
 }
 
@@ -485,8 +531,8 @@ void Depthmap::renderNormalMap(Object const* object){
 	glBlitFramebuffer(0, 0, depthmapWidth, depthmapHeight, 0, 0, depthmapWidth, depthmapHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
 	/*glBindFramebuffer(GL_FRAMEBUFFER, fboDNormal);
-	glReadPixels(0, 0, depthmapWidth, depthmapHeight, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, depthData2);
-	Bitmap::saveBitmap8("depth.bmp", depthData2, depthmapWidth, depthmapHeight);*/
+	glReadPixels(0, 0, depthmapWidth, depthmapHeight, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, normalDataDepth);
+	Bitmap::saveBitmap8("depth.bmp", normalDataDepth, depthmapWidth, depthmapHeight);*/
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	
@@ -510,7 +556,7 @@ void Depthmap::renderIrradianceMap(Object const* object){
 		m_irradianceShader->loadMatrix("u_normalMatrix", Matrix4f::getNormalMatrix(object->m_model->getTransformationMatrix() * m_viewMatrix));
 
 		glBindBuffer(GL_ARRAY_BUFFER, object->m_model->getMesches()[i]->getVertexName());
-		m_irradianceShader->bindAttributes(object->m_model->getMesches()[i], irradianceMap);
+		m_irradianceShader->bindAttributes(object->m_model->getMesches()[i], texture);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->m_model->getMesches()[i]->getIndexName());
 		glDrawElements(GL_TRIANGLES, object->m_model->getMesches()[i]->getNumberOfTriangles() * 3, GL_UNSIGNED_INT, 0);
@@ -562,7 +608,6 @@ void Depthmap::createBuffer(){
 	glGenBuffers(1, &m_indexQuad);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexQuad);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);
-
 }
 
 

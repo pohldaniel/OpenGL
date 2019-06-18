@@ -32,6 +32,8 @@ enum DIRECTION {
 };
 
 
+
+
 Depthmap * depthmap;
 Camera* camera;
 Object *buddha;
@@ -41,24 +43,20 @@ bool rotate = false;
 float degree = 0.0;
 
 Matrix4f rot;
-Vector3f lightPos = Vector3f(0.0, 0.0, -16.0);
+Vector3f lightPos = Vector3f(0.0, 0.0, -8.0);
 
 
 //prototype funktions
 LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParma, LPARAM lParam);
 void setCursortoMiddle(HWND hwnd);
 void processInput(HWND hWnd );
-
 void render();
-
 void initApp(HWND hWnd);
 void enableVerticalSync(bool enableVerticalSync);
-
 
 // the main windows entry point
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd){
 
-	
 	Vector3f camPos(0.0, 0.0, 6.0);
 	Vector3f xAxis(1, 0, 0);
 	Vector3f yAxis(0, 1, 0);
@@ -160,8 +158,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 }
 
 // the Windows Procedure event handler
-LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
+LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
+
 	static HGLRC hRC;					// rendering context
 	static HDC hDC;						// device context
 	int width, height;					// window width and height
@@ -262,13 +260,8 @@ LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return (DefWindowProc(hWnd, message, wParam, lParam));
 }
 
+void initApp(HWND hWnd){
 
-
-
-
-
-void initApp(HWND hWnd)
-{
 	static HGLRC hRC;					// rendering context
 	static HDC hDC;						// device context
 
@@ -307,17 +300,16 @@ void initApp(HWND hWnd)
 	camera->perspective(45.0f, (GLfloat)width / (GLfloat)height, 1.0f, 2000.0f);
 	
 
-	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_CULL_FACE);						
+	glEnable(GL_DEPTH_TEST);				
+	//glEnable(GL_CULL_FACE);				
 
 	buddha = new Object();
 	buddha->initModel("objs/buddha.obj");
 
 	buddha->m_model->setRotXYZPos(Vector3f(0.0, 1.0, 0.0), 45.0,
-		Vector3f(1.0, 0.0, 0.0), 270.0,
-		Vector3f(0.0, 0.0, 1.0), 0.0,
-		0.0, 0.0, 0.0);
-
+								  Vector3f(1.0, 0.0, 0.0), 270.0,
+								  Vector3f(0.0, 0.0, 1.0), 0.0,
+								  0.0, 0.0, 0.0);
 	buddha->m_model->scale(8.0, 8.0, 8.0);
 
 	depthmap = new Depthmap(camera);
@@ -325,10 +317,10 @@ void initApp(HWND hWnd)
 	
 	rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
 	depthmap->setViewMatrix(rot * lightPos, buddha->m_model->getTransformationMatrix() * buddha->m_model->getCenter(), Vector3f(0.0, 1.0, 0.0));
+	depthmap->renderToDepthTexture(buddha);
 	depthmap->renderToSingleChannel(buddha);
-
+	
 	sss = new Shader("shader/sss.vert", "shader/sss.frag");
-
 }
 
 void setCursortoMiddle(HWND hwnd){
@@ -414,6 +406,7 @@ void processInput(HWND hWnd ){
 				if (Direction & DIR_DOWN) dy = -speed;
 
 				camera->move(dx,dy,dz);
+
 			} 
 	
 		}// End if any movement
@@ -423,11 +416,11 @@ void processInput(HWND hWnd ){
 
 void render(){
 	
-
 	if (rotate){
 		degree = degree + 0.05;
 		rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
 		depthmap->setViewMatrix(rot * lightPos, buddha->m_model->getTransformationMatrix() * buddha->m_model->getCenter(), Vector3f(0.0, 1.0, 0.0));
+		depthmap->renderToDepthTexture(buddha);
 		depthmap->renderToSingleChannel(buddha);
 	}
 	
@@ -446,13 +439,13 @@ void render(){
 	sss->loadVector("light_pos", depthmap->getPosition());
 	sss->loadVector("light_pos2", lightPos);
 	
-
 		for (int i = 0; i < buddha->m_model->numberOfMeshes(); i++){
 
 			glBindBuffer(GL_ARRAY_BUFFER, buddha->m_model->getMesches()[i]->getVertexName());
 
-			sss->bindAttributes(buddha->m_model->getMesches()[i], depthmap->singleChannel);
-
+			//sss->bindAttributes(buddha->m_model->getMesches()[i], depthmap->singleChannelTexture);
+			sss->bindAttributes(buddha->m_model->getMesches()[i], depthmap->depthmapTexture);
+			
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buddha->m_model->getMesches()[i]->getIndexName());
 			glDrawElements(GL_TRIANGLES, buddha->m_model->getMesches()[i]->getNumberOfTriangles() * 3, GL_UNSIGNED_INT, 0);
@@ -463,9 +456,9 @@ void render(){
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		}
-
+	//glDisable(GL_CULL_FACE);
+	
+	//skyBox->render();
 	glUseProgram(0);
 		
 }
-
-

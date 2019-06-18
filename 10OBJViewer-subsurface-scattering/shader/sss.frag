@@ -101,7 +101,7 @@ void main(){
 
    //zIn = getDepthPassSpaceZ2(zIn);
    //zOut = getDepthPassSpaceZ2(zOut);
-   float thickness = ( zIn - zOut  )*0.001;
+   float thickness = abs( zIn - zOut )*0.001;
   
 	
   
