@@ -9,7 +9,7 @@ Depthmap::Depthmap(Camera* camera){
 	m_renderShader = new TextureShader("shader/texture.vert", "shader/texture.frag");
 
 	glUseProgram(m_renderShader->m_program);
-	m_shader->loadMatrix("u_projection", camera->getProjectionMatrix());
+	m_renderShader->loadMatrix("u_projection", camera->getProjectionMatrix());
 	glUseProgram(0);
 
 

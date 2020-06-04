@@ -21,6 +21,20 @@ public:
 	Model();
 	~Model();
 
+	const Vector3f &getCenter() const;
+	const Matrix4f &getTransformationMatrix() const;
+	const Matrix4f &getInvTransformationMatrix() const;
+
+	void setRotPos(const Vector3f &axis, float degrees, float dx, float dy, float dz);
+	void setRotXYZPos(const Vector3f &axisX, float degreesX,
+		const Vector3f &axisY, float degreesY,
+		const Vector3f &axisZ, float degreesZ,
+		float dx, float dy, float dz);
+
+	void rotate(const Vector3f &axis, float degrees);
+	void translate(float dx, float dy, float dz);
+	void scale(float a, float b, float c);
+
 	bool loadObject(const char* filename);
 	bool loadObject(const char* filename, Vector3f& translate, float scale);
 
@@ -32,34 +46,10 @@ public:
 	int numberOfMeshes();
 	bool hasMaterial() const;
 
-	const Vector3f &getCenter() const;
-	const Matrix4f &getTransformationMatrix() const;
-	const Matrix4f &getInvTransformationMatrix() const;
-
-	void setRotPos(const Vector3f &axis, float degrees, float dx, float dy, float dz);
-	void setRotXYZPos(const Vector3f &axisX, float degreesX,
-					  const Vector3f &axisY, float degreesY,
-					  const Vector3f &axisZ, float degreesZ,
-					  float dx, float dy, float dz);
-
-	void rotate(const Vector3f &axis, float degrees);
-	void translate(float dx, float dy, float dz);
-	void scale(float a, float b, float c);
-
-	bool m_hasTextureCoords;
-	bool m_hasNormals;
-	bool m_hasTangents;
-
+	bool m_hasTextureCoords, m_hasNormals, m_hasTangents;
 	
-
 private:
 
-	void indexVBO_P(std::vector<float> & in_vertices, std::vector<int> & out_indices, std::vector<float> & out_vertices);
-	void indexVBO_PN(std::vector<float> & in_vertices, std::vector<int> & out_indices, std::vector<float> & out_vertices);
-	void indexVBO_PT(std::vector<float> & in_vertices, std::vector<int> & out_indices, std::vector<float> & out_vertices);
-	void indexVBO_PTN(std::vector<float> & in_vertices, std::vector<int> & out_indices, std::vector<float> & out_vertices);
-
-	
 	bool m_hasMaterial;
 	int m_numberOfMeshes;
 
@@ -80,10 +70,6 @@ class Mesh{
 	friend Model;
 
 public:
-
-	bool m_hasTextureCoords;
-	bool m_hasNormals;
-	bool m_hasTangents;
 
 	struct Material{
 
@@ -117,9 +103,7 @@ public:
 	int getNumberOfIndices() const;
 	int getNumberOfVertices() const;
 	int getNumberOfTriangles() const;
-	
 
-	
 	std::string getMltName();
 	
 
@@ -140,8 +124,8 @@ public:
 
 	const Vector3f &getColor() const;
 
-	std::map<int, int > m_vertexCache;
-	int addVertex(int hash, const float *pVertex, int n);
+	std::map<int, std::vector<int>> m_vertexCache;
+	int addVertex(int hash, const float *pVertex, int numberOfBytes);
 
 
 	unsigned int m_vertexName;
@@ -149,15 +133,18 @@ public:
 	unsigned int m_textureName;
 	unsigned int m_normalMap;
 	unsigned int m_displacementMap;
+
+
+	bool m_hasTextureCoords, m_hasNormals, m_hasTangents;
+	
+
 private:
 
 	std::vector <float> m_vertexBuffer;
 	std::vector<int> m_indexBuffer;
+		
+	unsigned int m_numberTriangles, m_numberOfBytes;
 	
-	
-	int m_numberTriangles;
-	
-
 	bool mltCompare(std::string* mltName);
 	Vector3f m_color;
 	
@@ -165,13 +152,7 @@ private:
 
 	Material m_material;
 
-	float	xmin;
-	float	xmax;
-	float	ymin;
-	float	ymax;
-	float	zmin;
-	float	zmax;
-
+	float xmin, xmax, ymin, ymax, zmin, zmax;
 	
 };
 

@@ -83,12 +83,16 @@ vec4 sss(float thickness, float attentuation) {
     return clamp((mat_diffuse * light_diffuse * lt), 0.0,1.0);
 }
 
-float getDepthPassSpaceZ2(float zWC){
+float getDepthPassSpaceZ(float zWC, float near, float far){
 
 	// Assume standard depth range [0..1]
-	
+    float z_n = 2.0 * zWC - 1.0;
+    float z_e =  (2.0 * near * far) / (far + near + z_n * (near - far));	//[near, far]
 
-	return 2*near / (zWC*(near-far)+far);
+	//divided by far to get the range [near/far, 1.0] just for visualisation
+	//float z_e =  (2.0 * near) / (far + near + z_n * (near - far));	
+
+	return z_e;
 }
 
 void main(){
@@ -96,17 +100,16 @@ void main(){
 	
 
 
-   float zIn =  (textureProj(u_texture, sc ).r*100);
-   float zOut = sc.z ;
+   vec4 scPostW = sc/sc.w;
+   float zIn =  texture2D(u_texture, scPostW.xy ).r;
+   float zOut = scPostW.z;
 
-   //zIn = getDepthPassSpaceZ2(zIn);
-   //zOut = getDepthPassSpaceZ2(zOut);
-   float thickness = abs( zIn - zOut )*0.001;
-  
+   zIn = getDepthPassSpaceZ(zIn, 1.0, 100.0);
+   zOut = getDepthPassSpaceZ(zOut, 1.0, 100.0);
 	
-  
+   float thickness = (zOut - zIn )* 0.3;
    
-   //thickness = (1.0 - thickness) *0.05;
+   thickness = (1.0 - thickness) *0.1;
         
    vec3 light_dir = (frag_eye_light_pos - frag_eye_pos) / light_radius;
    float light_attentuation = max(1.0 - dot(light_dir, light_dir), 0.0); //1.0 / (CONSTANT_ATTENUATION + LINEAR_ATTENUATION * d + QUADRATIC_ATTENUATION * d * d);

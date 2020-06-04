@@ -2,15 +2,14 @@
 
 #include "Bitmap.h"
 
-Bitmap::Bitmap()
-{
+Bitmap::Bitmap(){
 	Bitmap::data = NULL;
 	Bitmap::dataMatrix = NULL;
 }
 
  
-Bitmap::~Bitmap()
-{
+Bitmap::~Bitmap(){
+
 	if(Bitmap::data){
 		free(Bitmap::data);
 		Bitmap::data = NULL;
@@ -32,8 +31,8 @@ Bitmap::~Bitmap()
 // desc: Returns a pointer to the bitmap image of the bitmap specified
 //       by filename. Also returns the bitmap header information.
 //		 No support for 8-bit bitmaps.
-bool Bitmap::loadBitmap24(const char *filename)
-{
+bool Bitmap::loadBitmap24(const char *filename){
+
 	FILE 				*filePtr;				// the file pointer
 	unsigned char		tempRGB;				// swap variable
 	int					padWidth;				// widht of a padded row
@@ -48,8 +47,7 @@ bool Bitmap::loadBitmap24(const char *filename)
 	fread(&(Bitmap::bmfh), sizeof(BITMAPFILEHEADER), 1, filePtr);
 	
 	// verify that this is a bitmap by checking for the universal bitmap id
-	if (Bitmap::bmfh.bfType != 0x4D42)
-	{
+	if (Bitmap::bmfh.bfType != 0x4D42){
 		fclose(filePtr);
 		return false;
 	}
@@ -73,8 +71,7 @@ bool Bitmap::loadBitmap24(const char *filename)
 	Bitmap::data = (unsigned char*)malloc(bmih.biSizeImage);
 
 	// verify memory allocation
-	if (!Bitmap::data)
-	{
+	if (!Bitmap::data){
 		free(Bitmap::data);
 		fclose(filePtr);
 		return false;
@@ -84,8 +81,8 @@ bool Bitmap::loadBitmap24(const char *filename)
 	fread(Bitmap::data, 1, (Bitmap::bmih).biSizeImage, filePtr);
 
 	// make sure bitmap image data was read
-	if (Bitmap::data == NULL)
-	{
+	if (Bitmap::data == NULL){
+
 		fclose(filePtr);
 		return false;
 	}
@@ -103,18 +100,14 @@ bool Bitmap::loadBitmap24(const char *filename)
 			Bitmap::data[i+ 2] = tempRGB;
         }
 
-
-	
 	// close the file and return the bitmap image data
 	fclose(filePtr);
 
 	return true;
 }
 
+bool Bitmap::readMonochrome(const char *filename){
 
-
-bool Bitmap::readMonochrome(const char *filename)
-{
     FILE *filePtr = fopen(filename,"rb");
 
     // BMP header is 54 bytes
@@ -129,14 +122,10 @@ bool Bitmap::readMonochrome(const char *filename)
 	int w = Bitmap::bmih.biWidth;
 	int h = Bitmap::bmih.biHeight;
 
-	
-
     // lines are aligned on 4-byte boundary
     int lineSize = (w / 32) * 4;
 		 if( w % 32 )lineSize += 4;
     int fileSize = lineSize * h;
-
-	
 
 	Bitmap::data = (unsigned char *)malloc(w * h);
 	unsigned char *tempData =(unsigned char *) malloc(fileSize);
@@ -161,16 +150,13 @@ bool Bitmap::readMonochrome(const char *filename)
         }
     }
 
-		
-
-    free(tempData);
-    
+    free(tempData);   
     return true;
 }
 
 
-bool Bitmap::loadBitmap24B(const char *filename)
-{
+bool Bitmap::loadBitmap24B(const char *filename){
+
 	FILE *filePtr;								// the file pointer
 	int					padWidth;				// widht of a padded row
 	int					paddingByte;			// number of Bytes to fill up the row to a multiple of four
@@ -184,8 +170,7 @@ bool Bitmap::loadBitmap24B(const char *filename)
 	fread(&(Bitmap::bmfh), sizeof(BITMAPFILEHEADER), 1, filePtr);
 	
 	// verify that this is a bitmap by checking for the universal bitmap id
-	if (Bitmap::bmfh.bfType != 0x4D42)
-	{
+	if (Bitmap::bmfh.bfType != 0x4D42){
 		fclose(filePtr);
 		return false;
 	}
@@ -210,8 +195,8 @@ bool Bitmap::loadBitmap24B(const char *filename)
 	Bitmap::data = (unsigned char*)malloc(bmih.biSizeImage);
 	
 	// verify memory allocation
-	if (!Bitmap::data)
-	{
+	if (!Bitmap::data){
+
 		free(Bitmap::data);
 		fclose(filePtr);
 		return false;
@@ -221,8 +206,8 @@ bool Bitmap::loadBitmap24B(const char *filename)
 	fread(Bitmap::data, 1, (Bitmap::bmih).biSizeImage, filePtr);
 
 	// make sure bitmap image data was read
-	if (Bitmap::data == NULL)
-	{
+	if (Bitmap::data == NULL){
+
 		fclose(filePtr);
 		return false;
 	}
@@ -231,8 +216,8 @@ bool Bitmap::loadBitmap24B(const char *filename)
 	// allocate enough memory for the B-color data
 	Bitmap::dataMatrix = (unsigned char**)malloc(Bitmap::height* sizeof(unsigned char*) );
 
-	for(int j=0; j<Bitmap::height; j++  )
-	{
+	for(int j=0; j<Bitmap::height; j++  ){
+
 	   dataMatrix[j] = (unsigned char *)malloc(Bitmap::width* sizeof(unsigned char) );
 	}
 

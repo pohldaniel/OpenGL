@@ -55,8 +55,7 @@ private :
 	unsigned int fboCNormal;
 	unsigned int fboDNormal;
 
-	unsigned int fboDDepthMSAA;
-	unsigned int fboDDepth;
+	unsigned int fboDepthmap;
 
 	unsigned int fboSingleChannelMSAA;
 	unsigned int fboCSingleChannel;

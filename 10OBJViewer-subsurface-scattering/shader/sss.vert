@@ -49,5 +49,5 @@ void main()
 	
 	vec3 shrinkedPos = i_position - 0.005 * normalize(i_normal);
 	sc = u_projectionShadow   * u_viewShadow * u_model * vec4(shrinkedPos, 1.0);
-    sc.xy = sc.xy*0.5 + vec2(0.5)*sc.w;
+    
 }

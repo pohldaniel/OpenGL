@@ -111,17 +111,12 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 		m_modelDirectory = filename.substr(0, index);
 	}
 
-	
-
-	std::vector<std::string*>coord;
+	//std::vector<std::string*>coord;
 	std::vector<std::array<int, 10>> face;
 
 	std::vector<float> vertexCoords;
 	std::vector<float> normalCoords;
 	std::vector<float> textureCoords;
-	std::vector <float> tmpVertexBuffer;
-
-	std::ifstream in(a_filename);
 
 	std::map<std::string, int> name;
 
@@ -129,156 +124,171 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 	int assign = 0;
 	int countFacesWithTexture = 0;
 
-	float xmin = FLT_MAX;
-	float ymin = FLT_MAX;
-	float zmin = FLT_MAX;
-	float xmax = -FLT_MAX;
-	float ymax = -FLT_MAX;
-	float zmax = -FLT_MAX;
+	float xmin = FLT_MAX; float ymin = FLT_MAX; float zmin = FLT_MAX;
+	float xmax = -FLT_MAX; float ymax = -FLT_MAX; float zmax = -FLT_MAX;
 
 	char buffer[250];
 
-	if (!in.is_open()){
-
+	FILE * pFile = fopen(a_filename, "r");
+	if (pFile == NULL) {
 		std::cout << "File not found" << std::endl;
 		return false;
 	}
 
-	std::string line;
-	while (getline(in, line)){
-		coord.push_back(new std::string(line));
+	while (fscanf(pFile, "%s", buffer) != EOF) {
 
-	}
-	in.close();
+		switch (buffer[0]) {
 
-	
+		case '#': {
 
-	for (int i = 0; i < coord.size(); i++){
+			fgets(buffer, sizeof(buffer), pFile);
+			break;
 
-		if ((*coord[i])[0] == '#'){
+		}case 'm': {
 
-			continue;
-
-		}else if ((*coord[i])[0] == 'm'){
-
-			sscanf(coord[i]->c_str(), "%s %s", buffer, buffer);
+			fgets(buffer, sizeof(buffer), pFile);
+			sscanf(buffer, "%s %s", buffer, buffer);
 			m_mltPath = buffer;
-		
+
 			m_hasMaterial = true;
-			
-		}else if ((*coord[i])[0] == 'v' && (*coord[i])[1] == ' '){
+			break;
 
+		}case 'v': {
 
-			float tmpx, tmpy, tmpz;
-			sscanf(coord[i]->c_str(), "v %f %f %f", &tmpx, &tmpy, &tmpz);
+			switch (buffer[1]) {
 
-			/*vertexCoords.push_back((translate.getVec()[0] + tmpx) * scale);
-			vertexCoords.push_back((translate.getVec()[1] + tmpy) * scale);
-			vertexCoords.push_back((translate.getVec()[2] + tmpz) * scale);*/
+			case '\0': {
 
-			
+				float tmpx, tmpy, tmpz;
+				fgets(buffer, sizeof(buffer), pFile);
+				sscanf(buffer, "%f %f %f", &tmpx, &tmpy, &tmpz);
 
-			tmpx = tmpx * scale + translate[0];
-			tmpy = tmpy * scale + translate[1];
-			tmpz = tmpz * scale + translate[2];
+				tmpx = tmpx * scale + translate[0];
+				tmpy = tmpy * scale + translate[1];
+				tmpz = tmpz * scale + translate[2];
 
-			vertexCoords.push_back(tmpx);
-			vertexCoords.push_back(tmpy);
-			vertexCoords.push_back(tmpz);
+				vertexCoords.push_back(tmpx);
+				vertexCoords.push_back(tmpy);
+				vertexCoords.push_back(tmpz);
 
-			xmin = std::min(tmpx, xmin);
-			ymin = std::min(tmpy, ymin);
-			zmin = std::min(tmpz, zmin);
+				xmin = (std::min)(tmpx, xmin);
+				ymin = (std::min)(tmpy, ymin);
+				zmin = (std::min)(tmpz, zmin);
 
-			xmax = std::max(tmpx, xmax);
-			ymax = std::max(tmpy, ymax);
-			zmax = std::max(tmpz, zmax);
+				xmax = (std::max)(tmpx, xmax);
+				ymax = (std::max)(tmpy, ymax);
+				zmax = (std::max)(tmpz, zmax);
+				break;
 
+			}case 't': {
 
-		}else if ((*coord[i])[0] == 'v' && (*coord[i])[1] == 't'){
+				float tmpu, tmpv;
+				fgets(buffer, sizeof(buffer), pFile);
+				sscanf(buffer, "%f %f", &tmpu, &tmpv);
 
-			float tmpu, tmpv;
-			sscanf(coord[i]->c_str(), "vt %f %f", &tmpu, &tmpv);
+				textureCoords.push_back(tmpu);
+				textureCoords.push_back(tmpv);
+				break;
 
-			textureCoords.push_back(tmpu);
-			textureCoords.push_back(tmpv);
+			}case 'n': {
 
-		}else if ((*coord[i])[0] == 'v' && (*coord[i])[1] == 'n'){
-			float tmpx, tmpy, tmpz;
-			sscanf(coord[i]->c_str(), "vn %f %f %f", &tmpx, &tmpy, &tmpz);
+				float tmpx, tmpy, tmpz;
+				fgets(buffer, sizeof(buffer), pFile);
+				sscanf(buffer, "%f %f %f", &tmpx, &tmpy, &tmpz);
 
-			normalCoords.push_back(tmpx);
-			normalCoords.push_back(tmpy);
-			normalCoords.push_back(tmpz);
+				normalCoords.push_back(tmpx);
+				normalCoords.push_back(tmpy);
+				normalCoords.push_back(tmpz);
+				break;
 
-		}else if ((*coord[i])[0] == 'u' &&  m_hasMaterial){
+			}default: {
 
-			sscanf(coord[i]->c_str(), "%s %s", buffer, buffer);
+				break;
+			}
+			}
+			break;
 
-			std::map<std::string, int >::const_iterator iter = name.find(buffer);
+		}case 'u': {
 
-			if (iter == name.end()){
-				// mlt name not found
+			if (m_hasMaterial) {
+
+				fgets(buffer, sizeof(buffer), pFile);
+				sscanf(buffer, "%s %s", buffer, buffer);
+
+				std::map<std::string, int >::const_iterator iter = name.find(buffer);
+
+				if (iter == name.end()) {
+					// mlt name not found
+					countMesh++;
+					assign = countMesh;
+
+					name[buffer] = countMesh;
+
+				}
+				else {
+					// mlt name found
+					assign = iter->second;
+				}
+			}
+			break;
+
+		}case 'g': {
+
+			if (!m_hasMaterial) {
+
+				fgets(buffer, sizeof(buffer), pFile);
+				sscanf(buffer, "%s", buffer);
+
 				countMesh++;
 				assign = countMesh;
-
 				name[buffer] = countMesh;
-
-			}else{
-				// mlt name found
-				assign = iter->second;
 			}
-				
-		}else if ((*coord[i])[0] == 'g' && !m_hasMaterial){
+			break;
 
-			sscanf(coord[i]->c_str(), "%s %s", buffer, buffer);
-
-			countMesh++;
-			assign = countMesh;
-			name[buffer] = countMesh;
-
-		}else if ((*coord[i])[0] == 'f'){
+		}case 'f': {
 
 			int a, b, c, n1, n2, n3, t1, t2, t3;
+			fgets(buffer, sizeof(buffer), pFile);
 
-			
-			if (coord[i]->find("//") != std::string::npos){
-				
-				sscanf(coord[i]->c_str(), "f %d//%d %d//%d %d//%d", &a, &n1, &b, &n2, &c, &n3);
-				face.push_back({ { a, b, c, n1, n2, n3, 0, 0, 0, assign } });
+			if (!textureCoords.empty() && !normalCoords.empty()) {
+				sscanf(buffer, "%d/%d/%d %d/%d/%d %d/%d/%d ", &a, &t1, &n1, &b, &t2, &n2, &c, &t3, &n3);
+				face.push_back({ { a, b, c, t1, t2, t3, n1, n2, n3, assign } });
 
-			}else if (std::count(coord[i]->begin(), coord[i]->end(), '/') == 3){
-				
-				sscanf(coord[i]->c_str(), "f %d/%d %d/%d %d/%d", &a, &t1, &b, &t2, &c, &t3);
-				face.push_back({ { a, b, c, 0, 0, 0, t1, t2, t3, assign } });
+			}
+			else if (!normalCoords.empty()) {
+				sscanf(buffer, "%d//%d %d//%d %d//%d", &a, &n1, &b, &n2, &c, &n3);
+				face.push_back({ { a, b, c, 0, 0, 0, n1, n2, n3, assign } });
 
-			}else if (std::count(coord[i]->begin(), coord[i]->end(), '/') == 6){
-			
-				countFacesWithTexture++;
-				sscanf(coord[i]->c_str(), "f %d/%d/%d %d/%d/%d %d/%d/%d ", &a, &t1, &n1, &b, &t2, &n2, &c, &t3, &n3);
-				face.push_back({ { a, b, c, n1, n2, n3, t1, t2, t3, assign } });
+			}
+			else if (!textureCoords.empty()) {
+				sscanf(buffer, "%d/%d %d/%d %d/%d", &a, &t1, &b, &t2, &c, &t3);
+				face.push_back({ { a, b, c, t1, t2, t3, 0, 0, 0, assign } });
 
-			}else{
-				
-				sscanf(coord[i]->c_str(), "f %d %d %d", &a, &b, &c);
+			}
+			else {
+				sscanf(buffer, "%d %d %d", &a, &b, &c);
 				face.push_back({ { a, b, c, 0, 0, 0, 0, 0, 0, assign } });
 			}
+			break;
 
+		}default: {
+
+			break;
 		}
-	}
+
+		}//end switch
+	}// end while
+	fclose(pFile);
 	
 	m_center = Vector3f((xmin + xmax) / 2.0f, (ymin + ymax) / 2.0f, (zmin + zmax) / 2.0f);
 
 	std::sort(face.begin(), face.end(), compare);
-
 	std::map<int, int> dup;
 
 	for (int i = 0; i < face.size(); i++){
 		dup[face[i][9]]++;
 	}
 
-	m_numberOfMeshes = dup.size();
-	
 	std::map<int, int>::const_iterator iterDup = dup.begin();
 
 	for (iterDup; iterDup != dup.end(); iterDup++){
@@ -294,22 +304,19 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 
 				if (iterDup->first == iterName->second){
 
-
-
 					mesh.push_back(new Mesh("newmtl " + iterName->first, iterDup->second));
 				}
 			}
 
 		}
 	}
-	
-	
+		
 	dup.clear();
 	name.clear();
 
+	m_numberOfMeshes = mesh.size();
 	int start = 0;
 	int end = mesh[0]->m_numberTriangles;
-
 
 	if (!textureCoords.empty() && !normalCoords.empty()){
 	
@@ -321,6 +328,10 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 
 			mesh[j]->m_hasTextureCoords = true;
 			mesh[j]->m_hasNormals = true;
+			mesh[j]->m_indexBuffer.resize(mesh[j]->m_numberTriangles * 3);
+			mesh[j]->m_numberOfBytes = 8;
+
+			int numberOfTriangle = 0;
 
 			if (j > 0){
 
@@ -328,45 +339,27 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 				end = end + mesh[j]->m_numberTriangles;
 			}
 	
-			
-
 			for (int i = start; i < end; i++){
 
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 2]);
-				tmpVertexBuffer.push_back(textureCoords[((face[i])[6] - 1) * 2]);
-				tmpVertexBuffer.push_back(textureCoords[((face[i])[6] - 1) * 2 + 1]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3 + 2]);
-				
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 2]);
-				tmpVertexBuffer.push_back(textureCoords[((face[i])[7] - 1) * 2]);
-				tmpVertexBuffer.push_back(textureCoords[((face[i])[7] - 1) * 2 + 1]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3 + 2]);
-				
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 2]);
-				tmpVertexBuffer.push_back(textureCoords[((face[i])[8] - 1) * 2]);
-				tmpVertexBuffer.push_back(textureCoords[((face[i])[8] - 1) * 2 + 1]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3 + 2]);
+				float vertex1[] = { vertexCoords[((face[i])[0] - 1) * 3], vertexCoords[((face[i])[0] - 1) * 3 + 1], vertexCoords[((face[i])[0] - 1) * 3 + 2],
+					textureCoords[((face[i])[3] - 1) * 2], textureCoords[((face[i])[3] - 1) * 2 + 1],
+					normalCoords[((face[i])[6] - 1) * 3], normalCoords[((face[i])[6] - 1) * 3 + 1], normalCoords[((face[i])[6] - 1) * 3 + 2] };
+				mesh[j]->m_indexBuffer[numberOfTriangle * 3] = mesh[j]->addVertex(((face[i])[0] - 1), &vertex1[0], 8);
+
+				float vertex2[] = { vertexCoords[((face[i])[1] - 1) * 3], vertexCoords[((face[i])[1] - 1) * 3 + 1], vertexCoords[((face[i])[1] - 1) * 3 + 2],
+					textureCoords[((face[i])[4] - 1) * 2], textureCoords[((face[i])[4] - 1) * 2 + 1],
+					normalCoords[((face[i])[7] - 1) * 3], normalCoords[((face[i])[7] - 1) * 3 + 1], normalCoords[((face[i])[7] - 1) * 3 + 2] };
+				mesh[j]->m_indexBuffer[numberOfTriangle * 3 + 1] = mesh[j]->addVertex(((face[i])[1] - 1), &vertex2[0], 8);
+
+				float vertex3[] = { vertexCoords[((face[i])[2] - 1) * 3], vertexCoords[((face[i])[2] - 1) * 3 + 1], vertexCoords[((face[i])[2] - 1) * 3 + 2],
+					textureCoords[((face[i])[5] - 1) * 2], textureCoords[((face[i])[5] - 1) * 2 + 1],
+					normalCoords[((face[i])[8] - 1) * 3], normalCoords[((face[i])[8] - 1) * 3 + 1], normalCoords[((face[i])[8] - 1) * 3 + 2] };
+				mesh[j]->m_indexBuffer[numberOfTriangle * 3 + 2] = mesh[j]->addVertex(((face[i])[2] - 1), &vertex3[0], 8);
+
+				numberOfTriangle++;
 				
 			}
-		
-			indexVBO_PTN(tmpVertexBuffer, mesh[j]->m_indexBuffer, mesh[j]->m_vertexBuffer);
-			tmpVertexBuffer.clear();
-			
-		}
-	
-	
+		}	
 	}else if (!normalCoords.empty()){
 	
 		m_hasNormals = true;
@@ -374,6 +367,10 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 		for (int j = 0; j < m_numberOfMeshes; j++){
 
 			mesh[j]->m_hasNormals = true;
+			mesh[j]->m_indexBuffer.resize(mesh[j]->m_numberTriangles * 3);
+			mesh[j]->m_numberOfBytes = 6;
+
+			int numberOfTriangle = 0;
 
 			if (j > 0){
 
@@ -383,33 +380,21 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 
 			for (int i = start; i < end; i++){
 			
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 2]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[3] - 1) * 3 + 2]);
+				float vertex1[] = { vertexCoords[((face[i])[0] - 1) * 3], vertexCoords[((face[i])[0] - 1) * 3 + 1], vertexCoords[((face[i])[0] - 1) * 3 + 2],
+					normalCoords[((face[i])[6] - 1) * 3], normalCoords[((face[i])[6] - 1) * 3 + 1], normalCoords[((face[i])[6] - 1) * 3 + 2] };
+				mesh[j]->m_indexBuffer[numberOfTriangle * 3] = mesh[j]->addVertex(((face[i])[0] - 1), &vertex1[0], 6);
 
+				float vertex2[] = { vertexCoords[((face[i])[1] - 1) * 3], vertexCoords[((face[i])[1] - 1) * 3 + 1], vertexCoords[((face[i])[1] - 1) * 3 + 2],
+					normalCoords[((face[i])[7] - 1) * 3], normalCoords[((face[i])[7] - 1) * 3 + 1], normalCoords[((face[i])[7] - 1) * 3 + 2] };
+				mesh[j]->m_indexBuffer[numberOfTriangle * 3 + 1] = mesh[j]->addVertex(((face[i])[1] - 1), &vertex2[0], 6);
 
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 2]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[4] - 1) * 3 + 2]);
+				float vertex3[] = { vertexCoords[((face[i])[2] - 1) * 3], vertexCoords[((face[i])[2] - 1) * 3 + 1], vertexCoords[((face[i])[2] - 1) * 3 + 2],
+					normalCoords[((face[i])[8] - 1) * 3], normalCoords[((face[i])[8] - 1) * 3 + 1], normalCoords[((face[i])[8] - 1) * 3 + 2] };
+				mesh[j]->m_indexBuffer[numberOfTriangle * 3 + 2] = mesh[j]->addVertex(((face[i])[2] - 1), &vertex3[0], 6);
 
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 2]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(normalCoords[((face[i])[5] - 1) * 3 + 2]);
-			
-			}
-			indexVBO_PN(tmpVertexBuffer, mesh[j]->m_indexBuffer, mesh[j]->m_vertexBuffer);
-			tmpVertexBuffer.clear();
+				numberOfTriangle++;			
+			}		
 		}
-
 	}else if (!textureCoords.empty()){
 
 		m_hasTextureCoords = true;
@@ -417,6 +402,9 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 		for (int j = 0; j < m_numberOfMeshes; j++){
 
 			mesh[j]->m_hasTextureCoords = true;
+			mesh[j]->m_indexBuffer.resize(mesh[j]->m_numberTriangles * 3);
+			mesh[j]->m_numberOfBytes = 5;
+			int numberOfTriangle = 0;
 
 			if (j > 0){
 
@@ -426,34 +414,30 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 
 			for (int i = start; i < end; i++){
 			
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 2]);
-				tmpVertexBuffer.push_back(textureCoords[((face[i])[6] - 1) * 2]);
-				tmpVertexBuffer.push_back(textureCoords[((face[i])[6] - 1) * 2 + 1]);
+				float vertex1[] = { vertexCoords[((face[i])[0] - 1) * 3], vertexCoords[((face[i])[0] - 1) * 3 + 1], vertexCoords[((face[i])[0] - 1) * 3 + 2],
+					textureCoords[((face[i])[3] - 1) * 2], textureCoords[((face[i])[3] - 1) * 2 + 1] };
+				mesh[j]->m_indexBuffer[numberOfTriangle * 3] = mesh[j]->addVertex(((face[i])[0] - 1), &vertex1[0], 5);
 
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 2]);
-				tmpVertexBuffer.push_back(textureCoords[((face[i])[7] - 1) * 2]);
-				tmpVertexBuffer.push_back(textureCoords[((face[i])[7] - 1) * 2 + 1]);
+				float vertex2[] = { vertexCoords[((face[i])[1] - 1) * 3], vertexCoords[((face[i])[1] - 1) * 3 + 1], vertexCoords[((face[i])[1] - 1) * 3 + 2],
+					textureCoords[((face[i])[4] - 1) * 2], textureCoords[((face[i])[4] - 1) * 2 + 1] };
+				mesh[j]->m_indexBuffer[numberOfTriangle * 3 + 1] = mesh[j]->addVertex(((face[i])[1] - 1), &vertex2[0], 5);
 
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 2]);
-				tmpVertexBuffer.push_back(textureCoords[((face[i])[8] - 1) * 2]);
-				tmpVertexBuffer.push_back(textureCoords[((face[i])[8] - 1) * 2 + 1]);
+				float vertex3[] = { vertexCoords[((face[i])[2] - 1) * 3], vertexCoords[((face[i])[2] - 1) * 3 + 1], vertexCoords[((face[i])[2] - 1) * 3 + 2],
+					textureCoords[((face[i])[5] - 1) * 2], textureCoords[((face[i])[5] - 1) * 2 + 1] };
+				mesh[j]->m_indexBuffer[numberOfTriangle * 3 + 2] = mesh[j]->addVertex(((face[i])[2] - 1), &vertex3[0], 5);
+
+				numberOfTriangle++;
 			
 			}
-
-			indexVBO_PT(tmpVertexBuffer, mesh[j]->m_indexBuffer, mesh[j]->m_vertexBuffer);
-			tmpVertexBuffer.clear();
 		}
-
 	}else {
 
 		for (int j = 0; j < m_numberOfMeshes; j++){
 			
+			mesh[j]->m_indexBuffer.resize(mesh[j]->m_numberTriangles * 3);
+			mesh[j]->m_numberOfBytes = 3;
+			int numberOfTriangle = 0;
+
 			if (j > 0){
 
 				start = end;
@@ -462,40 +446,22 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 
 			for (int i = start; i < end; i++){
 				
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[0] - 1) * 3 + 2]);
+				float vertex1[] = { vertexCoords[((face[i])[0] - 1) * 3], vertexCoords[((face[i])[0] - 1) * 3 + 1], vertexCoords[((face[i])[0] - 1) * 3 + 2] };
+				mesh[j]->m_indexBuffer[numberOfTriangle * 3] = mesh[j]->addVertex(((face[i])[0] - 1), &vertex1[0], 3);
 
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[1] - 1) * 3 + 2]);
+				float vertex2[] = { vertexCoords[((face[i])[1] - 1) * 3], vertexCoords[((face[i])[1] - 1) * 3 + 1], vertexCoords[((face[i])[1] - 1) * 3 + 2] };
+				mesh[j]->m_indexBuffer[numberOfTriangle * 3 + 1] = mesh[j]->addVertex(((face[i])[1] - 1), &vertex2[0], 3);
 
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 1]);
-				tmpVertexBuffer.push_back(vertexCoords[((face[i])[2] - 1) * 3 + 2]);
-			
-			}
+				float vertex3[] = { vertexCoords[((face[i])[2] - 1) * 3], vertexCoords[((face[i])[2] - 1) * 3 + 1], vertexCoords[((face[i])[2] - 1) * 3 + 2] };
+				mesh[j]->m_indexBuffer[numberOfTriangle * 3 + 2] = mesh[j]->addVertex(((face[i])[2] - 1), &vertex3[0], 3);
 
-			indexVBO_P(tmpVertexBuffer, mesh[j]->m_indexBuffer, mesh[j]->m_vertexBuffer);
-			tmpVertexBuffer.clear();
+				numberOfTriangle++;			
+			}			
 		}
-
 	}
-
-	
-	
-
-
-	for (int i = 0; i < coord.size(); i++){
-
-		delete coord[i];
-	}
-
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 void Mesh::generateNormals(){
 
 	if (m_hasNormals) {  return; }
@@ -514,11 +480,7 @@ void Mesh::generateNormals(){
 	int vertexLength = m_hasTextureCoords ? 8 : 6;
 	int vertexOffset = m_hasTextureCoords ? 2 : 0;
 
-
-
-
 		int totalTriangles = getNumberOfTriangles();
-
 
 		for (int i = 0; i < m_vertexBuffer.size(); i++){
 
@@ -1072,284 +1034,40 @@ void Mesh::setMaterial(const Vector3f &ambient, const Vector3f &diffuse, const V
 
 }
 
-/////////////////////////////////////////////////////////////////
-
-// Returns true iif v1 can be considered equal to v2
-bool is_near(float v1, float v2){
-	return v1 == v2;
-}
-
-// Searches through all already-exported vertices
-// for a similar one.
-// Similar = same position + same UVs + same normal
-bool getSimilarVertexIndex(float p1, float p2, float p3, float n1, float n2, float n3, std::vector<float>& out_vertices, int &index)
-
-{
-	// Lame linear search
-	for (unsigned int i = 0; i<out_vertices.size(); i = i + 6){
-		if (
-			is_near(p1, out_vertices[i]) &&
-			is_near(p2, out_vertices[i + 1]) &&
-			is_near(p3, out_vertices[i + 2]) &&
-			is_near(n1, out_vertices[i + 3]) &&
-			is_near(n2, out_vertices[i + 4]) &&
-			is_near(n3, out_vertices[i + 5])
-			){
-			index = i / 6;
-			return true;
-		}
-	}
-	// No other vertex could be used instead.
-	// Looks like we'll have to add it to the VBO.
-	return false;
-}
-
-bool getSimilarVertexIndex(float p1, float p2, float p3, float t1, float t2, float n1, float n2, float n3, std::vector<float>& out_vertices, int &index)
-
-{
-	// Lame linear search
-	for (unsigned int i = 0; i<out_vertices.size(); i = i + 8){
-		if (
-			is_near(p1, out_vertices[i]) &&
-			is_near(p2, out_vertices[i + 1]) &&
-			is_near(p3, out_vertices[i + 2]) &&
-			is_near(t1, out_vertices[i + 3]) &&
-			is_near(t2, out_vertices[i + 4]) &&
-			is_near(n1, out_vertices[i + 5]) &&
-			is_near(n2, out_vertices[i + 6]) &&
-			is_near(n3, out_vertices[i + 7])
-			){
-			index = i / 8;
-			return true;
-		}
-	}
-	// No other vertex could be used instead.
-	// Looks like we'll have to add it to the VBO.
-	return false;
-}
-
-bool getSimilarVertexIndex(float p1, float p2, float p3, float t1, float t2, std::vector<float>& out_vertices, int &index)
-
-{
-	// Lame linear search
-	for (unsigned int i = 0; i<out_vertices.size(); i = i + 5){
-		if (
-			is_near(p1, out_vertices[i]) &&
-			is_near(p2, out_vertices[i + 1]) &&
-			is_near(p3, out_vertices[i + 2]) &&
-			is_near(t1, out_vertices[i + 3]) &&
-			is_near(t2, out_vertices[i + 4])
-			){
-			index = i / 5;
-			return true;
-		}
-	}
-	// No other vertex could be used instead.
-	// Looks like we'll have to add it to the VBO.
-	return false;
-}
-
-
-bool getSimilarVertexIndex(float p1, float p2, float p3, std::vector<float>& out_vertices, int &index){
-	// Lame linear search
-	for (unsigned int i = 0; i<out_vertices.size(); i = i + 3){
-		if (
-			is_near(p1, out_vertices[i]) &&
-			is_near(p2, out_vertices[i + 1]) &&
-			is_near(p3, out_vertices[i + 2])
-
-			){
-			index = i / 3;
-			return true;
-		}
-	}
-	// No other vertex could be used instead.
-	// Looks like we'll have to add it to the VBO.
-	return false;
-}
-
-
-void Model::indexVBO_P(std::vector<float> & in_vertices, std::vector<int> & out_indices, std::vector<float> & out_vertices){
-	// For each input vertex
-	for (int i = 0; i<in_vertices.size(); i = i + 3){
-
-		// Try to find a similar vertex in out_XXXX
-		int index;
-		bool found = getSimilarVertexIndex(in_vertices[i],
-			in_vertices[i + 1],
-			in_vertices[i + 2],
-			out_vertices, index);
-
-		if (found){ // A similar vertex is already in the VBO, use it instead !
-
-
-
-			out_indices.push_back(index);
-		}
-		else{ // If not, it needs to be added in the output data.
-			out_vertices.push_back(in_vertices[i]);
-			out_vertices.push_back(in_vertices[i + 1]);
-			out_vertices.push_back(in_vertices[i + 2]);
-			out_indices.push_back((int)out_vertices.size() / 3 - 1);
-		}
-	}
-}
-
-void Model::indexVBO_PN(std::vector<float> & in_vertices, std::vector<int> & out_indices, std::vector<float> & out_vertices){
-	// For each input vertex
-	for (int i = 0; i<in_vertices.size(); i = i + 6){
-
-		// Try to find a similar vertex in out_XXXX
-		int index;
-		bool found = getSimilarVertexIndex(in_vertices[i],
-			in_vertices[i + 1],
-			in_vertices[i + 2],
-			in_vertices[i + 3],
-			in_vertices[i + 4],
-			in_vertices[i + 5],
-			out_vertices, index);
-
-		if (found){ // A similar vertex is already in the VBO, use it instead !
-
-			out_indices.push_back(index);
-		}
-		else{ // If not, it needs to be added in the output data.
-			out_vertices.push_back(in_vertices[i]);
-			out_vertices.push_back(in_vertices[i + 1]);
-			out_vertices.push_back(in_vertices[i + 2]);
-			out_vertices.push_back(in_vertices[i + 3]);
-			out_vertices.push_back(in_vertices[i + 4]);
-			out_vertices.push_back(in_vertices[i + 5]);
-
-			out_indices.push_back((int)out_vertices.size() / 6 - 1);
-		}
-	}
-}
-
-
-
-void Model::indexVBO_PT(std::vector<float> & in_vertices, std::vector<int> & out_indices, std::vector<float> & out_vertices){
-	// For each input vertex
-	for (int i = 0; i<in_vertices.size(); i = i + 5){
-
-		// Try to find a similar vertex in out_XXXX
-		int index;
-		bool found = getSimilarVertexIndex(in_vertices[i],
-			in_vertices[i + 1],
-			in_vertices[i + 2],
-			in_vertices[i + 3],
-			in_vertices[i + 4],
-			out_vertices, index);
-
-		if (found){ // A similar vertex is already in the VBO, use it instead !
-
-			out_indices.push_back(index);
-		}
-		else{ // If not, it needs to be added in the output data.
-			out_vertices.push_back(in_vertices[i]);
-			out_vertices.push_back(in_vertices[i + 1]);
-			out_vertices.push_back(in_vertices[i + 2]);
-			out_vertices.push_back(in_vertices[i + 3]);
-			out_vertices.push_back(in_vertices[i + 4]);
-
-			out_indices.push_back((int)out_vertices.size() / 5 - 1);
-		}
-	}
-}
-
-
-void Model::indexVBO_PTN(std::vector<float> & in_vertices, std::vector<int> & out_indices, std::vector<float> & out_vertices){
-	// For each input vertex
-	for (int i = 0; i<in_vertices.size(); i = i + 8){
-
-		// Try to find a similar vertex in out_XXXX
-		int index;
-		bool found = getSimilarVertexIndex(in_vertices[i],
-			in_vertices[i + 1],
-			in_vertices[i + 2],
-			in_vertices[i + 3],
-			in_vertices[i + 4],
-			in_vertices[i + 5],
-			in_vertices[i + 6],
-			in_vertices[i + 7],
-			out_vertices, index);
-
-		if (found){ // A similar vertex is already in the VBO, use it instead !
-
-			out_indices.push_back(index);
-		}
-		else{ // If not, it needs to be added in the output data.
-			out_vertices.push_back(in_vertices[i]);
-			out_vertices.push_back(in_vertices[i + 1]);
-			out_vertices.push_back(in_vertices[i + 2]);
-			out_vertices.push_back(in_vertices[i + 3]);
-			out_vertices.push_back(in_vertices[i + 4]);
-			out_vertices.push_back(in_vertices[i + 5]);
-			out_vertices.push_back(in_vertices[i + 6]);
-			out_vertices.push_back(in_vertices[i + 7]);
-
-			out_indices.push_back((int)out_vertices.size() / 8 - 1);
-		}
-	}
-}
-
-
-
-int Mesh::addVertex(int hash, const float *pVertex, int n){
+int Mesh::addVertex(int hash, const float *pVertex, int numberOfBytes){
 
 	int index = -1;
-	std::map<int, int >::const_iterator iter = m_vertexCache.find(hash);
+	std::map<int, std::vector<int> >::const_iterator iter = m_vertexCache.find(hash);
 
-	if (iter == m_vertexCache.end()){
-
+	if (iter == m_vertexCache.end()) {
 		// Vertex hash doesn't exist in the cache.
-		index = static_cast<int>(m_vertexBuffer.size() / n);
+		index = static_cast<int>(m_vertexBuffer.size() / numberOfBytes);
+		m_vertexBuffer.insert(m_vertexBuffer.end(), pVertex, pVertex + numberOfBytes);
+		m_vertexCache.insert(std::make_pair(hash, std::vector<int>(1, index)));
 
-		for (int i = 0; i < n; i++){
-
-
-			m_vertexBuffer.push_back(pVertex[i]);
-		}
-
-
-		m_vertexCache[hash] = index;
-
-	}
-	else {
-
-
+	}else {
 		// One or more vertices have been hashed to this entry in the cache.
+		const std::vector<int> &vertices = iter->second;
 		const float *pCachedVertex = 0;
 		bool found = false;
 
-		for (iter; iter != m_vertexCache.end(); iter++){
+		for (std::vector<int>::const_iterator i = vertices.begin(); i != vertices.end(); ++i) {
+			index = *i;
+			pCachedVertex = &m_vertexBuffer[index * 3];
 
-			index = iter->second;
-			pCachedVertex = &m_vertexBuffer[(index)* n];
 
 
-			if (memcmp(pCachedVertex, pVertex, 4 * n) == 0)
-			{
-
+			if (memcmp(pCachedVertex, pVertex, sizeof(float)* numberOfBytes) == 0) {
 				found = true;
 				break;
 			}
-
 		}
 
-		if (!found)
-		{
-			index = static_cast<int>(m_vertexBuffer.size() / n);
-
-
-			for (int i = 0; i < n; i++){
-				m_vertexBuffer.push_back(pVertex[i]);
-			}
-
-			m_vertexCache[hash] = index;
+		if (!found) {
+			index = static_cast<int>(m_vertexBuffer.size() / numberOfBytes);
+			m_vertexBuffer.insert(m_vertexBuffer.end(), pVertex, pVertex + numberOfBytes);
+			m_vertexCache[hash].push_back(index);
 		}
-
-
 	}
 
 	return index;
