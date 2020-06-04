@@ -33,6 +33,8 @@ in vec3 eyeSpaceBinormal;
 in vec3 eyeSpaceNormal;
 in vec3 eyeSpaceLight[2];
 
+
+
 out vec4 color;
 
 
@@ -112,7 +114,8 @@ vec4 relief_map(){
 	// Ray intersect in view direction
 	p  = eyeSpaceVert; 
 	v  = normalize( p );
-	s  = normalize( vec3( dot( v, eyeSpaceTangent ), dot( v, eyeSpaceBinormal ), dot( v, eyeSpaceNormal ) ) );
+	v = normalize( vec3( dot( v, eyeSpaceTangent ), dot( v, eyeSpaceBinormal ), dot( v, eyeSpaceNormal ) ) );
+	s  = v;
  
 	s  *= u_heighScale / -s.z;
 	dp = v_texCoord * u_tile;
@@ -154,7 +157,7 @@ vec4 relief_map(){
 				diffuse += light[i].diffuse * lambert;
 						
 				vec3 reflected = reflect(-l, normal);
-				specular += light[i].specular * pow( max( dot(v,reflected),0.0 ), material.specularShininesse ) * 4;		
+				specular += light[i].specular * pow( max( dot(-v,reflected),0.0 ), material.specularShininesse ) * 4;		
 			}
 			
 		}else{
@@ -190,6 +193,7 @@ vec4 relief_map2(){
 	// Ray intersect in view direction
 	p  = eyeSpaceVert; 
 	v  = normalize( p );
+	//v = normalize( vec3( dot( v, eyeSpaceTangent ), dot( v, eyeSpaceBinormal ), dot( v, eyeSpaceNormal ) ) );
 	s  = normalize( vec3( dot( v, eyeSpaceTangent ), dot( v, eyeSpaceBinormal ), dot( v, eyeSpaceNormal ) ) );
  
 	s  *= u_heighScale / -s.z;
@@ -216,16 +220,19 @@ vec4 relief_map2(){
 	for(int i = 0; i < 2; i++){
 		if(active[i] > 0.0){
 		
-			l = normalize(p - eyeSpaceLight[i]);
+			l = normalize( eyeSpaceLight[i] - p);
 			tangentSpacelight  = normalize( vec3( dot( l, eyeSpaceTangent ), dot( l, eyeSpaceBinormal ), dot( l, eyeSpaceNormal )));
 			
 			ambient += light[i].ambient;
 			
-			float diff = max(dot( -tangentSpacelight, normal ), 0.0 );	
-			diffuse += light[i].diffuse * diff;
+			float lambert = max(dot( tangentSpacelight, normal ), 0.0 );	
 			
-			vec3 reflected = reflect(tangentSpacelight, normal);
-			specular += light[i].specular * pow( max( dot(v,reflected),0.0 ), material.specularShininesse ) * 4;
+			if( lambert > 0.0){
+				diffuse += light[i].diffuse * lambert;
+				
+				vec3 reflected = reflect(-tangentSpacelight, normal);
+				specular += light[i].specular * pow( max( dot(-v,reflected),0.0 ), material.specularShininesse ) * 4;
+			}
 							
 		}else{
 		
@@ -258,6 +265,7 @@ vec4 relief_map_shadow(){
 	// Ray intersect in view direction
 	p  = eyeSpaceVert; 
 	v  = normalize( p );
+	//v = normalize( vec3( dot( v, eyeSpaceTangent ), dot( v, eyeSpaceBinormal ), dot( v, eyeSpaceNormal ) ) );
 	s  = normalize( vec3( dot( v, eyeSpaceTangent ), dot( v, eyeSpaceBinormal ), dot( v, eyeSpaceNormal ) ) );
  
 	s  *= u_heighScale / -s.z;
@@ -308,11 +316,12 @@ vec4 relief_map_shadow(){
 				tempSpecular = vec3(0.0);
 			} 
 		
+		
 			float diff = max(dot( -tangentSpacelight, normal ), 0.0 );	
 			diffuse += light[i].diffuse * diff;
 			
 			vec3 reflected = reflect(tangentSpacelight, normal);
-			specular += tempSpecular * pow( max( dot(v,reflected),0.0 ), material.specularShininesse ) * 4;
+			specular += tempSpecular * pow( max( dot(-v,reflected),0.0 ), material.specularShininesse ) * 4;
 							
 		}else{
 		

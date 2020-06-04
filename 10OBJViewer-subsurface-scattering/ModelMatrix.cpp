@@ -155,8 +155,8 @@ void ModelMatrix::rotate(const Vector3f &axis, float degrees){
 
 	if (!pos){
 
-		T = invRotMtx ^ T;
-		invT = invT ^ rotMtx;
+		T = T ^ rotMtx;
+		invT = invRotMtx ^ invT;
 
 	}else{
 

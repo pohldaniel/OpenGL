@@ -34,16 +34,32 @@ void Shader::getAttributeGetAttribLocation(){
 }
 
 void Shader::loadSampler(){
-
+	
 	glUseProgram(m_program);
-	glUniform1i(glGetUniformLocation(m_program, "u_texture"), 0);
+	glUniform1i(glGetUniformLocation(m_program, "u_textureColor"), 0);
 	glUniform1i(glGetUniformLocation(m_program, "u_textureNormal"), 1);
 	glUniform1i(glGetUniformLocation(m_program, "u_displace"), 2);
+	glUniform1i(glGetUniformLocation(m_program, "u_texture"), 3);
+	glUniform1i(glGetUniformLocation(m_program, "u_normal"), 4);
+	glUniform1i(glGetUniformLocation(m_program, "u_depth"), 5);
+	glUniform1i(glGetUniformLocation(m_program, "u_irradiance"), 6);
 	glUseProgram(0);
 }
 
 
-void Shader::bindAttributes(Mesh *a_mesh){
+void Shader::bindAttributes(Mesh *a_mesh, GLuint texture){
+	
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, normal);
+
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, depth);
+
+	glActiveTexture(GL_TEXTURE6);
+	glBindTexture(GL_TEXTURE_2D, irradiance);
 
 	if (a_mesh->m_hasTangents){
 
@@ -147,8 +163,8 @@ void Shader::bindAttributes(Mesh *a_mesh){
 			(void*)(5 * sizeof(float))	// array buffer offset
 			);
 
-	}else if (a_mesh->m_hasNormals) {
-
+	}else if (a_mesh->m_hasNormals) { 
+		
 		glEnableVertexAttribArray(positionID);
 		glVertexAttribPointer(
 			positionID,					// attribute
@@ -209,7 +225,7 @@ void Shader::bindAttributes(Mesh *a_mesh){
 	}
 }
 
-void Shader::unbindAttributes( Mesh *a_mesh){
+void Shader::unbindAttributes(Mesh *a_mesh){
 
 	if (a_mesh->m_hasTangents){
 
@@ -245,7 +261,10 @@ void Shader::unbindAttributes( Mesh *a_mesh){
 
 	}
 
+	
 	glDisableVertexAttribArray(positionID);
+
+	
 }
 
 
@@ -256,9 +275,11 @@ void Shader::loadSampler(const char* location, int sampler){
 	glUseProgram(0);
 }
 
+//OpenGL specifies matrices as column-major to get row-major just transpose it
+
 void Shader::loadMatrix(const char* location, const Matrix4f matrix){
 
-	glUniformMatrix4fv(glGetUniformLocation(m_program, location), 1, false, &matrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(m_program, location), 1, true, &matrix[0][0]);
 
 }
 
@@ -458,7 +479,7 @@ void Shader::cleanup(){
 }
 
 
-
+//////////////////////////////////////////SkyboxShader/////////////////////////////////////
 
 SkyboxShader::SkyboxShader(std::string vertex, std::string fragment, GLuint cubemap) : Shader(vertex, fragment){
 
@@ -474,14 +495,7 @@ SkyboxShader::~SkyboxShader(){
 void SkyboxShader::bindAttributes(){
 
 	glEnableVertexAttribArray(positionID);
-	glVertexAttribPointer(
-		positionID,					// attribute
-		3,						     // size
-		GL_FLOAT,					 // type
-		GL_FALSE,					 // normalized?
-		3 * sizeof(float),			 // stride
-		(void*)0      // array buffer offset
-		);
+	glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap);
@@ -513,7 +527,10 @@ EnvironmentMap::~EnvironmentMap(){
 }
 
 
-void EnvironmentMap::bindAttributes(Mesh *a_mesh){
+void EnvironmentMap::bindAttributes(Mesh *a_mesh, GLuint texture){
+	
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, texture);
 
 	if (a_mesh->m_hasTangents){
 
@@ -632,4 +649,174 @@ void EnvironmentMap::unbindAttributes(Mesh *a_mesh){
 	}
 
 	glDisableVertexAttribArray(positionID);
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+///////////////////////////////DepthShader////////////////////////////
+
+DepthShader::DepthShader(std::string vertex, std::string fragment) : Shader(vertex, fragment){
+}
+
+DepthShader::~DepthShader(){
+
+}
+
+void DepthShader::bindAttributes(Mesh *a_mesh, GLuint texture){
+	
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	if (a_mesh->m_hasTangents){
+
+		glEnableVertexAttribArray(positionID);
+		glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)0);
+
+		glEnableVertexAttribArray(texCoordID);
+		glVertexAttribPointer(texCoordID, 2, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(3 * sizeof(float)));
+
+		glEnableVertexAttribArray(normalID);
+		glVertexAttribPointer(normalID, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(5 * sizeof(float)));
+
+		glEnableVertexAttribArray(tangentID);
+		glVertexAttribPointer(tangentID, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(8 * sizeof(float)));
+
+		glEnableVertexAttribArray(bitangentID);
+		glVertexAttribPointer(bitangentID, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(11 * sizeof(float)));
+
+	}else if (a_mesh->m_hasTextureCoords && a_mesh->m_hasNormals){
+
+		glEnableVertexAttribArray(positionID);
+		glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+
+		glEnableVertexAttribArray(texCoordID);
+		glVertexAttribPointer(texCoordID, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+
+		glEnableVertexAttribArray(normalID);
+		glVertexAttribPointer(normalID, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
+
+	}else if (a_mesh->m_hasNormals) {
+
+		glEnableVertexAttribArray(positionID);
+		glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+
+		glEnableVertexAttribArray(normalID);
+		glVertexAttribPointer(normalID, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+
+	}else if (a_mesh->m_hasTextureCoords){
+
+		glEnableVertexAttribArray(positionID);
+		glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+
+		glEnableVertexAttribArray(texCoordID);
+		glVertexAttribPointer(texCoordID, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+
+	}else{
+
+		glEnableVertexAttribArray(positionID);
+		glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	}
+}
+
+void DepthShader::unbindAttributes(Mesh *a_mesh){
+
+
+	if (a_mesh->m_hasTangents){
+
+		glDisableVertexAttribArray(normalID);
+		glDisableVertexAttribArray(tangentID);
+		glDisableVertexAttribArray(bitangentID);
+		glDisableVertexAttribArray(texCoordID);
+
+	}else if (a_mesh->m_hasTextureCoords && a_mesh->m_hasNormals){
+
+		glDisableVertexAttribArray(normalID);
+		glDisableVertexAttribArray(texCoordID);
+
+	}else if (a_mesh->m_hasTextureCoords){
+
+		glDisableVertexAttribArray(texCoordID);
+
+	}else if (a_mesh->m_hasNormals){
+
+		glDisableVertexAttribArray(normalID);
+	}
+
+	glDisableVertexAttribArray(positionID);
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+}
+
+//////////////////////////TextureShader/////////////////////////////////////
+
+
+TextureShader::TextureShader(std::string vertex, std::string fragment) : Shader(vertex, fragment){
+
+	loadSampler("u_texture", 0);
+}
+
+TextureShader::~TextureShader(){
+
+}
+
+
+void TextureShader::bindAttributes(GLuint texture){
+	
+	glEnableVertexAttribArray(positionID);
+	glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glEnableVertexAttribArray(texCoordID);
+	glVertexAttribPointer(texCoordID, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+}
+
+void TextureShader::unbindAttributes(){
+
+	glDisableVertexAttribArray(positionID);
+	glDisableVertexAttribArray(texCoordID);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+}
+
+///////////////////////////////Subsurface////////////////////////////
+
+Subsurfacehader::Subsurfacehader(std::string vertex, std::string fragment) : Shader(vertex, fragment){
+
+}
+
+Subsurfacehader::~Subsurfacehader(){
+
+}
+
+
+
+
+/*void Subsurfacehader::bindAttributes(Mesh *a_mesh, GLuint texture){
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glEnableVertexAttribArray(positionID);
+	glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+
+	glEnableVertexAttribArray(normalID);
+	glVertexAttribPointer(normalID, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+}
+
+
+void Subsurfacehader::unbindAttributes(Mesh *a_mesh){
+
+	glDisableVertexAttribArray(positionID);
+	glDisableVertexAttribArray(normalID);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+}*/

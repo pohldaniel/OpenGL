@@ -27,12 +27,12 @@ uniform LightSource light[2];
 uniform Material material;
 uniform float active[2];
 
-uniform sampler2D u_texture;
+uniform sampler2D u_textureColor;
 
 void main(void){
 
 	int count = 0;
-	vec3 diffuseColor = texture2D( u_texture, v_texCoord ).rgb;
+	vec3 diffuseColor = texture2D(u_textureColor, v_texCoord ).rgb;
 	vec3 E = normalize(v_viewDirection);
 	vec3 N = normalize(v_normal);
 	

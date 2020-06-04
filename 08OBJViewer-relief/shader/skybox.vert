@@ -11,7 +11,7 @@ out vec3 v_texCoord;
 
 void main(void){
 
-   gl_Position =   u_projection * u_modelView * vec4(i_position, 1.0);
+   gl_Position =  u_projection * u_modelView * vec4(i_position, 1.0);
    v_texCoord = i_position;
   
 }

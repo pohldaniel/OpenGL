@@ -22,26 +22,27 @@ out vec3 eyeSpaceBinormal;
 out vec3 eyeSpaceNormal;
 out vec3 eyeSpaceLight[2];
 
+
+
 void main(void){
 
 	eyeSpaceVert = (u_modelView * vec4(i_position, 1.0)).xyz;
 	
+	gl_Position =   u_projection * vec4(eyeSpaceVert, 1.0);
+	
+	
 	eyeSpaceTangent  = normalize((u_normalMatrix * vec4(i_tangent, 0.0)).xyz);
 	eyeSpaceBinormal = normalize((u_normalMatrix * vec4(i_bitangent, 0.0)).xyz);
 	eyeSpaceNormal   = normalize((u_normalMatrix * vec4(i_normal, 0.0)).xyz);
-	
+		
 	v_texCoord = i_texCoord;
-	gl_Position =   u_projection * u_modelView * vec4(i_position, 1.0);
+
+	
+	
 	
 	for(int i = 0; i < 2; i++){
 	
 		eyeSpaceLight[i] =  (u_modelViewLight * vec4(u_lightPos[i], 1.0)).xyz;
 	 
-	}
-	
-	
-	
-	
-	
-	
+	}		
 }

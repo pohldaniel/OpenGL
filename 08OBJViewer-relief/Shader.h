@@ -42,7 +42,7 @@ public:
 	void loadFloat(const char* location, float value);
 	void loadBool(const char* location, bool value);
 	
-	virtual void bindAttributes(Mesh *a_mesh);
+	virtual void bindAttributes(Mesh *a_mesh, GLuint texture);
 	virtual void unbindAttributes(Mesh *a_mesh);
 	
 	
@@ -51,7 +51,9 @@ public:
 	void loadLightSource(LightSource &lightsource, int index);
 	void loadLightSources(std::vector<LightSource> lights);
 	
-	
+	unsigned int normal;
+	unsigned int depth;
+	unsigned int irradiance;
 
 protected:
 
@@ -95,12 +97,55 @@ public:
 
 	
 
-	void bindAttributes(Mesh *a_mesh);
+	void bindAttributes(Mesh *a_mesh, GLuint texture);
 	void unbindAttributes(Mesh *a_mesh);
 
 private:
 
 	GLuint m_cubemap;
 };
+
+class DepthShader : public Shader{
+
+public:
+
+	DepthShader(std::string vertex, std::string fragment);
+	~DepthShader();
+
+	void bindAttributes(Mesh *a_mesh, GLuint texture);
+	void unbindAttributes(Mesh *a_mesh);
+
+};
+
+
+class TextureShader : public Shader{
+
+public:
+
+	TextureShader(std::string vertex, std::string fragment);
+	~TextureShader();
+
+	void bindAttributes(GLuint texture);
+	void unbindAttributes();
+
+	
+
+};
+
+class Subsurfacehader : public Shader{
+
+public:
+
+	Subsurfacehader(std::string vertex, std::string fragment);
+	~Subsurfacehader();
+
+	//void bindAttributes(Mesh *a_mesh, GLuint texture);
+	//void unbindAttributes(Mesh *a_mesh);
+	
+
+
+};
+
+
 
 #endif // __shaderH__

@@ -12,10 +12,7 @@ public:
 
 	Camera();
 
-	Camera(const Vector3f &eye,
-		const Vector3f &xAxis,
-		const Vector3f &yAxis,
-		const Vector3f &zAxis);
+	Camera(const Vector3f &eye, const Vector3f &xAxis, const Vector3f &yAxis, const Vector3f &zAxis);
 
 	Camera(const Vector3f &eye,
 		const Vector3f &xAxis,
@@ -33,9 +30,10 @@ public:
 	void rotate(float pitch, float yaw, float roll);
 
 	const Matrix4f &getViewMatrix() const;
+	const Matrix4f &getInvViewMatrix() const;
 	const Matrix4f &getProjectionMatrix() const;
+	const Matrix4f &getInvProjectionMatrix() const;
 	const Matrix4f &getOrthographicMatrix() const;
-
 	const Vector3f &getPosition() const;
 	const Vector3f &getCamX() const;
 	const Vector3f &getCamY() const;
@@ -54,9 +52,9 @@ private:
 	void updateViewMatrix(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
 
 
-    static  Vector3f WORLD_XAXIS;
-    static  Vector3f WORLD_YAXIS;
-    static  Vector3f WORLD_ZAXIS;
+    Vector3f WORLD_XAXIS;
+	Vector3f WORLD_YAXIS;
+	Vector3f WORLD_ZAXIS;
 
 	
     float			m_fovx;
@@ -72,7 +70,9 @@ private:
 	Vector3f		m_viewDir;
 
 	Matrix4f		m_viewMatrix;
+	Matrix4f		m_invViewMatrix;
 	Matrix4f		m_projMatrix;
+	Matrix4f		m_invProjMatrix;
 	Matrix4f		m_orthMatrix;
 
 };

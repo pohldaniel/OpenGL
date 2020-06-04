@@ -239,6 +239,23 @@ void glUniform1f(GLint location, GLfloat v0)
 	pfnUniform1f(location, v0);
 }
 
+void glUniform2f(GLint location, GLfloat v0, GLfloat v1){
+
+	typedef void (APIENTRY * PFNGLUNIFORM2FPROC) (GLint location, GLfloat v0, GLfloat v1);
+	static PFNGLUNIFORM2FPROC pfnUniform2f = 0;
+	LOAD_ENTRYPOINT("glUniform2f", pfnUniform2f, PFNGLUNIFORM2FPROC);
+	pfnUniform2f(location, v0, v1);
+}
+
+void glUniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3){
+
+	typedef void (APIENTRY * PFNGLUNIFORM4FPROC) (GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
+	static PFNGLUNIFORM4FPROC pfnUniform4f = 0;
+	LOAD_ENTRYPOINT("glUniform4f", pfnUniform4f, PFNGLUNIFORM4FPROC);
+	pfnUniform4f(location, v0, v1, v2, v3);
+}
+
+
 void glUniform1fv(GLint location, GLsizei count, const GLfloat *value)
 {
 	typedef void (APIENTRY * PFNGLUNIFORM1FVPROC) (GLint location, GLsizei count, const GLfloat *value);

@@ -433,7 +433,7 @@ void render(){
 	sss->loadMatrix("u_model", buddha->m_model->getTransformationMatrix());
 	sss->loadMatrix("u_view", camera->getViewMatrix());
 	sss->loadMatrix("u_modelView", buddha->m_model->getTransformationMatrix() * camera->getViewMatrix());
-	sss->loadMatrix("u_normalMatrix",Matrix4f::getNormalMatrix( buddha->m_model->getTransformationMatrix() * camera->getViewMatrix()));
+	sss->loadMatrix("u_normalMatrix", Matrix4f::getNormalMatrix( buddha->m_model->getTransformationMatrix() * camera->getViewMatrix()));
 	sss->loadMatrix("u_viewShadow", depthmap->getViewMatrix());
 	sss->loadMatrix("u_projectionShadow", depthmap->getDepthPassMatrix());
 	sss->loadVector("light_pos", depthmap->getPosition());

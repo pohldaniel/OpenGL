@@ -49,16 +49,11 @@ float degree = 0.0;
 //prototype funktions
 LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParma, LPARAM lParam);
 void setCursortoMiddle(HWND hwnd);
-void processInput(HWND hWnd );
+void processInput(HWND hWnd);
 
 void render();
 void initApp(HWND hWnd);
 void enableVerticalSync(bool enableVerticalSync);
-unsigned int loadSkybox(const char* filename);
-
-
-
-Matrix4f &getNormalMatrix(const Matrix4f &modelViewMatrix);
 
 Matrix4f modelView;
 ModelMatrix modelLight;
@@ -100,78 +95,78 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MSG				msg;				// message
 	HDC				hdc;				// device context handle
 
-	// fill out the window class structure
-	windowClass.cbSize			= sizeof(WNDCLASSEX);
-	windowClass.style			= CS_HREDRAW | CS_VREDRAW;
-	windowClass.lpfnWndProc		= winProc;
-	windowClass.cbClsExtra		= 0;
-	windowClass.cbWndExtra		= 0;
-	windowClass.hInstance		= hInstance;
-	windowClass.hIcon			= LoadIcon(NULL, IDI_APPLICATION);		// default icon
-	windowClass.hCursor			= LoadCursor(NULL, IDC_ARROW);			// default arrow
-	windowClass.hbrBackground	= (HBRUSH)GetStockObject(WHITE_BRUSH);	// white background
-	windowClass.lpszMenuName	= NULL;									// no menu
-	windowClass.lpszClassName	= "WINDOWCLASS";
-	windowClass.hIconSm			= LoadIcon(NULL, IDI_WINLOGO);			// windows logo small icon
+										// fill out the window class structure
+	windowClass.cbSize = sizeof(WNDCLASSEX);
+	windowClass.style = CS_HREDRAW | CS_VREDRAW;
+	windowClass.lpfnWndProc = winProc;
+	windowClass.cbClsExtra = 0;
+	windowClass.cbWndExtra = 0;
+	windowClass.hInstance = hInstance;
+	windowClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);		// default icon
+	windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);			// default arrow
+	windowClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);	// white background
+	windowClass.lpszMenuName = NULL;									// no menu
+	windowClass.lpszClassName = "WINDOWCLASS";
+	windowClass.hIconSm = LoadIcon(NULL, IDI_WINLOGO);			// windows logo small icon
 
-	// register the windows class
+																// register the windows class
 	if (!RegisterClassEx(&windowClass))
 		return 0;
 
 	// class registered, so now create our window
 	hwnd = CreateWindowEx(NULL,									// extended style
-						  "WINDOWCLASS",						// class name
-						  "OBJViewer",							// app name
-						  WS_OVERLAPPEDWINDOW,
-						  0, 0,									// x,y coordinate
-						  width,
-						  height,									// width, height
-						  NULL,									// handle to parent
-						  NULL,									// handle to menu
-						  hInstance,							// application instance
-						  NULL);								// no extra params
+		"WINDOWCLASS",						// class name
+		"OBJViewer",							// app name
+		WS_OVERLAPPEDWINDOW,
+		0, 0,									// x,y coordinate
+		width,
+		height,									// width, height
+		NULL,									// handle to parent
+		NULL,									// handle to menu
+		hInstance,							// application instance
+		NULL);								// no extra params
 
-	// check if window creation failed (hwnd would equal NULL)
+											// check if window creation failed (hwnd would equal NULL)
 	if (!hwnd)
 		return 0;
 
 	ShowWindow(hwnd, SW_SHOW);			// display the window
 	UpdateWindow(hwnd);					// update the window
 
-	
+
 	initApp(hwnd);
-	
-	
+
+
 
 	// main message loop
-	while (true) 
-    {
-        // Did we recieve a message, or are we idling ?
-		if ( PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) ) 
-        {
+	while (true)
+	{
+		// Did we recieve a message, or are we idling ?
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
 			// test if this is a quit
 			if (msg.message == WM_QUIT) break;
 			// translate and dispatch message
-			TranslateMessage( &msg );
-			DispatchMessage ( &msg );
-		} 
-        else 
-        {
-			
-			
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		else
+		{
+
+
 			processInput(hwnd);
 
-			
+
 			render();
-			
 
-			hdc=GetDC(hwnd);
-			SwapBuffers(hdc);			
-			ReleaseDC(hwnd,hdc);
+
+			hdc = GetDC(hwnd);
+			SwapBuffers(hdc);
+			ReleaseDC(hwnd, hdc);
 		}
-    } // end while
+	} // end while
 
-	for (int i = 0; i < objects.size(); i++){
+	for (int i = 0; i < objects.size(); i++) {
 		delete objects[i];
 	}
 
@@ -187,141 +182,141 @@ LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	POINT pt;
 	RECT rect;
 
-	switch(message)
+	switch (message)
 	{
-		case WM_DESTROY:{
+	case WM_DESTROY: {
+
+		PostQuitMessage(0);
+		return 0;
+	}
+
+	case WM_CREATE: {
+
+		GetClientRect(hWnd, &rect);
+		g_OldCursorPos.x = rect.right / 2;
+		g_OldCursorPos.y = rect.bottom / 2;
+		pt.x = rect.right / 2;
+		pt.y = rect.bottom / 2;
+		SetCursorPos(pt.x, pt.y);
+		// set the cursor to the middle of the window and capture the window via "SendMessage"
+		SendMessage(hWnd, WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(pt.x, pt.y));
+		return 0;
+	}break;
+
+	case WM_LBUTTONDOWN: { // Capture the mouse
+
+		setCursortoMiddle(hWnd);
+		SetCapture(hWnd);
+
+		return 0;
+	} break;
+
+	case WM_KEYDOWN: {
+
+		switch (wParam) {
+
+		case VK_ESCAPE: {
 
 			PostQuitMessage(0);
 			return 0;
+
+		}break;
+		case VK_SPACE: {
+
+			ReleaseCapture();
+			return 0;
+
+		}break;
+		case 'v': case 'V': {
+
+			enableVerticalSync(!g_enableVerticalSync);
+			return 0;
+
+		}break;
+		case '1': {
+			if (active[0] == 1.0) active[0] = 0.0;
+			else  active[0] = 1.0;
+		}break;
+		case '2': {
+			if (active[1] == 1.0) active[1] = 0.0;
+			else  active[1] = 1.0;
+		}break;
+		case VK_OEM_PLUS: {
+
+			heighscale = heighscale + 0.01;
+
+		}break;
+		case VK_OEM_MINUS: {
+			heighscale = heighscale - 0.01;
+			// if (heighscale < 0) heighscale = 0.0f;
+
+		}break;
+		case VK_ADD: {
+
+			degree = degree + 0.01;
+		}break;
+		case VK_SUBTRACT: {
+			degree = degree - 0.01;
+
+		}break;
+		case VK_RETURN: {
+			degree = 0.0;
+
+		}break;
+		case 'r':case 'R': {
+			if (rotate) rotate = false;
+			else  rotate = true;
+
+		}break;
+		case 'b':case 'B': {
+			if (shadow) shadow = false;
+			else  shadow = true;
+
+		}break;
+		case 'K': {
+			tile = tile + 0.1;
+
+		}break;
+		case 'L': {
+			tile = tile - 0.1;
+
+		}break;
+			return 0;
+		}break;
+
+		return 0;
+	}break;
+
+	case WM_SIZE: {
+
+		int height2 = HIWORD(lParam);		// retrieve width and height
+		int width2 = LOWORD(lParam);
+
+		if (height2 == 0) {					// avoid divide by zero
+
+			height2 = 1;
 		}
 
-		case WM_CREATE:{
-			
-			GetClientRect(hWnd, &rect);
-			g_OldCursorPos.x = rect.right / 2;
-			g_OldCursorPos.y = rect.bottom / 2;
-			pt.x = rect.right / 2;
-			pt.y = rect.bottom / 2;
-			SetCursorPos(pt.x, pt.y);
-			// set the cursor to the middle of the window and capture the window via "SendMessage"
-			SendMessage(hWnd, WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(pt.x, pt.y));
-			return 0;
-		}break;
+		glViewport(0, 0, width2, height2);
+		camera->perspective(45.0f, (GLfloat)width2 / (GLfloat)height2, 1.0f, 2000.0f);
 
-		case WM_LBUTTONDOWN:{ // Capture the mouse
+		for (int j = 0; j < objects.size(); j++) {
 
-			setCursortoMiddle(hWnd);
-			SetCapture(hWnd);
-			
-			return 0;
-		} break;
+			for (int i = 0; i < objects[j]->m_model->numberOfMeshes(); i++) {
 
-		case WM_KEYDOWN:{
-
-			switch (wParam){
-
-				case VK_ESCAPE:{
-
-					PostQuitMessage(0);
-					return 0;
-
-				}break;
-				case VK_SPACE: {
-
-					ReleaseCapture();
-					return 0;
-
-				}break;
-				case 'v': case 'V':{
-
-					enableVerticalSync(!g_enableVerticalSync);
-				    return 0;
-					
-				}break;
-				case '1':{
-							 if (active[0] == 1.0) active[0] = 0.0;
-							 else  active[0] = 1.0;
-				}break;
-				case '2':{
-							 if (active[1] == 1.0) active[1] = 0.0;
-							 else  active[1] = 1.0;
-				}break;
-				case VK_OEM_PLUS:{
-								
-								heighscale = heighscale + 0.01;
-								
-				}break;
-				case VK_OEM_MINUS:{
-									 heighscale = heighscale - 0.01;
-									// if (heighscale < 0) heighscale = 0.0f;
-									
-				}break;
-				case VK_ADD:{
-
-									 degree = degree + 0.01;
-				}break;
-				case VK_SUBTRACT:{
-									  degree = degree - 0.01;
-									 
-				}break;
-				case VK_RETURN:{
-									 degree = 0.0;
-
-				}break;
-				case 'r':case 'R':{
-							 if (rotate) rotate = false;
-							 else  rotate = true;
-							 
-				}break;
-				case 'b':case 'B':{
-							 if (shadow) shadow = false;
-							 else  shadow = true;
-
-				}break;
-				case 'K' : {
-							   tile = tile + 0.1;
-
-				}break;
-				case 'L': {
-							  tile = tile - 0.1;
-
-				}break;
-				return 0;
-			}break;
-
-			return 0;
-		}break;
-
-		case WM_SIZE:{
-
-			int height2 = HIWORD(lParam);		// retrieve width and height
-			int width2 = LOWORD(lParam);
-
-			if (height2 == 0){					// avoid divide by zero
-				
-					 height2 = 1;
+				glUseProgram(objects[j]->m_shader[i]->m_program);
+				objects[j]->m_shader[i]->loadMatrix("u_projection", camera->getProjectionMatrix());
+				glUseProgram(0);
 			}
-						 
-			glViewport(0, 0, width2, height2);
-			camera->perspective(45.0f, (GLfloat)width2 / (GLfloat)height2, 1.0f, 2000.0f);
-
-			for (int j = 0; j < objects.size(); j++){
-
-				for (int i = 0; i < objects[j]->m_model->numberOfMeshes(); i++){
-
-					glUseProgram(objects[j]->m_shader[i]->m_program);
-					objects[j]->m_shader[i]->loadMatrix("u_projection", camera->getProjectionMatrix());
-					glUseProgram(0);
-				}
-			}
+		}
 
 
-			return 0;
-		}break;
-	
-		default:
-		 break;
-    }
+		return 0;
+	}break;
+
+	default:
+		break;
+	}
 	return (DefWindowProc(hWnd, message, wParam, lParam));
 }
 
@@ -362,21 +357,21 @@ void initApp(HWND hWnd)
 	SetPixelFormat(hDC, nPixelFormat, &pfd);		// set pixel format to device context
 
 
-	// create rendering context and make it current
+													// create rendering context and make it current
 	hRC = wglCreateContext(hDC);
 	wglMakeCurrent(hDC, hRC);
 	enableVerticalSync(true);
 
-	
+
 	camera->perspective(45.0f, (GLfloat)width / (GLfloat)height, 1.0f, 2000.0f);
-	
+
 
 	glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
-	
-	glEnable(GL_DEPTH_TEST);					// hidden surface removal
-	//glEnable(GL_CULL_FACE);						// do not calculate inside of poly's
 
-	
+	glEnable(GL_DEPTH_TEST);					// hidden surface removal
+												//glEnable(GL_CULL_FACE);						// do not calculate inside of poly's
+
+
 
 	LightSource light;
 
@@ -405,9 +400,9 @@ void initApp(HWND hWnd)
 	object->initModel("objs/Teapot/teapot.obj");
 	object->initShader("shader/phongTexture.vert", "shader/phongTexture.frag");
 	object->m_model->setRotPos(Vector3f(0.0, 1.0, 0.0), -45.0, -100.0, 0.0, 0.0);
-	
+
 	objects.push_back(object);
-	
+
 	object = new Object();
 	object->initModel("objs/Teapot/teapot.obj");
 	object->initShader();
@@ -419,7 +414,7 @@ void initApp(HWND hWnd)
 	object->initModel("objs/Teapot/teapot.obj");
 	object->initShader(new EnvironmentMap("shader/envmap.vert", "shader/envmap.frag", skyBox->m_cubemap));
 	object->m_model->setRotPos(Vector3f(0.0, 1.0, 0.0), -45.0, 100.0, 0.0, 0.0);
-	
+
 	objects.push_back(object);
 
 	object = new Object();
@@ -432,9 +427,9 @@ void initApp(HWND hWnd)
 
 	objects.push_back(object);
 
-	for (int j = 0; j < objects.size(); j++){
+	for (int j = 0; j < objects.size(); j++) {
 
-		for (int i = 0; i < objects[j]->m_model->numberOfMeshes(); i++){
+		for (int i = 0; i < objects[j]->m_model->numberOfMeshes(); i++) {
 
 			glUseProgram(objects[j]->m_shader[i]->m_program);
 			objects[j]->m_shader[i]->loadMatrix("u_projection", camera->getProjectionMatrix());
@@ -444,7 +439,7 @@ void initApp(HWND hWnd)
 	}
 }
 
-void setCursortoMiddle(HWND hwnd){
+void setCursortoMiddle(HWND hwnd) {
 
 	RECT rect;
 
@@ -452,7 +447,7 @@ void setCursortoMiddle(HWND hwnd){
 	SetCursorPos(rect.right / 2, rect.bottom / 2);
 
 }
-void enableVerticalSync(bool enableVerticalSync){
+void enableVerticalSync(bool enableVerticalSync) {
 
 	// WGL_EXT_swap_control.
 
@@ -460,7 +455,7 @@ void enableVerticalSync(bool enableVerticalSync){
 
 	static PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT =
 		reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>(
-		wglGetProcAddress("wglSwapIntervalEXT"));
+			wglGetProcAddress("wglSwapIntervalEXT"));
 
 	if (wglSwapIntervalEXT)
 	{
@@ -470,54 +465,54 @@ void enableVerticalSync(bool enableVerticalSync){
 }
 
 
-void processInput(HWND hWnd ){
+void processInput(HWND hWnd) {
 
-    static UCHAR pKeyBuffer[ 256 ];
-    ULONG        Direction = 0;
-    POINT        CursorPos;
-    float        X = 0.0f, Y = 0.0f;
+	static UCHAR pKeyBuffer[256];
+	ULONG        Direction = 0;
+	POINT        CursorPos;
+	float        X = 0.0f, Y = 0.0f;
 
-    // Retrieve keyboard state
-    if ( !GetKeyboardState( pKeyBuffer ) ) return;
+	// Retrieve keyboard state
+	if (!GetKeyboardState(pKeyBuffer)) return;
 
 	// Check the relevant keys
-    if ( pKeyBuffer['W'] & 0xF0 ) Direction |= DIR_FORWARD;
-    if ( pKeyBuffer['S'] & 0xF0 ) Direction |= DIR_BACKWARD;
-    if ( pKeyBuffer['A'] & 0xF0 ) Direction |= DIR_LEFT;
-    if ( pKeyBuffer['D'] & 0xF0 ) Direction |= DIR_RIGHT;
-    if ( pKeyBuffer['E'] & 0xF0 ) Direction |= DIR_UP;
-    if ( pKeyBuffer['Q'] & 0xF0 ) Direction |= DIR_DOWN;
+	if (pKeyBuffer['W'] & 0xF0) Direction |= DIR_FORWARD;
+	if (pKeyBuffer['S'] & 0xF0) Direction |= DIR_BACKWARD;
+	if (pKeyBuffer['A'] & 0xF0) Direction |= DIR_LEFT;
+	if (pKeyBuffer['D'] & 0xF0) Direction |= DIR_RIGHT;
+	if (pKeyBuffer['E'] & 0xF0) Direction |= DIR_UP;
+	if (pKeyBuffer['Q'] & 0xF0) Direction |= DIR_DOWN;
 
-	 // Now process the mouse (if the button is pressed)
-    if ( GetCapture() == hWnd )
-    {
-        // Hide the mouse pointer
-        SetCursor( NULL );
+	// Now process the mouse (if the button is pressed)
+	if (GetCapture() == hWnd)
+	{
+		// Hide the mouse pointer
+		SetCursor(NULL);
 
-        // Retrieve the cursor position
-        GetCursorPos( &CursorPos );
+		// Retrieve the cursor position
+		GetCursorPos(&CursorPos);
 
-        // Calculate mouse rotational values
+		// Calculate mouse rotational values
 		X = (float)(g_OldCursorPos.x - CursorPos.x) * 0.1;
 		Y = (float)(g_OldCursorPos.y - CursorPos.y) * 0.1;
 
-        // Reset our cursor position so we can keep going forever :)
-        SetCursorPos( g_OldCursorPos.x, g_OldCursorPos.y );
+		// Reset our cursor position so we can keep going forever :)
+		SetCursorPos(g_OldCursorPos.x, g_OldCursorPos.y);
 
-		if ( Direction > 0 || X != 0.0f || Y != 0.0f )
+		if (Direction > 0 || X != 0.0f || Y != 0.0f)
 		{
 			// Rotate camera
-			if ( X || Y ) 
+			if (X || Y)
 			{
-				camera->rotate( X, Y, 0.0f );
-            
-        
+				camera->rotate(X, Y, 0.0f);
+
+
 			} // End if any rotation
 
 
-			if ( Direction ) {
-				
-				float dx=0,dy=0,dz=0, speed = 0.8;
+			if (Direction) {
+
+				float dx = 0, dy = 0, dz = 0, speed = 0.8;
 
 				if (Direction & DIR_FORWARD) dz = speed;
 				if (Direction & DIR_BACKWARD) dz = -speed;
@@ -526,10 +521,10 @@ void processInput(HWND hWnd ){
 				if (Direction & DIR_UP) dy = speed;
 				if (Direction & DIR_DOWN) dy = -speed;
 
-				camera->move(dx,dy,dz);
+				camera->move(dx, dy, dz);
 
-			} 
-	
+			}
+
 		}// End if any movement
 	} // End if Captured
 }
@@ -537,47 +532,47 @@ void processInput(HWND hWnd ){
 
 
 
-void render(){
-	
+void render() {
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	objects[1]->m_model->rotate(Vector3f(1.0, 0.0, 0.0).normalize(), degree);
-	for (int j = 0; j < objects.size(); j++){
+	for (int j = 0; j < objects.size(); j++) {
 
-		modelView = camera->getViewMatrix() * objects[j]->m_model->getTransformationMatrix();
-		if (rotate){
+		modelView = objects[j]->m_model->getTransformationMatrix() * camera->getViewMatrix() ;
+		if (rotate) {
 			modelLight.rotate(Vector3f(0.0, 1.0, 0.0), -0.3);
 		}
 
-		
-		if (j != objects.size() - 1 ){
+
+		if (j != objects.size() - 1) {
 			objects[j]->m_model->rotate(Vector3f(0.0, 1.0, 0.0).normalize(), degree);
 		}
-		
 
-		for (int i = 0; i < objects[j]->m_model->numberOfMeshes(); i++){
-		
-			
+
+		for (int i = 0; i < objects[j]->m_model->numberOfMeshes(); i++) {
+
+
 
 			glUseProgram(objects[j]->m_shader[i]->m_program);
 
 			objects[j]->m_shader[i]->loadFloat("u_heighScale", heighscale);
 			objects[j]->m_shader[i]->loadFloat("u_tile", tile);
-			objects[j]->m_shader[i]->loadFloat2("active",  active);
+			objects[j]->m_shader[i]->loadFloat2("active", active);
 			objects[j]->m_shader[i]->loadBool("u_shadow", shadow);
 
 			objects[j]->m_shader[i]->loadMatrix("u_modelView", modelView);
 			objects[j]->m_shader[i]->loadMatrix("u_model", objects[j]->m_model->getTransformationMatrix());
-			objects[j]->m_shader[i]->loadMatrix("u_normalMatrix", getNormalMatrix(modelView));
-			objects[j]->m_shader[i]->loadMatrix("u_modelViewLight", camera->getViewMatrix() * modelLight.getTransformationMatrix());
+			objects[j]->m_shader[i]->loadMatrix("u_normalMatrix", Matrix4f::getNormalMatrix(modelView));
+			objects[j]->m_shader[i]->loadMatrix("u_modelViewLight", modelLight.getTransformationMatrix() * camera->getViewMatrix());
 
 			objects[j]->m_shader[i]->loadMatrix("u_view", camera->getViewMatrix());
-			
-			
+
+
 			glBindBuffer(GL_ARRAY_BUFFER, objects[j]->m_model->getMesches()[i]->getVertexName());
 
-		
 
-			objects[j]->m_shader[i]->bindAttributes(objects[j]->m_model->getMesches()[i]);
+
+			objects[j]->m_shader[i]->bindAttributes(objects[j]->m_model->getMesches()[i], NULL);
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objects[j]->m_model->getMesches()[i]->getIndexName());
 			glDrawElements(GL_TRIANGLES, objects[j]->m_model->getMesches()[i]->getNumberOfTriangles() * 3, GL_UNSIGNED_INT, 0);
@@ -589,49 +584,12 @@ void render(){
 
 			glUseProgram(0);
 		}
-		
+
 	}
-	
+
 	skyBox->render();
 
-	
-}
-
-
-Matrix4f &getNormalMatrix(const Matrix4f &modelViewMatrix){
-
-	Matrix4f normalMatrix;
-	float det;
-	float invDet;
-
-	det = modelViewMatrix[0][0] * (modelViewMatrix[1][1] * modelViewMatrix[2][2] - modelViewMatrix[2][1] * modelViewMatrix[1][2]) +
-		  modelViewMatrix[1][0] * (modelViewMatrix[2][1] * modelViewMatrix[0][2] - modelViewMatrix[2][2] * modelViewMatrix[0][1]) +
-		  modelViewMatrix[2][0] * (modelViewMatrix[0][1] * modelViewMatrix[1][2] - modelViewMatrix[1][1] * modelViewMatrix[0][2]);
-
-	invDet = 1.0 / det;
-
-
-	normalMatrix[0][0] = (modelViewMatrix[1][1] * modelViewMatrix[2][2] - modelViewMatrix[2][1] * modelViewMatrix[1][2]) * invDet;
-	normalMatrix[1][0] = (modelViewMatrix[2][1] * modelViewMatrix[0][2] - modelViewMatrix[2][2] * modelViewMatrix[0][1]) * invDet;
-	normalMatrix[2][0] = (modelViewMatrix[0][1] * modelViewMatrix[1][2] - modelViewMatrix[1][1] * modelViewMatrix[0][2]) * invDet;
-	normalMatrix[3][0] = 0.0;
-
-	normalMatrix[0][1] = (modelViewMatrix[2][0] * modelViewMatrix[1][2] - modelViewMatrix[1][0] * modelViewMatrix[2][2]) * invDet;
-	normalMatrix[1][1] = (modelViewMatrix[0][0] * modelViewMatrix[2][2] - modelViewMatrix[2][0] * modelViewMatrix[0][2]) * invDet;
-	normalMatrix[2][1] = (modelViewMatrix[1][0] * modelViewMatrix[0][2] - modelViewMatrix[1][2] * modelViewMatrix[0][0]) * invDet;
-	normalMatrix[3][1] = 0.0;
-
-	normalMatrix[0][2] = (modelViewMatrix[1][0] * modelViewMatrix[2][1] - modelViewMatrix[1][1] * modelViewMatrix[2][0]) * invDet;
-	normalMatrix[1][2] = (modelViewMatrix[2][0] * modelViewMatrix[0][1] - modelViewMatrix[0][0] * modelViewMatrix[2][1]) * invDet;
-	normalMatrix[2][2] = (modelViewMatrix[0][0] * modelViewMatrix[1][1] - modelViewMatrix[0][1] * modelViewMatrix[1][0]) * invDet;
-	normalMatrix[3][2] = 0.0;
-
-	normalMatrix[0][3] = 0.0;
-	normalMatrix[1][3] = 0.0;
-	normalMatrix[2][3] = 0.0;
-	normalMatrix[3][3] = 1.0;
-
-	return normalMatrix;
-
 
 }
+
+

@@ -18,6 +18,11 @@ public:
 	void scale(float a, float b, float c);
 	void setRotPos(const Vector3f &axis, float degrees, float dx, float dy, float dz);
 
+	void setRotXYZPos(const Vector3f &axisX, float degreesX, 
+					  const Vector3f &axisY, float degreesY,
+					  const Vector3f &axisZ, float degreesZ,
+					  float dx, float dy, float dz);
+
 	Matrix4f orientation;
 	Vector3f position;
 
@@ -26,6 +31,7 @@ private:
 	Matrix4f startOrientation;
 	Vector3f startPosition;
 	bool pos;
+	bool posRot;
 
 	Matrix4f T;
 	Matrix4f invT;

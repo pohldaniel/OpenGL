@@ -17,7 +17,7 @@ struct Material{
 uniform LightSource light[2];
 uniform Material material;
 uniform float active[2];
-uniform sampler2D u_texture;
+uniform sampler2D u_textureColor;
 uniform sampler2D u_textureNormal;
 uniform samplerCube u_cubeMap;
 uniform vec3 u_camPos;
@@ -85,15 +85,3 @@ void main(void){
 	}
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-

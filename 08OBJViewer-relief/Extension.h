@@ -13,6 +13,9 @@ extern "C" {
 #define GL_BGR							  0x80E0
 #define GL_BGRA                           0x80E1
 #define GL_CLAMP_TO_EDGE                  0x812F
+#define GL_R8                             0x8229
+#define GL_RGB32F_ARB					  0x8815
+#define GL_RG							  0x8227
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // OpenGL 1.4
 //
@@ -24,6 +27,10 @@ extern "C" {
 #define GL_TEXTURE1						  0x84C1
 #define GL_TEXTURE2						  0x84C2
 #define	GL_TEXTURE3						  0x84C3
+#define GL_TEXTURE4						  0x84C4
+#define GL_TEXTURE5                       0x84C5
+#define GL_TEXTURE6                       0x84C6
+#define GL_TEXTURE7                       0x84C7
 #define GL_TEXTURE_CUBE_MAP               0x8513
 #define GL_TEXTURE_BINDING_CUBE_MAP       0x8514
 #define GL_TEXTURE_CUBE_MAP_POSITIVE_X    0x8515
@@ -32,6 +39,11 @@ extern "C" {
 #define GL_TEXTURE_CUBE_MAP_NEGATIVE_Y    0x8518
 #define GL_TEXTURE_CUBE_MAP_POSITIVE_Z    0x8519
 #define GL_TEXTURE_CUBE_MAP_NEGATIVE_Z    0x851A
+#define GL_DEPTH_COMPONENT24			  0x81A6
+#define GL_DEPTH_COMPONENT32F             0x8CAC
+#define GL_TEXTURE_COMPARE_MODE           0x884C
+#define GL_COMPARE_REF_TO_TEXTURE         0x884E
+#define GL_TEXTURE_COMPARE_FUNC           0x884D
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // OpenGL 1.5
 //
@@ -84,6 +96,10 @@ typedef char GLchar;
 	extern void glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *pointer);
 	extern void glDisableVertexAttribArray(GLuint index);
 	extern void glUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+
+	extern void glUniform2f(GLint location, GLfloat v0, GLfloat v1);
+	extern void glUniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
+
 	extern void glUniform1fv(GLint location, GLsizei count, const GLfloat *value);
 	extern void glUniform3fv(GLint location, GLsizei count, const GLfloat *value);
 	extern void glUniform4fv(GLint location, GLsizei count, const GLfloat *value);

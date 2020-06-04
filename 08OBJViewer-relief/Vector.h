@@ -45,8 +45,7 @@ private:
 
 };
 
-class Vector3f
-{
+class Vector3f{
 
     friend Vector3f operator-(const Vector3f &v);
 	friend bool operator ==(Vector3f lhs, Vector3f rhs);
@@ -105,11 +104,13 @@ private:
 };
 
 
-class Matrix4f
-{
+class Matrix4f{
+
 	friend Vector3f operator*(const Vector4f &lhs, const Matrix4f &rhs);
 	friend Vector3f operator*(const Matrix4f &rhs, const Vector4f &lhs);
 	friend Vector3f operator*(const Vector3f &lhs, const Matrix4f &rhs);
+	friend Vector3f operator*(const Matrix4f &lhs, const Vector3f &rhs);
+	friend Vector4f operator^(const Matrix4f &lhs, const Vector4f &rhs);
 	friend Matrix4f operator*(float scalar, const Matrix4f &rhs);
 
 public:
@@ -127,18 +128,36 @@ public:
 	float *operator[](int row);
 	const float *operator[](int row) const;
 	Matrix4f &operator*=(const Matrix4f &rhs);
+	Matrix4f &operator^=(const Matrix4f &rhs);
 	Matrix4f operator*(const Matrix4f &rhs) const;
+	Matrix4f operator^(const Matrix4f &rhs) const;
+	Matrix4f transpose();
 
 	void identity();
 	void rotate(const Vector3f &axis, float degrees);
 	void invRotate(const Vector3f &axis, float degrees);
+	void translate(float dx, float dy, float dz);
 	void invTranslate(float dx, float dy, float dz);
+	void scale(float a, float b, float c);
 	void invScale(float a, float b, float c);
+	void perspective(float fovx, float aspect, float znear, float zfar);
+	void orthographic(float left, float right, float bottom, float top, float znear, float zfar);
+	void perspectiveD3D(float fovx, float aspect, float znear, float zfar);
+	void linearPerspectiveD3D(float fovx, float aspect, float znear, float zfar);
+	void invPerspective(float fovx, float aspect, float znear, float zfar);
+	void lookAt(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
+	void invLookAt(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
+	
 
+	static Matrix4f &getNormalMatrix(const Matrix4f &modelViewMatrix);
+	static void transpose(Matrix4f &p);
 
 private:
 	float mtx[4][4];
 };
+
+
+
 
 #endif
 
