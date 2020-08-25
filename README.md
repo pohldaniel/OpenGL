@@ -6,7 +6,7 @@ I used tinyxml https://github.com/vmayoral/tinyxml, parts of stb https://github.
 
 Output from 12ColladaViewer-animation
 
-![ColladaDemo](https://user-images.githubusercontent.com/30089026/91202131-a7895400-e701-11ea-896a-6fa261c285c0.jpg)
+![ColladaDemo](https://user-images.githubusercontent.com/30089026/91202213-c25bc880-e701-11ea-8428-cf27d5e33620.jpg)
 
 Output from 07OBJViewer-normalMap
 
