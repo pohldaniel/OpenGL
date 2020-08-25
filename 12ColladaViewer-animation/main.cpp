@@ -81,13 +81,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	MoveWindow(GetConsoleWindow(), 740, 0, 550, 200, true);
 	std::cout << "w, a, s, d, mouse : move camera" << std::endl;
+	std::cout << "space             : release capture" << std::endl;
 	/*std::cout << "1, 2              : disable/enable lightsource" << std::endl;
 	std::cout << "r                 : rotate light" << std::endl;
 	std::cout << "v                 : disable/enable vsync" << std::endl;
 	std::cout << "-, +              : decrease/increase displacement intensity" << std::endl;
 	std::cout << "numpad - +        : rotate objeckts" << std::endl;
-	std::cout << "return            : stop rotating objeckts" << std::endl;
-	std::cout << "space             : release capture" << std::endl;
+	std::cout << "return            : stop rotating objeckts" << std::endl;	
 	std::cout << "b                 : shadows" << std::endl;
 	std::cout << "k, l              : texture tile" << std::endl;*/
 
