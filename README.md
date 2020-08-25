@@ -2,7 +2,7 @@
 
 Move the camera with 'w' 'a' 's' 'd' 'q' 'e' and mouse, release the capture with space. Activate lightspot with '1' and '2'.
 
-I used tinyxml https://github.com/vmayoral/tinyxml, parts of stb https://github.com/nothings/stb in particular stb_image.c and glm https://glm.g-truc.net/0.9.9/index.html for the project 12ColladaViewer-animation and do not own the copyright.
+I used tinyxml https://github.com/vmayoral/tinyxml, parts of stb https://github.com/nothings/stb in particular stb_image.c and glm https://glm.g-truc.net/0.9.9/index.html for the project 12ColladaViewer-animation and do not own the copyright. The cowboy model is from https://github.com/TheThinMatrix/OpenGL-Animation and I also do not own the copyright.
 
 Output from 12ColladaViewer-animation
 
