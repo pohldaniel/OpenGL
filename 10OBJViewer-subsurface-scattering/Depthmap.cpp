@@ -1,6 +1,6 @@
 #include "Depthmap.h"
 
-Depthmap::Depthmap(Camera* camera){
+Depthmap::Depthmap(Camera* camera) {
 
 	m_camera = camera;
 	
@@ -354,7 +354,11 @@ const Vector3f &Depthmap::getPosition() const{
 	return m_eye;
 }
 
+void Depthmap::setViewport(int width, int height) {
 
+	m_viewportWidth = width;
+	m_viewportHeight = height;
+}
 
 
 
@@ -391,7 +395,7 @@ void Depthmap::renderToDepthTexture(Object const* object){
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	glViewport(0, 0, viewportWidth, viewportHeight);
+	glViewport(0, 0, m_viewportWidth, m_viewportHeight);
 
 }
 
@@ -423,7 +427,7 @@ void Depthmap::renderToSingleChannel(Object const* object){
 
 	}
 	glDisable(GL_CULL_FACE);
-	glViewport(0, 0, viewportWidth, viewportHeight);
+	glViewport(0, 0, m_viewportWidth, m_viewportHeight);
 
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -474,7 +478,7 @@ void Depthmap::renderNormalMap(Object const* object){
 		
 	}
 	glDisable(GL_CULL_FACE);
-	glViewport(0, 0, viewportWidth, viewportHeight);
+	glViewport(0, 0, m_viewportWidth, m_viewportHeight);
 	
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -538,7 +542,7 @@ void Depthmap::renderIrradianceMap(Object const* object){
 
 	}
 	//glDisable(GL_CULL_FACE);
-	glViewport(0, 0, viewportWidth, viewportHeight);
+	glViewport(0, 0, m_viewportWidth, m_viewportHeight);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glUseProgram(0);
 

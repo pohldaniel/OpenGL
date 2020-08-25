@@ -33,6 +33,7 @@ public:
 	void renderNormalMap(Object const* object);
 	void renderToDepthTexture(Object const* object);
 	void renderToSingleChannel(Object const* object);
+	void setViewport(int width, int height);
 
 	const Matrix4f &getDepthPassMatrix() const;
 	const Matrix4f &getProjectionMatrix() const;
@@ -63,8 +64,8 @@ private :
 	unsigned int depthmapWidth = 512*2;
 	unsigned int depthmapHeight = 512*2;
 
-	unsigned int viewportWidth = 640;
-	unsigned int viewportHeight = 480;
+	unsigned int m_viewportWidth = 640;
+	unsigned int m_viewportHeight = 480;
 
 	unsigned int depthViewportWidth = 512*2;
 	unsigned int depthViewportHeight = 512*2;

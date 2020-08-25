@@ -34,13 +34,16 @@ enum DIRECTION {
 
 
 
-Depthmap * depthmap;
+Depthmap * depthmap = NULL;
 Camera* camera;
-Object *buddha;
+Object *model;
 Shader *sss;
 
 bool rotate = false;
 float degree = 0.0;
+float offset = 0.05;
+float thicknessScale = 0.5;
+float sssScale = 0.2;
 
 Matrix4f rot;
 Vector3f lightPos = Vector3f(0.0, 0.0, -8.0);
@@ -61,7 +64,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Vector3f xAxis(1, 0, 0);
 	Vector3f yAxis(0, 1, 0);
 	Vector3f zAxis(0, 0, 1);
-	Vector3f target(0.0, 0.0, -5.0);
+	Vector3f target(0.0, 0.2, -5.0);
 
 	Vector3f up(0.0, 1.0, 0.0);
 
@@ -79,6 +82,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::cout << "r                 : rotate light" << std::endl;
 	std::cout << "v                 : disable/enable vsync" << std::endl;
 	std::cout << "space             : release capture" << std::endl;
+	std::cout << "-, +              : decrease/increase thickness scale" << std::endl;
+	std::cout << "k, l              : decrease/increase sss scale" << std::endl;
 
 	WNDCLASSEX		windowClass;		// window class
 	HWND			hwnd;				// window handle
@@ -153,7 +158,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
     } // end while
 
-	delete buddha;
+	delete model;
 	return msg.wParam;
 }
 
@@ -218,12 +223,28 @@ LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 					
 				}break;
 				case VK_ADD:{
-
-									 degree = degree + 0.01;
+					offset = offset + 0.1;
+				
 				}break;
 				case VK_SUBTRACT:{
-									  degree = degree - 0.01;
-									 
+					offset = offset - 0.1;
+					
+				}break;
+				case VK_OEM_PLUS: {
+					thicknessScale = thicknessScale + 0.01;
+					std::cout << "thiknessScale: " << thicknessScale << std::endl;
+				}break;
+				case VK_OEM_MINUS: {
+					thicknessScale = thicknessScale - 0.01;
+					std::cout << "thiknessScale: " << thicknessScale << std::endl;
+				}break;
+				case 'K': {
+					sssScale = sssScale + 0.01;
+					std::cout << "sssScale: " << sssScale << std::endl;
+				}break;
+				case 'L': {
+					sssScale = sssScale - 0.01;
+					std::cout << "sssScale: " << sssScale << std::endl;
 				}break;
 				case VK_RETURN:{
 									 degree = 0.0;
@@ -250,7 +271,11 @@ LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 			}
 						 
 			glViewport(0, 0, width2, height2);
-						
+			camera->perspective(45.0f, (GLfloat)width2 / (GLfloat)height2, 1.0f, 2000.0f);
+
+			if (depthmap) {
+				depthmap->setViewport(width2, height2);
+			}
 			return 0;
 		}break;
 	
@@ -303,22 +328,33 @@ void initApp(HWND hWnd){
 	glEnable(GL_DEPTH_TEST);				
 	//glEnable(GL_CULL_FACE);				
 
-	buddha = new Object();
-	buddha->initModel("objs/buddha.obj");
+	model = new Object();
 
-	buddha->m_model->setRotXYZPos(Vector3f(0.0, 1.0, 0.0), 45.0,
+
+	////////////////////// Buddha ///////////////////////////////
+	model->initModel("objs/buddha.obj");
+	model->m_model->setRotXYZPos(Vector3f(0.0, 1.0, 0.0), 45.0,
 								  Vector3f(1.0, 0.0, 0.0), 270.0,
 								  Vector3f(0.0, 0.0, 1.0), 0.0,
 								  0.0, 0.0, 0.0);
-	buddha->m_model->scale(8.0, 8.0, 8.0);
+	model->m_model->scale(8.0 * 0.3, 8.0 * 0.3, 8.0* 0.3);
+
+	////////////////////// Dragon ///////////////////////////////
+	/*model->initModel("objs/dragon.obj");
+
+	model->m_model->translate(0.0, 0.0, 4.0);
+	//model->m_model->rotate(Vector3f(1.0, 0.0, 0.0), 90.0);
+	model->m_model->scale(8.0 , 8.0, 8.0);*/
+	
 
 	depthmap = new Depthmap(camera);
+	depthmap->setViewport(width, height);
 	depthmap->setProjectionMatrix(45.0f, 1.0, 1.0f, 100.0f);
 	
 	rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
-	depthmap->setViewMatrix(rot * lightPos, buddha->m_model->getTransformationMatrix() * buddha->m_model->getCenter(), Vector3f(0.0, 1.0, 0.0));
-	depthmap->renderToDepthTexture(buddha);
-	depthmap->renderToSingleChannel(buddha);
+	depthmap->setViewMatrix(rot * lightPos, model->m_model->getTransformationMatrix() * model->m_model->getCenter(), Vector3f(0.0, 1.0, 0.0));
+	depthmap->renderToDepthTexture(model);
+	depthmap->renderToSingleChannel(model);
 	
 	sss = new Shader("shader/sss.vert", "shader/sss.frag");
 }
@@ -417,11 +453,11 @@ void processInput(HWND hWnd ){
 void render(){
 	
 	if (rotate){
-		degree = degree + 0.05;
+		degree = degree + offset;
 		rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
-		depthmap->setViewMatrix(rot * lightPos, buddha->m_model->getTransformationMatrix() * buddha->m_model->getCenter(), Vector3f(0.0, 1.0, 0.0));
-		depthmap->renderToDepthTexture(buddha);
-		depthmap->renderToSingleChannel(buddha);
+		depthmap->setViewMatrix(rot * lightPos, model->m_model->getTransformationMatrix() * model->m_model->getCenter(), Vector3f(0.0, 1.0, 0.0));
+		depthmap->renderToDepthTexture(model);
+		//depthmap->renderToSingleChannel(model);
 	}
 	
 	glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
@@ -430,28 +466,31 @@ void render(){
 	glUseProgram(sss->m_program);
 
 	sss->loadMatrix("u_projection", camera->getProjectionMatrix());
-	sss->loadMatrix("u_model", buddha->m_model->getTransformationMatrix());
+	sss->loadMatrix("u_model", model->m_model->getTransformationMatrix());
 	sss->loadMatrix("u_view", camera->getViewMatrix());
-	sss->loadMatrix("u_modelView", buddha->m_model->getTransformationMatrix() * camera->getViewMatrix());
-	sss->loadMatrix("u_normalMatrix", Matrix4f::getNormalMatrix( buddha->m_model->getTransformationMatrix() * camera->getViewMatrix()));
+	sss->loadMatrix("u_modelView", model->m_model->getTransformationMatrix() * camera->getViewMatrix());
+	sss->loadMatrix("u_normalMatrix", Matrix4f::getNormalMatrix(model->m_model->getTransformationMatrix() * camera->getViewMatrix()));
 	sss->loadMatrix("u_viewShadow", depthmap->getViewMatrix());
-	sss->loadMatrix("u_projectionShadow", depthmap->getDepthPassMatrix());
-	sss->loadVector("light_pos", depthmap->getPosition());
-	sss->loadVector("light_pos2", lightPos);
-	
-		for (int i = 0; i < buddha->m_model->numberOfMeshes(); i++){
+	sss->loadMatrix("u_projectionShadowBias", depthmap->getDepthPassMatrix());
+	sss->loadMatrix("u_projectionShadow", depthmap->getProjectionMatrix());
+	sss->loadMatrix("u_projectionShadowD3D", depthmap->getProjectionMatrixD3D());
+	sss->loadVector("u_lightPos", depthmap->getPosition());
+	sss->loadFloat("u_thicknessScale", thicknessScale);
+	sss->loadFloat("u_sssScale", sssScale);
 
-			glBindBuffer(GL_ARRAY_BUFFER, buddha->m_model->getMesches()[i]->getVertexName());
+		for (int i = 0; i < model->m_model->numberOfMeshes(); i++){
+
+			glBindBuffer(GL_ARRAY_BUFFER, model->m_model->getMesches()[i]->getVertexName());
 
 			//sss->bindAttributes(buddha->m_model->getMesches()[i], depthmap->singleChannelTexture);
-			sss->bindAttributes(buddha->m_model->getMesches()[i], depthmap->depthmapTexture);
+			sss->bindAttributes(model->m_model->getMesches()[i], depthmap->depthmapTexture);
 			
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buddha->m_model->getMesches()[i]->getIndexName());
-			glDrawElements(GL_TRIANGLES, buddha->m_model->getMesches()[i]->getNumberOfTriangles() * 3, GL_UNSIGNED_INT, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model->m_model->getMesches()[i]->getIndexName());
+			glDrawElements(GL_TRIANGLES, model->m_model->getMesches()[i]->getNumberOfTriangles() * 3, GL_UNSIGNED_INT, 0);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-			sss->unbindAttributes(buddha->m_model->getMesches()[i]);
+			sss->unbindAttributes(model->m_model->getMesches()[i]);
 
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 

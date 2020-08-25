@@ -6,6 +6,8 @@
 
 uniform float near = 1.0; 
 uniform float far  = 100.0; 
+uniform float u_thicknessScale = 0.5;
+uniform float u_sssScale = 0.2;
 
 uniform sampler2D u_texture;
 
@@ -26,7 +28,7 @@ varying vec3 frag_eye_dir;
 varying vec3 frag_eye_normal;
 varying vec3 frag_eye_light_normal;
 varying vec3 frag_eye_light_pos;
-varying vec3 frag_eye_light_pos2;
+
 varying vec4 sc;
 
 float saturate(float val) {
@@ -85,38 +87,49 @@ vec4 sss(float thickness, float attentuation) {
 
 float getDepthPassSpaceZ(float zWC, float near, float far){
 
-	// Assume standard depth range [0..1]
+	// Assume standard opengl depth range [0..1]
     float z_n = 2.0 * zWC - 1.0;
-    float z_e =  (2.0 * near * far) / (far + near + z_n * (near - far));	//[near, far]
+    float z_e = (2.0 * near * far) / (far + near + z_n * (near - far));	//[near, far]
 
 	//divided by far to get the range [near/far, 1.0] just for visualisation
-	//float z_e =  (2.0 * near) / (far + near + z_n * (near - far));	
+	//float z_e = (2.0 * near) / (far + near + z_n * (near - far));	
+
+	return z_e;
+}
+
+float getDepthPassSpaceZD3D(float zWC, float near, float far){
+
+    float z_e = (near * far) / (far + zWC * (near - far));	//[near, far]
+
+	//divided by far to get the range [near/far, 1.0] just for visualisation
+	//float z_e = near / (far + zWC * (near - far));	
 
 	return z_e;
 }
 
 void main(){
 
-	
-
-
-   vec4 scPostW = sc/sc.w;
-   float zIn =  texture2D(u_texture, scPostW.xy ).r;
-   float zOut = scPostW.z;
+   //vec4 scPostW = (sc/sc.w);
+   //float zIn =  texture2D(u_texture, sc.xy).r;
+   float zIn =  textureProj(u_texture, sc).r;
+   float zOut = sc.z /sc.w;
 
    zIn = getDepthPassSpaceZ(zIn, 1.0, 100.0);
    zOut = getDepthPassSpaceZ(zOut, 1.0, 100.0);
+
+   //zIn = getDepthPassSpaceZD3D(zIn, 1.0, 100.0);
+   //zOut = getDepthPassSpaceZD3D(zOut, 1.0, 100.0);
 	
-   float thickness = (zOut - zIn )* 0.3;
+   float thickness = (zOut - zIn ) * u_thicknessScale;
    
-   thickness = (1.0 - thickness) *0.1;
+   thickness = (1.0 - thickness) * u_sssScale;
         
    vec3 light_dir = (frag_eye_light_pos - frag_eye_pos) / light_radius;
    float light_attentuation = max(1.0 - dot(light_dir, light_dir), 0.0); //1.0 / (CONSTANT_ATTENUATION + LINEAR_ATTENUATION * d + QUADRATIC_ATTENUATION * d * d);
    //light_attentuation = 0.6;
-   //vec3 phong_color = phong_shade(frag_eye_light_pos2, frag_eye_pos, frag_eye_normal, light_attentuation);
+   //vec3 phong_color = phong_shade(frag_eye_light_pos, frag_eye_pos, frag_eye_normal, light_attentuation);
    vec3 blinn_color = blinn_shade(frag_eye_light_pos, frag_eye_pos, frag_eye_normal, light_attentuation);
    gl_FragColor = (vec4(blinn_color, 1.0)) + sss(thickness, light_attentuation);
-   
+
    //gl_FragColor = vec4(thickness);
 }
