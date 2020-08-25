@@ -2,6 +2,8 @@
 
 Move the camera with 'w' 'a' 's' 'd' 'q' 'e' and mouse, release the capture with space. Activate lightspot with '1' and '2'.
 
+I used tinyxml https://github.com/vmayoral/tinyxml, parts of stb https://github.com/nothings/stb in particular stb_image.c and glm https://glm.g-truc.net/0.9.9/index.html for the project 12ColladaViewer-animation and do not own the copyright.
+
 Output from 12ColladaViewer-animation
 
 ![ColladaDemo](https://user-images.githubusercontent.com/30089026/91200887-0bab1880-e700-11ea-895a-5f831beefb95.jpg)
