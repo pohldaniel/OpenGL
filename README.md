@@ -2,6 +2,10 @@
 
 Move the camera with 'w' 'a' 's' 'd' 'q' 'e' and mouse, release the capture with space. Activate lightspot with '1' and '2'.
 
+Output from 12ColladaViewer-animation
+
+![ColladaDemo](https://user-images.githubusercontent.com/30089026/91200887-0bab1880-e700-11ea-895a-5f831beefb95.jpg)
+
 Output from 07OBJViewer-normalMap
 
 ![unbenannt1](https://user-images.githubusercontent.com/30089026/43673297-cea307bc-97c0-11e8-8418-d84cd3f4a1b3.jpg)
