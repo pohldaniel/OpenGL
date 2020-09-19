@@ -124,6 +124,7 @@ void Animator::startAnimation(const std::string & animationName){
 void Animator::addAnimation(const std::string &filename, const std::string &rootJoinName){
 
 	_animations.push_back(std::make_shared<Animation>(filename, rootJoinName));
+
 }
 
 
@@ -136,6 +137,9 @@ void Animator::Update(double elapsedTime){
 	}
 
 	std::unordered_map<std::string, glm::mat4> currentPose = calculateCurrentAnimationPose();
+
+	
+
 	_model->_meshes[0]->applyPoseToJoints(currentPose);
 	
 }
@@ -172,17 +176,18 @@ std::unordered_map<std::string, glm::mat4> Animator::calculateCurrentAnimationPo
 	while (it != previousFrame.pose.end()) {
 
 		std::string name = it->first;
-
+		
+	
 		glm::vec3 position = GetInterpolated(previousFrame.pose.at(name).positonKeys, nextFrame.pose.at(name).positonKeys, progression);
 		glm::vec3 scale = GetInterpolated(previousFrame.pose.at(name).scallingKeys, nextFrame.pose.at(name).scallingKeys, progression);
 		
 		/**Built in interpolation correspondents to the built in "glm::quat_cast function" at Animamtion.cpp*/
-		glm::quat rotation = glm::slerp(previousFrame.pose.at(name).rotationKeys, nextFrame.pose.at(name).rotationKeys, progression);
-		currentPose.insert(std::make_pair(name, glm::scale(scale) * glm::translate(position) *  glm::toMat4(rotation)));
+		//glm::quat rotation = glm::slerp(previousFrame.pose.at(name).rotationKeys, nextFrame.pose.at(name).rotationKeys, progression);
+		//currentPose.insert(std::make_pair(name, glm::scale(scale) * glm::translate(position) *  glm::toMat4(rotation)));
 
 		/**Custom interpolation correspondets to the custom "fromMatrix function" at Animation.cpp*/
-		//glm::quat rotation = interpolateQuat(previousFrame.pose.at(name).rotationKeys, nextFrame.pose.at(name).rotationKeys, progression);
-		//currentPose.insert(std::make_pair(name, glm::scale(scale) * glm::translate(position) * toRotationMatrix(rotation)));
+		glm::quat rotation = interpolateQuat(previousFrame.pose.at(name).rotationKeys, nextFrame.pose.at(name).rotationKeys, progression);
+		currentPose.insert(std::make_pair(name, glm::scale(scale) * glm::translate(position) * toRotationMatrix(rotation)));
 		it++;
 	}
 	return currentPose;

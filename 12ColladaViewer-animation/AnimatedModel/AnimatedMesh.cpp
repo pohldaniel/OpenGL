@@ -22,6 +22,8 @@ AnimatedMesh::AnimatedMesh(const std::string & _path) : path(_path) {
 	rootJoint = createJoints(skeletonData.headJoint);
 	rootJoint.calcInverseBindTransform(glm::mat4(1.0));
 
+	
+
 	Joint3 joint = rootJoint;
 	//Joint3 joint2 = rootJoint.children[0];
 	//Joint3 joint3 = rootJoint.children[0].children[0];
@@ -77,7 +79,7 @@ AnimatedMesh::AnimatedMesh(const std::string & _path) : path(_path) {
 }
 
 void AnimatedMesh::loadData(std::vector<glm::vec3> &_positions, std::vector<glm::vec2> &_texCoords, std::vector<glm::vec3> &_normals, std::vector<glm::uvec4> &_jointIds, std::vector<glm::vec4> &_jointWeights, std::vector<unsigned int> &_indices) {
-	
+
 	glm::mat4 CORRECTION = glm::mat4(1.0f);
 	CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
@@ -87,7 +89,7 @@ void AnimatedMesh::loadData(std::vector<glm::vec3> &_positions, std::vector<glm:
 	std::vector<glm::uvec4> jointIds;
 	std::vector<glm::vec4> jointWeights;
 	std::vector<unsigned int> indices;
-	
+
 	int prim_count, num_indices, pos_count, norm_count, tex_count, numberOfTriangles;
 	bool hasPositions, hasNormals, hasTexCoords;
 
@@ -95,7 +97,7 @@ void AnimatedMesh::loadData(std::vector<glm::vec3> &_positions, std::vector<glm:
 	doc.LoadFile();
 	TiXmlElement* geometry = doc.RootElement()->FirstChildElement("library_geometries")->FirstChildElement("geometry");
 	TiXmlElement* mesh = geometry->FirstChildElement("mesh");
-	
+
 
 	TiXmlElement* primitives = mesh->FirstChildElement("triangles");
 	primitives->QueryIntAttribute("count", &prim_count);
@@ -141,7 +143,7 @@ void AnimatedMesh::loadData(std::vector<glm::vec3> &_positions, std::vector<glm:
 			glm::vec4 position = CORRECTION * glm::vec4(x, y, z, 1.0);
 			positions.push_back(glm::vec3(position[0], position[1], position[2]));
 
-		
+
 
 			for (unsigned int index = 1; index < pos_count; index++) {
 				x = atof(strtok(NULL, " ")); y = atof(strtok(NULL, " ")); z = atof(strtok(NULL, " "));
@@ -152,7 +154,8 @@ void AnimatedMesh::loadData(std::vector<glm::vec3> &_positions, std::vector<glm:
 			hasPositions = false;
 			source = source->NextSiblingElement("source");
 			continue;
-		}else if (hasNormals) {
+		}
+		else if (hasNormals) {
 			floatArray = source->FirstChildElement("float_array");
 			text = (char*)(floatArray->GetText());
 			floatArray->QueryIntAttribute("count", &norm_count);
@@ -171,7 +174,8 @@ void AnimatedMesh::loadData(std::vector<glm::vec3> &_positions, std::vector<glm:
 			hasNormals = false;
 			source = source->NextSiblingElement("source");
 			continue;
-		}else if (hasTexCoords) {
+		}
+		else if (hasTexCoords) {
 			floatArray = source->FirstChildElement("float_array");
 			text = (char*)(floatArray->GetText());
 			floatArray->QueryIntAttribute("count", &tex_count);
@@ -191,7 +195,7 @@ void AnimatedMesh::loadData(std::vector<glm::vec3> &_positions, std::vector<glm:
 		}
 		source = source->NextSiblingElement("source");
 	}
-	
+
 	primitives->QueryIntAttribute("count", &numberOfTriangles);
 	TiXmlElement* p = primitives->FirstChildElement("p");
 
@@ -312,11 +316,11 @@ void AnimatedMesh::loadData(std::vector<glm::vec3> &_positions, std::vector<glm:
 		skinData.fill();
 		skinData.limitJointNumber(maxWeights);
 
-	
+
 		skinningData.push_back(skinData);
 	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 
 	m_indexBuffer.resize(numberOfTriangles * 3);
 
@@ -330,7 +334,7 @@ void AnimatedMesh::loadData(std::vector<glm::vec3> &_positions, std::vector<glm:
 			texCoords[indices[i * vertexstride + offsetTexcoords + offset * 0]][0], texCoords[indices[i * vertexstride + offsetTexcoords + offset * 0]][1],
 			skinningData[indices[i * vertexstride + offsetPositions + offset * 0]].jointIds[0], skinningData[indices[i * vertexstride + offsetPositions + offset * 0]].jointIds[1], skinningData[indices[i * vertexstride + offsetPositions + offset * 0]].jointIds[2],
 			skinningData[indices[i * vertexstride + offsetPositions + offset * 0]].weights[0] , skinningData[indices[i * vertexstride + offsetPositions + offset * 0]].weights[1] , skinningData[indices[i * vertexstride + offsetPositions + offset * 0]].weights[2]
-			};
+		};
 
 		m_indexBuffer[i * 3] = addVertex(indices[i * 3], &vertex1[0], 14);
 
@@ -339,27 +343,27 @@ void AnimatedMesh::loadData(std::vector<glm::vec3> &_positions, std::vector<glm:
 			texCoords[indices[i * vertexstride + offsetTexcoords + offset * 1]][0], texCoords[indices[i * vertexstride + offsetTexcoords + offset * 1]][1],
 			skinningData[indices[i * vertexstride + offsetPositions + offset * 1]].jointIds[0], skinningData[indices[i * vertexstride + offsetPositions + offset * 1]].jointIds[1], skinningData[indices[i * vertexstride + offsetPositions + offset * 1]].jointIds[2],
 			skinningData[indices[i * vertexstride + offsetPositions + offset * 1]].weights[0] , skinningData[indices[i * vertexstride + offsetPositions + offset * 1]].weights[1] , skinningData[indices[i * vertexstride + offsetPositions + offset * 1]].weights[2]
-			};
+		};
 
 		m_indexBuffer[i * 3 + 1] = addVertex(indices[i * 3 + 3], &vertex2[0], 14);
-		
+
 		float vertex3[] = { positions[indices[i * vertexstride + offsetPositions + offset * 2]][0], positions[indices[i * vertexstride + offsetPositions + offset * 2]][1], positions[indices[i * vertexstride + offsetPositions + offset * 2]][2],
 			normals[indices[i * vertexstride + offsetNormals + offset * 2]][0]  , normals[indices[i * vertexstride + offsetNormals + offset * 2]][1]  , normals[indices[i * 3 + offsetNormals + offset * 2]][2],
 			texCoords[indices[i * vertexstride + offsetTexcoords + offset * 2]][0], texCoords[indices[i * vertexstride + offsetTexcoords + offset * 2]][1],
 			skinningData[indices[i * vertexstride + offsetPositions + offset * 2]].jointIds[0], skinningData[indices[i * vertexstride + offsetPositions + offset * 2]].jointIds[1], skinningData[indices[i * vertexstride + offsetPositions + offset * 2]].jointIds[2],
 			skinningData[indices[i * vertexstride + offsetPositions + offset * 2]].weights[0] , skinningData[indices[i * vertexstride + offsetPositions + offset * 2]].weights[1] , skinningData[indices[i * vertexstride + offsetPositions + offset * 2]].weights[2]
-			};
+		};
 
 		m_indexBuffer[i * 3 + 2] = addVertex(indices[i * 3 + 6], &vertex3[0], 14);
 	}
-	
+
 	for (int i = 0; i < m_indexBuffer.size(); i++) {
 
-		glm::vec3 position    = glm::vec3 (m_vertexBuffer[m_indexBuffer[i] * 14],      m_vertexBuffer[m_indexBuffer[i] * 14 + 1],  m_vertexBuffer[m_indexBuffer[i] * 14 + 2]);
-		glm::vec3 normal	  = glm::vec3 (m_vertexBuffer[m_indexBuffer[i] * 14 + 3],  m_vertexBuffer[m_indexBuffer[i] * 14 + 4],  m_vertexBuffer[m_indexBuffer[i] * 14 + 5]);
-		glm::vec2 texCoord    = glm::vec2 (m_vertexBuffer[m_indexBuffer[i] * 14 + 6],  1.0 - m_vertexBuffer[m_indexBuffer[i] * 14 + 7]);
-		glm::uvec4 jointId    = glm::uvec4(m_vertexBuffer[m_indexBuffer[i] * 14 + 8],  m_vertexBuffer[m_indexBuffer[i] * 14 + 9],  m_vertexBuffer[m_indexBuffer[i] * 14 + 10], 0);
-		glm::vec4 jointWeight = glm::vec4 (m_vertexBuffer[m_indexBuffer[i] * 14 + 11], m_vertexBuffer[m_indexBuffer[i] * 14 + 12], m_vertexBuffer[m_indexBuffer[i] * 14 + 13], 0.0);
+		glm::vec3 position = glm::vec3(m_vertexBuffer[m_indexBuffer[i] * 14], m_vertexBuffer[m_indexBuffer[i] * 14 + 1], m_vertexBuffer[m_indexBuffer[i] * 14 + 2]);
+		glm::vec3 normal = glm::vec3(m_vertexBuffer[m_indexBuffer[i] * 14 + 3], m_vertexBuffer[m_indexBuffer[i] * 14 + 4], m_vertexBuffer[m_indexBuffer[i] * 14 + 5]);
+		glm::vec2 texCoord = glm::vec2(m_vertexBuffer[m_indexBuffer[i] * 14 + 6], 1.0 - m_vertexBuffer[m_indexBuffer[i] * 14 + 7]);
+		glm::uvec4 jointId = glm::uvec4(m_vertexBuffer[m_indexBuffer[i] * 14 + 8], m_vertexBuffer[m_indexBuffer[i] * 14 + 9], m_vertexBuffer[m_indexBuffer[i] * 14 + 10], 0);
+		glm::vec4 jointWeight = glm::vec4(m_vertexBuffer[m_indexBuffer[i] * 14 + 11], m_vertexBuffer[m_indexBuffer[i] * 14 + 12], m_vertexBuffer[m_indexBuffer[i] * 14 + 13], 0.0);
 
 		_positions.push_back(position);
 		_texCoords.push_back(texCoord);
@@ -381,7 +385,8 @@ int AnimatedMesh::addVertex(int hash, const float *pVertex, int numberOfBytes) {
 		m_vertexBuffer.insert(m_vertexBuffer.end(), pVertex, pVertex + numberOfBytes);
 		m_vertexCache.insert(std::make_pair(hash, std::vector<int>(1, index)));
 
-	}else {
+	}
+	else {
 		// One or more vertices have been hashed to this entry in the cache.
 		const std::vector<int> &vertices = iter->second;
 		const float *pCachedVertex = 0;
@@ -455,42 +460,45 @@ void AnimatedMesh::LoadJointsData(std::unordered_map<std::string, unsigned int> 
 
 		input = input->NextSiblingElement("input");
 	}
-	
+
 	TiXmlElement* rootNode = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node")->FirstChildElement("node");
-	
+
 	for (int i = 0; i < jointsList.size(); i++) {
 
-			std::string name = std::string(rootNode->Attribute("name"));
-			if (name.compare(jointsList[i]) == 0) {
-				char* text = (char*)rootNode->FirstChild()->FirstChild()->Value();
+		std::string name = std::string(rootNode->Attribute("sid"));
+		if (name.compare(jointsList[i]) == 0) {
+			char* text = (char*)rootNode->FirstChild()->FirstChild()->Value();
 
-				glm::mat4 offsetMatrix;
-				offsetMatrix[0][0] = atof(strtok(text, " "));
-				
-				short start = 1;
-				for (int i = 0; i < 4; i++) {
-					for (int j = start; j < 4; j++) {
-						offsetMatrix[i][j] = atof(strtok(NULL, " "));
-					}
-					start = 0;
+			glm::mat4 offsetMatrix;
+			offsetMatrix[0][0] = atof(strtok(text, " "));
+
+			short start = 1;
+			for (int i = 0; i < 4; i++) {
+				for (int j = start; j < 4; j++) {
+					offsetMatrix[i][j] = atof(strtok(NULL, " "));
 				}
+				start = 0;
+			}
 
-				offsetMatrix = glm::transpose(offsetMatrix);
-				offsetMatrix = CORRECTION * offsetMatrix;
+			offsetMatrix = glm::transpose(offsetMatrix);
+			offsetMatrix = CORRECTION * offsetMatrix;
 
-				BoneData data;
-				data.offsetMatrix = offsetMatrix;
+			BoneData data;
+			data.offsetMatrix = offsetMatrix;
 
-				boneIdMap.insert(std::make_pair(name, i));
-				boneDataMap.insert(std::make_pair(i, data));
+			boneIdMap.insert(std::make_pair(name, i));
+			boneDataMap.insert(std::make_pair(i, data));
 
-				continue;
+			continue;
 
-			}else {
-				
-				search(rootNode, jointsList[i], i, boneIdMap, boneDataMap);
-			}					
+		}
+		else {
+
+			search(rootNode, jointsList[i], i, boneIdMap, boneDataMap);
+		}
 	}
+
+	std::cout << boneIdMap.size() << "  " << boneDataMap.size() << std::endl;
 }
 
 void AnimatedMesh::LoadJointsData2() {
@@ -521,10 +529,10 @@ void AnimatedMesh::LoadJointsData2() {
 	offsetMatrix = glm::transpose(offsetMatrix);
 	offsetMatrix = CORRECTION * offsetMatrix;
 
-	std::string name = std::string(((TiXmlElement*)rootNode)->Attribute("name"));
+	std::string name = std::string(((TiXmlElement*)rootNode)->Attribute("sid"));
 	std::vector<std::string>::iterator it = std::find(jointsList.begin(), jointsList.end(), name);
 
-	skeletonData.headJoint = JointData(std::distance(jointsList.begin(), it), name, offsetMatrix);
+	skeletonData.headJoint = JointData(std::distance(jointsList.begin(), it), std::string(((TiXmlElement*)rootNode)->Attribute("id")), offsetMatrix);
 
 	TiXmlNode* nextNode = rootNode->FirstChildElement("node");
 	while (nextNode != NULL) {
@@ -543,11 +551,11 @@ void AnimatedMesh::search(TiXmlNode* node, std::string jointName, int index, std
 
 		if (std::string(child->Value()).compare("node") == 0) {
 
-			std::string name = std::string(((TiXmlElement*)child)->Attribute("name"));
-			
+			std::string name = std::string(((TiXmlElement*)child)->Attribute("sid"));
+
 			if (name.compare(jointName) == 0) {
 
-			
+
 
 				char* text = (char*)child->FirstChild()->FirstChild()->Value();
 				glm::mat4 offsetMatrix;
@@ -566,15 +574,16 @@ void AnimatedMesh::search(TiXmlNode* node, std::string jointName, int index, std
 
 				BoneData data;
 				data.offsetMatrix = offsetMatrix;
-				
+
 				boneIdMap.insert(std::make_pair(name, index));
 				boneDataMap.insert(std::make_pair(index, data));
 
-			}else {
+			}
+			else {
 				search(child, jointName, index, boneIdMap, boneDataMap);
 			}
-			
-		}		
+
+		}
 	}
 }
 
@@ -602,14 +611,14 @@ JointData AnimatedMesh::search(TiXmlNode* _node) {
 	offsetMatrix = glm::transpose(offsetMatrix);
 	offsetMatrix = CORRECTION * offsetMatrix;
 
-	std::string name = ((TiXmlElement*)node)->Attribute("name");
+	std::string name = ((TiXmlElement*)node)->Attribute("sid");
 	std::vector<std::string>::iterator it = std::find(jointsList.begin(), jointsList.end(), name);
 	data.index = std::distance(jointsList.begin(), it);
-	data.nameId = name;
+	data.nameId = ((TiXmlElement*)node)->Attribute("id");
 	data.bindLocalTransform = offsetMatrix;
 
 	TiXmlNode* nextNode = node->FirstChildElement("node");
-	while (nextNode) {		
+	while (nextNode) {
 		data.addChild(search(nextNode));
 		nextNode = nextNode->NextSiblingElement("node");
 	}
@@ -628,7 +637,7 @@ AnimatedMesh::~AnimatedMesh() {
 	glDeleteVertexArrays(1, &_vao);
 }
 
-void AnimatedMesh::Draw(){
+void AnimatedMesh::Draw() {
 
 	glBindVertexArray(_vao);
 	//glDrawArrays(GL_TRIANGLES, 0, _drawCount);
@@ -636,12 +645,12 @@ void AnimatedMesh::Draw(){
 	glBindVertexArray(0);
 }
 
-std::vector<glm::mat4> AnimatedMesh::GetBoneArray(){
+std::vector<glm::mat4> AnimatedMesh::GetBoneArray() {
 
 	std::vector<glm::mat4> boneArray;
 
 	boneArray.assign(_boneDataMap.size(), glm::mat4());
-	for (auto i : _boneDataMap){
+	for (auto i : _boneDataMap) {
 
 		boneArray[i.first] = i.second.finalTransformation;
 	}
@@ -665,7 +674,7 @@ void AnimatedMesh::addJointsToArray(Joint3 rootJoint, std::vector<glm::mat4> &bo
 		addJointsToArray(rootJoint.children[i], boneArray);
 	}
 
-	
+
 }
 
 void AnimatedMesh::applyPoseToJoints(std::unordered_map<std::string, glm::mat4> currentPose) {
@@ -676,9 +685,32 @@ void AnimatedMesh::applyPoseToJoints(std::unordered_map<std::string, glm::mat4> 
 
 	glm::mat4 currentTransform = currentPose.find(joint.name) == currentPose.end() ? parentTransform : parentTransform * currentPose.at(joint.name);
 
+	if (joint.name.compare("metarig_spine_006") == 0) {
+		/*std::cout << currentTransform[0][0] << "  " << currentTransform[0][1] << "  " << currentTransform[0][2] << "  " << currentTransform[0][3] << std::endl;
+		std::cout << currentTransform[1][0] << "  " << currentTransform[1][1] << "  " << currentTransform[1][2] << "  " << currentTransform[1][3] << std::endl;
+		std::cout << currentTransform[2][0] << "  " << currentTransform[2][1] << "  " << currentTransform[2][2] << "  " << currentTransform[2][3] << std::endl;
+		std::cout << currentTransform[3][0] << "  " << currentTransform[3][1] << "  " << currentTransform[3][2] << "  " << currentTransform[3][3] << std::endl;
+		std::cout << "------------" << std::endl;*/
+
+		glm::mat4 CORRECTION = glm::mat4(1.0f);
+		CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+
+		//currentTransform = parentTransform *  CORRECTION * currentPose.at(joint.name) ;
+		//std::cout << "------------" << std::endl;
+	}
+
 	for (int i = 0; i < joint.children.size(); i++) {
 		applyPoseToJoints(currentPose, joint.children[i], currentTransform);
 	}
+	
+	if (joint.name.compare("metarig_spine") == 0) {
+		/*std::cout << currentTransform[0][0] << "  " << currentTransform[0][1] << "  " << currentTransform[0][2] << "  " << currentTransform[0][3] << std::endl;
+		std::cout << currentTransform[1][0] << "  " << currentTransform[1][1] << "  " << currentTransform[1][2] << "  " << currentTransform[1][3] << std::endl;
+		std::cout << currentTransform[2][0] << "  " << currentTransform[2][1] << "  " << currentTransform[2][2] << "  " << currentTransform[2][3] << std::endl;
+		std::cout << currentTransform[3][0] << "  " << currentTransform[3][1] << "  " << currentTransform[3][2] << "  " << currentTransform[3][3] << std::endl;
+		std::cout << "------------" << std::endl;*/
+	}
+	
 
 	if (currentPose.find(joint.name) == currentPose.end()) {
 		joint.animatedTransform = parentTransform;
@@ -686,4 +718,19 @@ void AnimatedMesh::applyPoseToJoints(std::unordered_map<std::string, glm::mat4> 
 	}else {
 		joint.animatedTransform = currentTransform * joint.inverseBindTransform;
 	}
+
+	/*if (joint.name.compare("metarigpine_006") == 0) {
+		std::cout << joint.inverseBindTransform[0][0] << "  " << joint.inverseBindTransform[0][1] << joint.inverseBindTransform[0][2] << "  " << joint.inverseBindTransform[0][3] << std::endl;
+		std::cout << joint.inverseBindTransform[1][0] << "  " << joint.inverseBindTransform[1][1] << joint.inverseBindTransform[1][2] << "  " << joint.inverseBindTransform[1][3] << std::endl;
+		std::cout << joint.inverseBindTransform[2][0] << "  " << joint.inverseBindTransform[2][1] << joint.inverseBindTransform[2][2] << "  " << joint.inverseBindTransform[2][3] << std::endl;
+		std::cout << joint.inverseBindTransform[3][0] << "  " << joint.inverseBindTransform[3][1] << joint.inverseBindTransform[3][2] << "  " << joint.inverseBindTransform[3][3] << std::endl;
+		std::cout << "##########" << currentPose.size() << std::endl;
+
+		glm::mat4 CORRECTION = glm::mat4(1.0f);
+		CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+		//CORRECTION = glm::translate(CORRECTION, glm::vec3(10.0f, 0.0f, 0.0f));
+
+
+		joint.animatedTransform = currentTransform * CORRECTION ;
+	}*/
 }

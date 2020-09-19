@@ -59,6 +59,7 @@ void AnimatedModel::LoadModel(const std::string &filename, const std::string &te
 	_meshes.push_back(std::make_shared<AnimatedMesh>(filename));
 	
 	LoadJointHierarchy(filename);
+	std::cout << _rootJoint.get()->getName().c_str() << std::endl;
 	_animator->addAnimation(filename, _rootJoint.get()->getName());
 	_texture->setTexture(texture);
 	
@@ -73,7 +74,7 @@ void AnimatedModel::LoadJointHierarchy(const std::string &filename) {
 	TiXmlElement* rootNode = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node")->FirstChildElement("node");
 	TiXmlElement* firstChild = (TiXmlElement*)rootNode->FirstChild();
 	
-	_rootJoint->setName(std::string(rootNode->Attribute("name")));
+	_rootJoint->setName(std::string(rootNode->Attribute("id")));
 	while (firstChild != NULL) {
 		if (std::string(firstChild->Value()).compare("node") == 0) {
 			_rootJoint->addChild(LoadJoint(firstChild));
@@ -87,8 +88,8 @@ std::shared_ptr<Joint> AnimatedModel::LoadJoint(TiXmlNode* node) {
 	TiXmlElement* firstChild = (TiXmlElement*)node->FirstChild();
 
 	std::shared_ptr<Joint> j = std::make_shared<Joint>();
-	j->setName(std::string(((TiXmlElement*)node)->Attribute("name")));
-
+	j->setName(std::string(((TiXmlElement*)node)->Attribute("id")));
+	
 	while (firstChild != NULL) {
 		if (std::string(firstChild->Value()).compare("node") == 0) {
 			j->addChild(LoadJoint(firstChild));

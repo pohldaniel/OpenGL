@@ -252,7 +252,7 @@
           <input semantic="OUTPUT" source="#Armature_ArmatureAction_stalk_pose_matrix-output"/>
           <input semantic="INTERPOLATION" source="#Armature_ArmatureAction_stalk_pose_matrix-interpolation"/>
         </sampler>
-        <channel source="#Armature_ArmatureAction_stalk_pose_matrix-sampler" target="stalk/transform"/>
+        <channel source="#Armature_ArmatureAction_stalk_pose_matrix-sampler" target="Armature_stalk/transform"/>
       </animation>
       <animation id="Armature_ArmatureAction_cap2_pose_matrix" name="Armature">
         <source id="Armature_ArmatureAction_cap2_pose_matrix-input">
@@ -284,7 +284,7 @@
           <input semantic="OUTPUT" source="#Armature_ArmatureAction_cap2_pose_matrix-output"/>
           <input semantic="INTERPOLATION" source="#Armature_ArmatureAction_cap2_pose_matrix-interpolation"/>
         </sampler>
-        <channel source="#Armature_ArmatureAction_cap2_pose_matrix-sampler" target="cap2/transform"/>
+        <channel source="#Armature_ArmatureAction_cap2_pose_matrix-sampler" target="Armature_cap2/transform"/>
       </animation>
     </animation>
   </library_animations>
