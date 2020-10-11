@@ -94,10 +94,11 @@ Animation::Animation(const std::string &path, const std::string &rootJoinName){
 
 			matrix = glm::transpose(matrix);
 			if (jointNameId.compare(rootJoinName) == 0) {
-				//std::cout << jointNameId.c_str()  << "------------"<<  std::endl;
-				matrix = CORRECTION * matrix;
+				std::cout << jointNameId.c_str()  << "------------"<<  std::endl;			
+				//matrix = CORRECTION * matrix;
 			}
-						
+					
+
 			keyFrames[k].time = times[k];
 			
 			glm::vec3 position = glm::vec3(matrix[3][0], matrix[3][1], matrix[3][2]);

@@ -82,14 +82,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MoveWindow(GetConsoleWindow(), 740, 0, 550, 200, true);
 	std::cout << "w, a, s, d, mouse : move camera" << std::endl;
 	std::cout << "space             : release capture" << std::endl;
-	/*std::cout << "1, 2              : disable/enable lightsource" << std::endl;
+	std::cout << "1, 2              : disable/enable lightsource" << std::endl;
 	std::cout << "r                 : rotate light" << std::endl;
 	std::cout << "v                 : disable/enable vsync" << std::endl;
 	std::cout << "-, +              : decrease/increase displacement intensity" << std::endl;
 	std::cout << "numpad - +        : rotate objeckts" << std::endl;
 	std::cout << "return            : stop rotating objeckts" << std::endl;	
 	std::cout << "b                 : shadows" << std::endl;
-	std::cout << "k, l              : texture tile" << std::endl;*/
+	std::cout << "k, l              : texture tile" << std::endl;
 
 	WNDCLASSEX		windowClass;		// window class
 	HWND			hwnd;				// window handle
@@ -144,6 +144,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	cowboy.LoadModel(".\\res\\model.dae", ".\\res\\diffuse.png");
 	cowboy.translate(-5.0, 0.0, 0.0);
 
+	AnimatedModel dragon;
+	dragon.LoadModel(".\\res\\Dragon5.dae", ".\\res\\ImphenziaPalette01.png");
+	dragon.translate(5.0, 0.0, 0.0);
 
 	std::chrono::steady_clock::time_point start = std::chrono::high_resolution_clock::now();
 	std::chrono::steady_clock::time_point end;
@@ -152,6 +155,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	mushroom.getAnimator()->startAnimation("");
 	cowboy.getAnimator()->startAnimation("");
+	dragon.getAnimator()->startAnimation("");
 	// main message loop
 	while (true){
 
@@ -180,6 +184,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			cowboy.Update(deltaTime.count());
 			cowboy.Draw(*camera);
 
+			dragon.Update(deltaTime.count());
+			dragon.Draw(*camera);
+
 			//render();
 			processInput(hwnd);
 			hdc = GetDC(hwnd);
@@ -188,9 +195,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 	} // end while
 
-	for (int i = 0; i < objects.size(); i++) {
+	/*for (int i = 0; i < objects.size(); i++) {
 		delete objects[i];
-	}
+	}*/
 
 	return msg.wParam;
 }
@@ -341,11 +348,6 @@ LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 	}
 	return (DefWindowProc(hWnd, message, wParam, lParam));
 }
-
-
-
-
-
 
 void initApp(HWND hWnd){
 
@@ -549,7 +551,7 @@ void processInput(HWND hWnd) {
 
 void render() {
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	objects[1]->m_model->rotate(Vector3f(1.0, 0.0, 0.0).normalize(), degree);
 	for (int j = 0; j < objects.size(); j++) {
 
@@ -600,8 +602,6 @@ void render() {
 	}
 
 	skyBox->render();
-
-
 }
 
 

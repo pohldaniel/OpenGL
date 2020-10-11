@@ -50,6 +50,7 @@ public:
 private:
 
 	void fillEmptyWeights(int max) {
+		
 		while (jointIds.size() < max) {
 			jointIds.push_back(0);
 			weights.push_back(0.0);

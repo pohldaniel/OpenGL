@@ -311,6 +311,7 @@ void AnimatedMesh::loadData(std::vector<glm::vec3> &_positions, std::vector<glm:
 		for (int j = 0; j < effectiveJointCounts[i]; j++) {
 			int jointId = rawData[pointer++];
 			int weightId = rawData[pointer++];
+		
 			skinData.addJointEffect(jointId, weights[weightId]);
 		}
 		skinData.fill();
@@ -416,8 +417,7 @@ int AnimatedMesh::addVertex(int hash, const float *pVertex, int numberOfBytes) {
 
 void AnimatedMesh::LoadJointsData(std::unordered_map<std::string, unsigned int> &boneIdMap, std::unordered_map<unsigned int, BoneData> &boneDataMap) {
 
-	glm::mat4 CORRECTION = glm::mat4(1.0f);
-	CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+	
 
 	TiXmlDocument doc(path.c_str());
 	doc.LoadFile();
@@ -436,7 +436,6 @@ void AnimatedMesh::LoadJointsData(std::unordered_map<std::string, unsigned int> 
 		if (std::string(input->Attribute("semantic")).compare("JOINT") == 0) {
 
 			std::string jointDataId = std::string(input->Attribute("source")).erase(0, 1);
-
 			while (source != NULL) {
 
 				if (std::string(source->Attribute("id")).compare(jointDataId) == 0) {
@@ -446,6 +445,7 @@ void AnimatedMesh::LoadJointsData(std::unordered_map<std::string, unsigned int> 
 					text = (char*)(nameArray->GetText());
 
 					jointsList.push_back(strtok(text, " "));
+				
 					for (int index = 1; index < atoi(nameArray->Attribute("count")); index++) {
 						jointsList.push_back(strtok(NULL, " "));
 					}
@@ -457,7 +457,6 @@ void AnimatedMesh::LoadJointsData(std::unordered_map<std::string, unsigned int> 
 
 			break;
 		}
-
 		input = input->NextSiblingElement("input");
 	}
 
@@ -481,7 +480,7 @@ void AnimatedMesh::LoadJointsData(std::unordered_map<std::string, unsigned int> 
 			}
 
 			offsetMatrix = glm::transpose(offsetMatrix);
-			offsetMatrix = CORRECTION * offsetMatrix;
+			offsetMatrix =  offsetMatrix;
 
 			BoneData data;
 			data.offsetMatrix = offsetMatrix;
@@ -491,14 +490,11 @@ void AnimatedMesh::LoadJointsData(std::unordered_map<std::string, unsigned int> 
 
 			continue;
 
-		}
-		else {
+		}else {
 
 			search(rootNode, jointsList[i], i, boneIdMap, boneDataMap);
 		}
 	}
-
-	std::cout << boneIdMap.size() << "  " << boneDataMap.size() << std::endl;
 }
 
 void AnimatedMesh::LoadJointsData2() {
@@ -544,8 +540,6 @@ void AnimatedMesh::LoadJointsData2() {
 
 void AnimatedMesh::search(TiXmlNode* node, std::string jointName, int index, std::unordered_map<std::string, unsigned int> &boneIdMap, std::unordered_map<unsigned int, BoneData> &boneDataMap) {
 
-	glm::mat4 CORRECTION = glm::mat4(1.0f);
-	//CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
 	for (TiXmlNode* child = node->FirstChild(); child; child = child->NextSibling()) {
 
@@ -570,7 +564,7 @@ void AnimatedMesh::search(TiXmlNode* node, std::string jointName, int index, std
 				}
 
 				offsetMatrix = glm::transpose(offsetMatrix);
-				offsetMatrix = CORRECTION * offsetMatrix;
+				offsetMatrix = offsetMatrix;
 
 				BoneData data;
 				data.offsetMatrix = offsetMatrix;
@@ -589,9 +583,6 @@ void AnimatedMesh::search(TiXmlNode* node, std::string jointName, int index, std
 
 JointData AnimatedMesh::search(TiXmlNode* _node) {
 
-	glm::mat4 CORRECTION = glm::mat4(1.0f);
-	//CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-
 	JointData data;
 	TiXmlNode* node = _node;
 
@@ -609,7 +600,7 @@ JointData AnimatedMesh::search(TiXmlNode* _node) {
 	}
 
 	offsetMatrix = glm::transpose(offsetMatrix);
-	offsetMatrix = CORRECTION * offsetMatrix;
+	offsetMatrix = offsetMatrix;
 
 	std::string name = ((TiXmlElement*)node)->Attribute("sid");
 	std::vector<std::string>::iterator it = std::find(jointsList.begin(), jointsList.end(), name);
@@ -681,56 +672,51 @@ void AnimatedMesh::applyPoseToJoints(std::unordered_map<std::string, glm::mat4> 
 	applyPoseToJoints(currentPose, rootJoint, glm::mat4(1.0));
 }
 
+
+
+
 void AnimatedMesh::applyPoseToJoints(std::unordered_map<std::string, glm::mat4> currentPose, Joint3 &joint, glm::mat4 parentTransform) {
 
-	glm::mat4 currentTransform = currentPose.find(joint.name) == currentPose.end() ? parentTransform : parentTransform * currentPose.at(joint.name);
+	glm::mat4 CORRECTION = glm::mat4(1.0f);
+	CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
-	if (joint.name.compare("metarig_spine_006") == 0) {
-		/*std::cout << currentTransform[0][0] << "  " << currentTransform[0][1] << "  " << currentTransform[0][2] << "  " << currentTransform[0][3] << std::endl;
-		std::cout << currentTransform[1][0] << "  " << currentTransform[1][1] << "  " << currentTransform[1][2] << "  " << currentTransform[1][3] << std::endl;
-		std::cout << currentTransform[2][0] << "  " << currentTransform[2][1] << "  " << currentTransform[2][2] << "  " << currentTransform[2][3] << std::endl;
-		std::cout << currentTransform[3][0] << "  " << currentTransform[3][1] << "  " << currentTransform[3][2] << "  " << currentTransform[3][3] << std::endl;
-		std::cout << "------------" << std::endl;*/
+	glm::mat4 currentTransform = currentPose.find(joint.name) == currentPose.end() ? joint.localBindTransform : parentTransform * currentPose.at(joint.name);
 
-		glm::mat4 CORRECTION = glm::mat4(1.0f);
-		CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-
-		//currentTransform = parentTransform *  CORRECTION * currentPose.at(joint.name) ;
-		//std::cout << "------------" << std::endl;
+	if (joint.name.compare("Torso") == 0) {
+		currentTransform = CORRECTION * currentTransform;
 	}
 
-	for (int i = 0; i < joint.children.size(); i++) {
-		applyPoseToJoints(currentPose, joint.children[i], currentTransform);
+	if (joint.name.compare("Armature_stalk") == 0) {
+		currentTransform = CORRECTION * currentTransform;
 	}
-	
-	if (joint.name.compare("metarig_spine") == 0) {
-		/*std::cout << currentTransform[0][0] << "  " << currentTransform[0][1] << "  " << currentTransform[0][2] << "  " << currentTransform[0][3] << std::endl;
-		std::cout << currentTransform[1][0] << "  " << currentTransform[1][1] << "  " << currentTransform[1][2] << "  " << currentTransform[1][3] << std::endl;
-		std::cout << currentTransform[2][0] << "  " << currentTransform[2][1] << "  " << currentTransform[2][2] << "  " << currentTransform[2][3] << std::endl;
-		std::cout << currentTransform[3][0] << "  " << currentTransform[3][1] << "  " << currentTransform[3][2] << "  " << currentTransform[3][3] << std::endl;
-		std::cout << "------------" << std::endl;*/
+
+	if (joint.name.compare("metarig_forearm_R_001") == 0) {
+		currentTransform =  currentTransform;
+	}
+
+	if (joint.name.compare("metarig_hand_R_001") == 0) {
+		/**parentTransform = CORRECTION * currentTransform from "metarig_forearm_R_001"**/
+		currentTransform = parentTransform * currentPose.at(joint.name);
 	}
 	
 
+	for (int i = 0; i < joint.children.size(); i++) {	
+			applyPoseToJoints(currentPose, joint.children[i], currentTransform);	
+	}
+	
 	if (currentPose.find(joint.name) == currentPose.end()) {
-		joint.animatedTransform = parentTransform;
+		//check for identity maybe there is a bette way
+		if (glm::length2(parentTransform[0]) == 1 && 
+			glm::length2(parentTransform[1]) == 1 && 
+			glm::length2(parentTransform[2]) == 1 && 
+			glm::length2(parentTransform[3]) == 1) {
 
-	}else {
+			joint.animatedTransform =  joint.localBindTransform * joint.inverseBindTransform;
+		}else {
+			joint.animatedTransform = parentTransform;
+		}
+	}else {		
+
 		joint.animatedTransform = currentTransform * joint.inverseBindTransform;
 	}
-
-	/*if (joint.name.compare("metarigpine_006") == 0) {
-		std::cout << joint.inverseBindTransform[0][0] << "  " << joint.inverseBindTransform[0][1] << joint.inverseBindTransform[0][2] << "  " << joint.inverseBindTransform[0][3] << std::endl;
-		std::cout << joint.inverseBindTransform[1][0] << "  " << joint.inverseBindTransform[1][1] << joint.inverseBindTransform[1][2] << "  " << joint.inverseBindTransform[1][3] << std::endl;
-		std::cout << joint.inverseBindTransform[2][0] << "  " << joint.inverseBindTransform[2][1] << joint.inverseBindTransform[2][2] << "  " << joint.inverseBindTransform[2][3] << std::endl;
-		std::cout << joint.inverseBindTransform[3][0] << "  " << joint.inverseBindTransform[3][1] << joint.inverseBindTransform[3][2] << "  " << joint.inverseBindTransform[3][3] << std::endl;
-		std::cout << "##########" << currentPose.size() << std::endl;
-
-		glm::mat4 CORRECTION = glm::mat4(1.0f);
-		CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-		//CORRECTION = glm::translate(CORRECTION, glm::vec3(10.0f, 0.0f, 0.0f));
-
-
-		joint.animatedTransform = currentTransform * CORRECTION ;
-	}*/
 }

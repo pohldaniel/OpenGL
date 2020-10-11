@@ -59,7 +59,7 @@ void AnimatedModel::LoadModel(const std::string &filename, const std::string &te
 	_meshes.push_back(std::make_shared<AnimatedMesh>(filename));
 	
 	LoadJointHierarchy(filename);
-	std::cout << _rootJoint.get()->getName().c_str() << std::endl;
+
 	_animator->addAnimation(filename, _rootJoint.get()->getName());
 	_texture->setTexture(texture);
 	
