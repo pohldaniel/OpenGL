@@ -71,7 +71,17 @@ void AnimatedModel::LoadJointHierarchy(const std::string &filename) {
 	
 	TiXmlDocument doc(filename.c_str());
 	doc.LoadFile();
-	TiXmlElement* rootNode = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node")->FirstChildElement("node");
+	//TiXmlElement* rootNode = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node")->FirstChildElement("node");
+	TiXmlElement* rootNode = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node");
+	while (rootNode != NULL) {
+
+		if (std::string(rootNode->Attribute("id")).compare("Armature") == 0 || std::string(rootNode->Attribute("id")).compare("metarig") == 0) {
+			break;
+		}
+		rootNode = rootNode->NextSiblingElement("node");
+	}
+	rootNode = rootNode->FirstChildElement("node");
+
 	TiXmlElement* firstChild = (TiXmlElement*)rootNode->FirstChild();
 	
 	_rootJoint->setName(std::string(rootNode->Attribute("id")));

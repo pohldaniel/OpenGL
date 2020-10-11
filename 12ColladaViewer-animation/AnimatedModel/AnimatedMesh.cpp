@@ -3,10 +3,11 @@
 
 #include "../tinyxml/tinyxml.h"
 
-
+glm::mat4 CORRECTION = glm::mat4(1.0f);
+//glm::mat4 CORRECTION = glm::rotate(glm::mat4(1.0f), -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
 AnimatedMesh::AnimatedMesh(const std::string & _path) : path(_path) {
-
+	
 	//create local variables to load json into
 	std::vector<glm::vec3> positions;
 	std::vector<glm::vec2> texCoords;
@@ -75,13 +76,13 @@ AnimatedMesh::AnimatedMesh(const std::string & _path) : path(_path) {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(indices[0]), &indices[0], GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
-
+	
 }
 
 void AnimatedMesh::loadData(std::vector<glm::vec3> &_positions, std::vector<glm::vec2> &_texCoords, std::vector<glm::vec3> &_normals, std::vector<glm::uvec4> &_jointIds, std::vector<glm::vec4> &_jointWeights, std::vector<unsigned int> &_indices) {
 
-	glm::mat4 CORRECTION = glm::mat4(1.0f);
-	CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+	/*glm::mat4 CORRECTION = glm::mat4(1.0f);
+	CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));*/
 
 	std::vector<glm::vec3> positions;
 	std::vector<glm::vec3> normals;
@@ -460,8 +461,17 @@ void AnimatedMesh::LoadJointsData(std::unordered_map<std::string, unsigned int> 
 		input = input->NextSiblingElement("input");
 	}
 
-	TiXmlElement* rootNode = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node")->FirstChildElement("node");
+	//TiXmlElement* rootNode = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node")->FirstChildElement("node");
+	TiXmlElement* rootNode = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node");
+	while (rootNode != NULL) {
 
+		if (std::string(rootNode->Attribute("id")).compare("Armature") == 0 || std::string(rootNode->Attribute("id")).compare("metarig") == 0) {
+			break;
+		}
+		rootNode = rootNode->NextSiblingElement("node");
+	}
+	rootNode = rootNode->FirstChildElement("node");
+	
 	for (int i = 0; i < jointsList.size(); i++) {
 
 		std::string name = std::string(rootNode->Attribute("sid"));
@@ -499,13 +509,23 @@ void AnimatedMesh::LoadJointsData(std::unordered_map<std::string, unsigned int> 
 
 void AnimatedMesh::LoadJointsData2() {
 
-	glm::mat4 CORRECTION = glm::mat4(1.0f);
-	CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+	/*glm::mat4 CORRECTION = glm::mat4(1.0f);
+	CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));*/
 
 	TiXmlDocument doc(path.c_str());
 	doc.LoadFile();
 
-	TiXmlElement* rootNode = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node")->FirstChildElement("node");
+	//TiXmlElement* rootNode = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node")->FirstChildElement("node");
+
+	TiXmlElement* rootNode = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node");
+	while (rootNode != NULL) {
+
+		if (std::string(rootNode->Attribute("id")).compare("Armature") == 0 || std::string(rootNode->Attribute("id")).compare("metarig") == 0) {
+			break;
+		}
+		rootNode = rootNode->NextSiblingElement("node");
+	}
+	rootNode = rootNode->FirstChildElement("node");
 
 	char* text = (char*)rootNode->FirstChild()->FirstChild()->Value();
 
@@ -536,6 +556,9 @@ void AnimatedMesh::LoadJointsData2() {
 		nextNode = nextNode->NextSiblingElement("node");
 	}
 	skeletonData.jointCount = jointsList.size();
+
+
+	
 }
 
 void AnimatedMesh::search(TiXmlNode* node, std::string jointName, int index, std::unordered_map<std::string, unsigned int> &boneIdMap, std::unordered_map<unsigned int, BoneData> &boneDataMap) {
@@ -677,31 +700,51 @@ void AnimatedMesh::applyPoseToJoints(std::unordered_map<std::string, glm::mat4> 
 
 void AnimatedMesh::applyPoseToJoints(std::unordered_map<std::string, glm::mat4> currentPose, Joint3 &joint, glm::mat4 parentTransform) {
 
-	glm::mat4 CORRECTION = glm::mat4(1.0f);
-	CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+	glm::mat4 currentTransform;
+	if (currentPose.find(joint.name) == currentPose.end()) {
+		//check for identity maybe there is a bette way
+		if (glm::length2(parentTransform[0]) == 1 &&
+			glm::length2(parentTransform[1]) == 1 &&
+			glm::length2(parentTransform[2]) == 1 &&
+			glm::length2(parentTransform[3]) == 1) {
 
-	glm::mat4 currentTransform = currentPose.find(joint.name) == currentPose.end() ? joint.localBindTransform : parentTransform * currentPose.at(joint.name);
+			currentTransform = joint.localBindTransform;
+		}
+		else {
+			currentTransform = parentTransform * joint.localBindTransform;
+		}
+	}else {
+
+		currentTransform = parentTransform * currentPose.at(joint.name);
+	}
+
+	/*glm::mat4 currentTransform = currentPose.find(joint.name) == currentPose.end() ? joint.localBindTransform : parentTransform * currentPose.at(joint.name);
 
 	if (joint.name.compare("Torso") == 0) {
-		currentTransform = CORRECTION * currentTransform;
+		currentTransform = currentTransform = CORRECTION * currentTransform;
 	}
 
 	if (joint.name.compare("Armature_stalk") == 0) {
 		currentTransform = CORRECTION * currentTransform;
 	}
 
+	if (joint.name.compare("Armature_cap") == 0) {
+	
+		currentTransform = parentTransform *  joint.localBindTransform;
+	}
+
 	if (joint.name.compare("metarig_forearm_R_001") == 0) {
-		currentTransform =  currentTransform;
+		currentTransform = joint.localBindTransform;
 	}
 
 	if (joint.name.compare("metarig_hand_R_001") == 0) {
-		/**parentTransform = CORRECTION * currentTransform from "metarig_forearm_R_001"**/
+		//++++++parentTransform = CORRECTION * currentTransform from "metarig_forearm_R_001+++++++//
 		currentTransform = parentTransform * currentPose.at(joint.name);
-	}
+	}*/
 	
 
 	for (int i = 0; i < joint.children.size(); i++) {	
-			applyPoseToJoints(currentPose, joint.children[i], currentTransform);	
+		applyPoseToJoints(currentPose, joint.children[i], currentTransform);	
 	}
 	
 	if (currentPose.find(joint.name) == currentPose.end()) {
@@ -713,7 +756,7 @@ void AnimatedMesh::applyPoseToJoints(std::unordered_map<std::string, glm::mat4> 
 
 			joint.animatedTransform =  joint.localBindTransform * joint.inverseBindTransform;
 		}else {
-			joint.animatedTransform = parentTransform;
+			joint.animatedTransform = currentTransform * joint.inverseBindTransform;
 		}
 	}else {		
 

@@ -67,12 +67,13 @@ public:
 	inline std::string getName() { return _name; }
 	inline double getDuration() { return _duration; }
 	inline std::vector<JointAnim> getJointAnims() { return _jointAnims; }
+	inline std::string getFirstJoint() { return _firstJoint; }
 
 private:
 	std::string _name;
 	double _duration = 0;
 	std::vector<JointAnim> _jointAnims;
-
+	std::string _firstJoint;
 };
 
 #endif

@@ -124,7 +124,7 @@ void Animator::startAnimation(const std::string & animationName){
 void Animator::addAnimation(const std::string &filename, const std::string &rootJoinName){
 	std::cout << "root Joint: " << rootJoinName.c_str() << std::endl;
 	_animations.push_back(std::make_shared<Animation>(filename, rootJoinName));
-
+	
 }
 
 

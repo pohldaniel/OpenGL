@@ -52,6 +52,8 @@ Animation::Animation(const std::string &path, const std::string &rootJoinName){
 	glm::mat4 CORRECTION = glm::mat4(1.0f);
 	CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
+	bool firtsBoneAtAnimation = true;
+
 	while (animation != NULL) {
 
 		JointAnim jAnim;
@@ -125,12 +127,22 @@ Animation::Animation(const std::string &path, const std::string &rootJoinName){
 		}
 		
 		jAnim._name = jointNameId;
-		_jointAnims.push_back(jAnim);
+		//_jointAnims.push_back(jAnim);
+
+		if (firtsBoneAtAnimation) {
+			_firstJoint = jointNameId;
+		}
+		firtsBoneAtAnimation = false;
+
 		animation = animation->NextSiblingElement("animation");
+
+
 	}
 
 	_name = "";
 	_duration = times[numberOfKeyframes - 1];
 
 	duration = times[numberOfKeyframes - 1];
+
+	
 }
