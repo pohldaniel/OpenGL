@@ -6,9 +6,9 @@ I used tinyxml https://github.com/vmayoral/tinyxml, parts of stb https://github.
 
 Output from 12ColladaViewer-animation
 
-![ColladaDemo](https://user-images.githubusercontent.com/30089026/91202213-c25bc880-e701-11ea-8428-cf27d5e33620.jpg)
+![Collada](https://user-images.githubusercontent.com/30089026/95699071-d45ae180-0c43-11eb-91e4-ad597412f37f.jpg)
 
-The next image shows my export options: To avoid the use of the CORRECTION Matrix a change of the Y and Z axis is neccesary. Furthermore renaming the armature to "Armature", shown in the blue rectangle, is neccesary. Otherwise this simple parser will crash. I also add the .blend files, they represent some special cases. At mushroom.blend the "bone chain" of the animation is holding a gap. At dragon.blend the "bone.chain" doesn't start with the root. At the moment I lack the weights and there is still a lot of cleaning up to do :).
+The next image shows my export options: To avoid the use of the CORRECTION Matrix a change of the Y and Z axis is neccesary. Furthermore renaming the armature to "Armature", shown in the blue rectangle, is neccesary. Otherwise this simple parser will crash. I also add the .blend files, they represent some special cases. At mushroom.blend the "bone chain" of the animation is holding a gap. At dragon.blend the "bone.chain" doesn't start with the root. At the moment I ignore the weights and there is still a lot of cleaning up to do :).
 
 ![Collada](https://user-images.githubusercontent.com/30089026/95698007-e0916f80-0c40-11eb-8fb8-9ec466681a0b.jpg)
 
