@@ -2,11 +2,15 @@
 
 Move the camera with 'w' 'a' 's' 'd' 'q' 'e' and mouse, release the capture with space. Activate lightspot with '1' and '2'.
 
-I used tinyxml https://github.com/vmayoral/tinyxml, parts of stb https://github.com/nothings/stb in particular stb_image.c, glm https://glm.g-truc.net/0.9.9/index.html and parts of https://github.com/emargollo/OpenGL-Animator for the project 12ColladaViewer-animation and do not own the copyright. The cowboy model is from https://github.com/TheThinMatrix/OpenGL-Animation and I also do not own the copyright.
+I used tinyxml https://github.com/vmayoral/tinyxml, parts of stb https://github.com/nothings/stb in particular stb_image.c, glm https://glm.g-truc.net/0.9.9/index.html and parts of https://github.com/emargollo/OpenGL-Animator for the project 12ColladaViewer-animation and do not own the copyright. The cowboy model is from "ThinMatrix" https://github.com/TheThinMatrix/OpenGL-Animation and the dragon model from "Imphenzia" https://www.youtube.com/watch?v=otiEQZr2idM I also do not own the copyright.
 
 Output from 12ColladaViewer-animation
 
 ![ColladaDemo](https://user-images.githubusercontent.com/30089026/91202213-c25bc880-e701-11ea-8428-cf27d5e33620.jpg)
+
+The next image shows my export options: To avoid the use of the CORRECTION Matrix a change of the Y and Z axis is neccesary. Furthermore renaming the armature to "Armature", shown in the blue rectangle, is neccesary. Otherwise this simple parser will crash. I also add the .blend files, they represent some special cases. At mushroom.blend the "bone chain" of the animation is holding a gap. At dragon.blend the "bone.chain" doesn't start with the root. At the moment I lack the weights and there is still a lot of cleaning up to do :).
+
+![Collada](https://user-images.githubusercontent.com/30089026/95698007-e0916f80-0c40-11eb-8fb8-9ec466681a0b.jpg)
 
 Output from 07OBJViewer-normalMap
 
