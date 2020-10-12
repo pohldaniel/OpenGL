@@ -3,9 +3,6 @@
 
 #include "../tinyxml/tinyxml.h"
 
-glm::mat4 CORRECTION = glm::mat4(1.0f);
-//glm::mat4 CORRECTION = glm::rotate(glm::mat4(1.0f), -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-
 AnimatedMesh::AnimatedMesh(const std::string & _path) : path(_path) {
 	
 	//create local variables to load json into
@@ -23,11 +20,7 @@ AnimatedMesh::AnimatedMesh(const std::string & _path) : path(_path) {
 	rootJoint = createJoints(skeletonData.headJoint);
 	rootJoint.calcInverseBindTransform(glm::mat4(1.0));
 
-	
-
 	Joint3 joint = rootJoint;
-	//Joint3 joint2 = rootJoint.children[0];
-	//Joint3 joint3 = rootJoint.children[0].children[0];
 
 	_drawCount = indices.size();
 
@@ -80,9 +73,6 @@ AnimatedMesh::AnimatedMesh(const std::string & _path) : path(_path) {
 }
 
 void AnimatedMesh::loadData(std::vector<glm::vec3> &_positions, std::vector<glm::vec2> &_texCoords, std::vector<glm::vec3> &_normals, std::vector<glm::uvec4> &_jointIds, std::vector<glm::vec4> &_jointWeights, std::vector<unsigned int> &_indices) {
-
-	/*glm::mat4 CORRECTION = glm::mat4(1.0f);
-	CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));*/
 
 	std::vector<glm::vec3> positions;
 	std::vector<glm::vec3> normals;
@@ -141,42 +131,42 @@ void AnimatedMesh::loadData(std::vector<glm::vec3> &_positions, std::vector<glm:
 
 			float x = atof(strtok(text, " "));  float y = atof(strtok(NULL, " ")); float z = atof(strtok(NULL, " "));
 
-			glm::vec4 position = CORRECTION * glm::vec4(x, y, z, 1.0);
+			glm::vec4 position = glm::vec4(x, y, z, 1.0);
 			positions.push_back(glm::vec3(position[0], position[1], position[2]));
 
 
 
 			for (unsigned int index = 1; index < pos_count; index++) {
 				x = atof(strtok(NULL, " ")); y = atof(strtok(NULL, " ")); z = atof(strtok(NULL, " "));
-				position = CORRECTION * glm::vec4(x, y, z, 1.0);
+				position = glm::vec4(x, y, z, 1.0);
 				positions.push_back(glm::vec3(position[0], position[1], position[2]));
 			}
 
 			hasPositions = false;
 			source = source->NextSiblingElement("source");
 			continue;
-		}
-		else if (hasNormals) {
+
+		}else if (hasNormals) {
 			floatArray = source->FirstChildElement("float_array");
 			text = (char*)(floatArray->GetText());
 			floatArray->QueryIntAttribute("count", &norm_count);
 			norm_count = norm_count / 3;
 
 			float x = atof(strtok(text, " "));  float y = atof(strtok(NULL, " ")); float z = atof(strtok(NULL, " "));
-			glm::vec4 normal = CORRECTION * glm::vec4(x, y, z, 0.0);
+			glm::vec4 normal = glm::vec4(x, y, z, 0.0);
 			normals.push_back(glm::vec3(normal[0], normal[1], normal[2]));
 
 			for (unsigned int index = 1; index < norm_count; index++) {
 				x = atof(strtok(NULL, " ")); y = atof(strtok(NULL, " ")); z = atof(strtok(NULL, " "));
-				normal = CORRECTION * glm::vec4(x, y, z, 0.0);
+				normal = glm::vec4(x, y, z, 0.0);
 				normals.push_back(glm::vec3(normal[0], normal[1], normal[2]));
 			}
 
 			hasNormals = false;
 			source = source->NextSiblingElement("source");
 			continue;
-		}
-		else if (hasTexCoords) {
+
+		}else if (hasTexCoords) {
 			floatArray = source->FirstChildElement("float_array");
 			text = (char*)(floatArray->GetText());
 			floatArray->QueryIntAttribute("count", &tex_count);
@@ -209,8 +199,6 @@ void AnimatedMesh::loadData(std::vector<glm::vec3> &_positions, std::vector<glm:
 		indices.push_back((unsigned int)atoi(strtok(NULL, " ")));
 	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 	TiXmlElement* controller = doc.RootElement()->FirstChildElement("library_controllers")->FirstChildElement("controller");
 	TiXmlElement* skin = controller->FirstChildElement("skin");
 
@@ -322,8 +310,6 @@ void AnimatedMesh::loadData(std::vector<glm::vec3> &_positions, std::vector<glm:
 		skinningData.push_back(skinData);
 	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 	m_indexBuffer.resize(numberOfTriangles * 3);
 
 
@@ -509,14 +495,10 @@ void AnimatedMesh::LoadJointsData(std::unordered_map<std::string, unsigned int> 
 
 void AnimatedMesh::LoadJointsData2() {
 
-	/*glm::mat4 CORRECTION = glm::mat4(1.0f);
-	CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));*/
-
 	TiXmlDocument doc(path.c_str());
 	doc.LoadFile();
 
 	//TiXmlElement* rootNode = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node")->FirstChildElement("node");
-
 	TiXmlElement* rootNode = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node");
 	while (rootNode != NULL) {
 
@@ -543,7 +525,7 @@ void AnimatedMesh::LoadJointsData2() {
 	}
 
 	offsetMatrix = glm::transpose(offsetMatrix);
-	offsetMatrix = CORRECTION * offsetMatrix;
+	offsetMatrix = offsetMatrix;
 
 	std::string name = std::string(((TiXmlElement*)rootNode)->Attribute("sid"));
 	std::vector<std::string>::iterator it = std::find(jointsList.begin(), jointsList.end(), name);
@@ -563,7 +545,6 @@ void AnimatedMesh::LoadJointsData2() {
 
 void AnimatedMesh::search(TiXmlNode* node, std::string jointName, int index, std::unordered_map<std::string, unsigned int> &boneIdMap, std::unordered_map<unsigned int, BoneData> &boneDataMap) {
 
-
 	for (TiXmlNode* child = node->FirstChild(); child; child = child->NextSibling()) {
 
 		if (std::string(child->Value()).compare("node") == 0) {
@@ -571,8 +552,6 @@ void AnimatedMesh::search(TiXmlNode* node, std::string jointName, int index, std
 			std::string name = std::string(((TiXmlElement*)child)->Attribute("sid"));
 
 			if (name.compare(jointName) == 0) {
-
-
 
 				char* text = (char*)child->FirstChild()->FirstChild()->Value();
 				glm::mat4 offsetMatrix;
@@ -595,8 +574,7 @@ void AnimatedMesh::search(TiXmlNode* node, std::string jointName, int index, std
 				boneIdMap.insert(std::make_pair(name, index));
 				boneDataMap.insert(std::make_pair(index, data));
 
-			}
-			else {
+			}else {
 				search(child, jointName, index, boneIdMap, boneDataMap);
 			}
 
@@ -683,34 +661,26 @@ std::vector<glm::mat4> AnimatedMesh::GetBoneArray2() {
 void AnimatedMesh::addJointsToArray(Joint3 rootJoint, std::vector<glm::mat4> &boneArray) {
 
 	boneArray[rootJoint.index] = rootJoint.animatedTransform;
-
 	for (int i = 0; i < rootJoint.children.size(); i++) {
 		addJointsToArray(rootJoint.children[i], boneArray);
 	}
-
-
 }
 
 void AnimatedMesh::applyPoseToJoints(std::unordered_map<std::string, glm::mat4> currentPose) {
 	applyPoseToJoints(currentPose, rootJoint, glm::mat4(1.0));
 }
 
-
-
-
 void AnimatedMesh::applyPoseToJoints(std::unordered_map<std::string, glm::mat4> currentPose, Joint3 &joint, glm::mat4 parentTransform) {
-
+	
 	glm::mat4 currentTransform;
 	if (currentPose.find(joint.name) == currentPose.end()) {
 		//check for identity maybe there is a bette way
-		if (glm::length2(parentTransform[0]) == 1 &&
-			glm::length2(parentTransform[1]) == 1 &&
-			glm::length2(parentTransform[2]) == 1 &&
-			glm::length2(parentTransform[3]) == 1) {
-
+		const float *pParentTransform = (const float*)glm::value_ptr(parentTransform);
+		const float *pIdentity = (const float*)glm::value_ptr(identity);
+		//static const float pIdentity[] = { 1.0, 0.0 , 0.0 , 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 };
+		if (memcmp(pParentTransform, pIdentity, sizeof(float) * 16) == 0) {
 			currentTransform = joint.localBindTransform;
-		}
-		else {
+		}else {
 			currentTransform = parentTransform * joint.localBindTransform;
 		}
 	}else {
@@ -718,48 +688,21 @@ void AnimatedMesh::applyPoseToJoints(std::unordered_map<std::string, glm::mat4> 
 		currentTransform = parentTransform * currentPose.at(joint.name);
 	}
 
-	/*glm::mat4 currentTransform = currentPose.find(joint.name) == currentPose.end() ? joint.localBindTransform : parentTransform * currentPose.at(joint.name);
-
-	if (joint.name.compare("Torso") == 0) {
-		currentTransform = currentTransform = CORRECTION * currentTransform;
-	}
-
-	if (joint.name.compare("Armature_stalk") == 0) {
-		currentTransform = CORRECTION * currentTransform;
-	}
-
-	if (joint.name.compare("Armature_cap") == 0) {
-	
-		currentTransform = parentTransform *  joint.localBindTransform;
-	}
-
-	if (joint.name.compare("metarig_forearm_R_001") == 0) {
-		currentTransform = joint.localBindTransform;
-	}
-
-	if (joint.name.compare("metarig_hand_R_001") == 0) {
-		//++++++parentTransform = CORRECTION * currentTransform from "metarig_forearm_R_001+++++++//
-		currentTransform = parentTransform * currentPose.at(joint.name);
-	}*/
-	
-
 	for (int i = 0; i < joint.children.size(); i++) {	
 		applyPoseToJoints(currentPose, joint.children[i], currentTransform);	
 	}
 	
 	if (currentPose.find(joint.name) == currentPose.end()) {
 		//check for identity maybe there is a bette way
-		if (glm::length2(parentTransform[0]) == 1 && 
-			glm::length2(parentTransform[1]) == 1 && 
-			glm::length2(parentTransform[2]) == 1 && 
-			glm::length2(parentTransform[3]) == 1) {
-
+		const float *pParentTransform = (const float*)glm::value_ptr(parentTransform);
+		const float *pIdentity = (const float*)glm::value_ptr(identity);
+		//static const float pIdentity[] = { 1.0, 0.0 , 0.0 , 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 };
+		if (memcmp(pParentTransform, pIdentity, sizeof(float) * 16) == 0) {
 			joint.animatedTransform =  joint.localBindTransform * joint.inverseBindTransform;
 		}else {
 			joint.animatedTransform = currentTransform * joint.inverseBindTransform;
 		}
 	}else {		
-
 		joint.animatedTransform = currentTransform * joint.inverseBindTransform;
 	}
 }

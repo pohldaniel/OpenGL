@@ -56,8 +56,6 @@ Animation::Animation(const std::string &path, const std::string &rootJoinName){
 
 	while (animation != NULL) {
 
-		JointAnim jAnim;
-
 		source = animation->FirstChildElement("source");
 		floatArray = source->FirstChildElement("float_array");
 		floatArray->QueryIntAttribute("count", &numberOfKeyframes);
@@ -95,12 +93,6 @@ Animation::Animation(const std::string &path, const std::string &rootJoinName){
 			}
 
 			matrix = glm::transpose(matrix);
-			if (jointNameId.compare(rootJoinName) == 0) {
-				std::cout << jointNameId.c_str()  << "------------"<<  std::endl;			
-				//matrix = CORRECTION * matrix;
-			}
-					
-
 			keyFrames[k].time = times[k];
 			
 			glm::vec3 position = glm::vec3(matrix[3][0], matrix[3][1], matrix[3][2]);
@@ -112,37 +104,21 @@ Animation::Animation(const std::string &path, const std::string &rootJoinName){
 			
 			glm::vec3 scale = glm::vec3(sx, sy, sz);
 
-			/*matrix[0][0] = matrix[0][0] * 1.0 / (scale[0]); matrix[0][1] = matrix[0][1] * 1.0 / (scale[0]); matrix[0][2] = matrix[0][2] * 1.0 / (scale[0]); matrix[3][0] = 0.0;
-			matrix[1][0] = matrix[1][0] * 1.0 / (scale[1]); matrix[1][1] = matrix[1][1] * 1.0 / (scale[1]); matrix[1][2] = matrix[1][2] * 1.0 / (scale[1]); matrix[3][1] = 0.0;
-			matrix[2][0] = matrix[2][0] * 1.0 / (scale[2]); matrix[2][1] = matrix[2][1] * 1.0 / (scale[2]); matrix[2][2] = matrix[2][2] * 1.0 / (scale[2]); matrix[3][2] = 0.0;
-			matrix[0][3] = 0.0;								matrix[1][3] = 0.0;								matrix[2][3] = 0.0;								matrix[3][3] = 1.0;*/
+			//*matrix[0][0] = matrix[0][0] * 1.0 / (scale[0]); matrix[0][1] = matrix[0][1] * 1.0 / (scale[0]); matrix[0][2] = matrix[0][2] * 1.0 / (scale[0]); matrix[3][0] = 0.0;
+			//*matrix[1][0] = matrix[1][0] * 1.0 / (scale[1]); matrix[1][1] = matrix[1][1] * 1.0 / (scale[1]); matrix[1][2] = matrix[1][2] * 1.0 / (scale[1]); matrix[3][1] = 0.0;
+			//*matrix[2][0] = matrix[2][0] * 1.0 / (scale[2]); matrix[2][1] = matrix[2][1] * 1.0 / (scale[2]); matrix[2][2] = matrix[2][2] * 1.0 / (scale[2]); matrix[3][2] = 0.0;
+			//*matrix[0][3] = 0.0;								matrix[1][3] = 0.0;								matrix[2][3] = 0.0;								matrix[3][3] = 1.0;
 			
 			//keyFrames[k].pose.insert(std::pair<std::string, JointTransformData>(jointNameId, JointTransformData(jointNameId, position, glm::quat_cast(matrix), scale)));	
 			
 			keyFrames[k].pose.insert(std::pair<std::string, JointTransformData>(jointNameId, JointTransformData(jointNameId, position, fromMatrix(matrix), scale)));
 
-			jAnim._positionKeys.insert(std::make_pair(times[k], position));
-			jAnim._rotationKeys.insert(std::make_pair(times[k], fromMatrix(matrix)));
-			jAnim._scallingKeys.insert(std::make_pair(times[k], scale));
-		}
 		
-		jAnim._name = jointNameId;
-		//_jointAnims.push_back(jAnim);
-
-		if (firtsBoneAtAnimation) {
-			_firstJoint = jointNameId;
-		}
-		firtsBoneAtAnimation = false;
-
+		}		
 		animation = animation->NextSiblingElement("animation");
 
 
 	}
-
-	_name = "";
-	_duration = times[numberOfKeyframes - 1];
-
 	duration = times[numberOfKeyframes - 1];
-
-	
+	_name = "";
 }

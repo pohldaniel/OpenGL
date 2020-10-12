@@ -141,18 +141,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	mushroom.LoadModel(".\\res\\mushroom.dae", ".\\res\\mushroom.png");
 	
 	AnimatedModel cowboy;
-	cowboy.LoadModel(".\\res\\model.dae", ".\\res\\diffuse.png");
+	cowboy.LoadModel(".\\res\\cowboy.dae", ".\\res\\cowboy.png");
 	cowboy.translate(-5.0, 0.0, 0.0);
 
 	AnimatedModel dragon;
-	dragon.LoadModel(".\\res\\Dragon5.dae", ".\\res\\ImphenziaPalette01.png");
+	dragon.LoadModel(".\\res\\dragon.dae", ".\\res\\dragon.png");
 	dragon.translate(5.0, 0.0, 0.0);
 
 	std::chrono::steady_clock::time_point start = std::chrono::high_resolution_clock::now();
 	std::chrono::steady_clock::time_point end;
-
 	std::chrono::duration<double> deltaTime;
-
+	
 	mushroom.getAnimator()->startAnimation("");
 	cowboy.getAnimator()->startAnimation("");
 	dragon.getAnimator()->startAnimation("");
@@ -173,7 +172,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			end = start;
 			start = std::chrono::high_resolution_clock::now();
 			deltaTime = start - end;
-
+		
 			
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

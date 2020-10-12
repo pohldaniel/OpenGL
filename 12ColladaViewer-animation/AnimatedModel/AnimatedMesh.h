@@ -4,6 +4,7 @@
 #include <glm\glm.hpp>
 #include <glm\gtx\transform.hpp>
 #include <glm\gtx\quaternion.hpp>
+#include <glm\gtc\type_ptr.hpp>
 #include <unordered_map>
 #include <queue>
 #include <iostream>
@@ -125,15 +126,6 @@ struct Joint3 {
 		glm::mat4 bindTransform = parentBindTransform * localBindTransform;
 		inverseBindTransform = glm::inverse(bindTransform);
 
-
-		/*std::cout << inverseBindTransform[0][0] << "  " << inverseBindTransform[0][1] << "  " << inverseBindTransform[0][2] << "  " << inverseBindTransform[0][3] << std::endl;
-		std::cout << inverseBindTransform[1][0] << "  " << inverseBindTransform[1][1] << "  " << inverseBindTransform[1][2] << "  " << inverseBindTransform[1][3] << std::endl;
-		std::cout << inverseBindTransform[2][0] << "  " << inverseBindTransform[2][1] << "  " << inverseBindTransform[2][2] << "  " << inverseBindTransform[2][3] << std::endl;
-		std::cout << inverseBindTransform[3][0] << "  " << inverseBindTransform[3][1] << "  " << inverseBindTransform[3][2] << "  " << inverseBindTransform[3][3] << std::endl;
-
-
-		std::cout << "###############" << std::endl;*/
-
 		for (int i = 0; i < children.size(); i++) {
 			children[i].calcInverseBindTransform(bindTransform);
 		}
@@ -199,5 +191,6 @@ private:
 	unsigned int _vbo[NUM_BUFFERS];
 	unsigned int _drawCount;
 	const std::string& path;
+	const glm::mat4 identity = glm::mat4(1.0f);
 };
 #endif

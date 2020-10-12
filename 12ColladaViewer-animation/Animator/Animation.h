@@ -8,18 +8,11 @@
 #include <string>
 #include <vector>
 
-struct JointAnim{
 
-	std::string _name;
-	std::map<double, glm::vec3> _positionKeys;
-	std::map<double, glm::quat> _rotationKeys;
-	std::map<double, glm::vec3> _scallingKeys;
-};
 
 struct JointTransformData {
 
 	std::string jointNameId;
-
 	glm::vec3 positonKeys;
 	glm::quat rotationKeys;
 	glm::vec3 scallingKeys;
@@ -58,22 +51,21 @@ class Animation{
 
 public:
 
-	std::vector<KeyFrameData> keyFrames;
-	double duration;
-
+	
 	Animation(const std::string &path, const std::string &rootJoinName);
 	virtual ~Animation() {}
 
 	inline std::string getName() { return _name; }
-	inline double getDuration() { return _duration; }
-	inline std::vector<JointAnim> getJointAnims() { return _jointAnims; }
-	inline std::string getFirstJoint() { return _firstJoint; }
+	inline double getDuration() { return duration; }
 
-private:
 	std::string _name;
-	double _duration = 0;
-	std::vector<JointAnim> _jointAnims;
-	std::string _firstJoint;
+	std::vector<KeyFrameData> keyFrames;
+	double duration;
+private:
+	
+
+
+
 };
 
 #endif

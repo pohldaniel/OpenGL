@@ -122,9 +122,7 @@ void Animator::startAnimation(const std::string & animationName){
 }
 
 void Animator::addAnimation(const std::string &filename, const std::string &rootJoinName){
-	std::cout << "root Joint: " << rootJoinName.c_str() << std::endl;
-	_animations.push_back(std::make_shared<Animation>(filename, rootJoinName));
-	
+	_animations.push_back(std::make_shared<Animation>(filename, rootJoinName));	
 }
 
 
@@ -133,15 +131,11 @@ void Animator::Update(double elapsedTime){
 	//increase animationTime
 	_animationTime += elapsedTime;
 	if (_animationTime > _currentAnimation->getDuration()) {
-		_animationTime = fmod(_animationTime, _currentAnimation->duration);
+		_animationTime = fmod(_animationTime, _currentAnimation->getDuration());
 	}
 
 	std::unordered_map<std::string, glm::mat4> currentPose = calculateCurrentAnimationPose();
-
-	
-
-	_model->_meshes[0]->applyPoseToJoints(currentPose);
-	
+	_model->_meshes[0]->applyPoseToJoints(currentPose);	
 }
 
 
@@ -176,8 +170,7 @@ std::unordered_map<std::string, glm::mat4> Animator::calculateCurrentAnimationPo
 	while (it != previousFrame.pose.end()) {
 
 		std::string name = it->first;
-		
-	
+			
 		glm::vec3 position = GetInterpolated(previousFrame.pose.at(name).positonKeys, nextFrame.pose.at(name).positonKeys, progression);
 		glm::vec3 scale = GetInterpolated(previousFrame.pose.at(name).scallingKeys, nextFrame.pose.at(name).scallingKeys, progression);
 		
