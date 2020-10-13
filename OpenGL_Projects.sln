@@ -25,6 +25,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "10OBJViewer-subsurface-scat
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "12ColladaViewer-animation", "12ColladaViewer-animation\12ColladaViewer-animation.vcxproj", "{DB00F9CB-11EA-4E39-A496-EE5AA64D7FC1}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "11OBJViewer-translucency", "11OBJViewer-translucency\11OBJViewer-translucency.vcxproj", "{38E9C269-57B1-4328-9AB1-DCF6ABE1F069}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -103,6 +105,14 @@ Global
 		{DB00F9CB-11EA-4E39-A496-EE5AA64D7FC1}.Release|Win32.Build.0 = Release|Win32
 		{DB00F9CB-11EA-4E39-A496-EE5AA64D7FC1}.Release|x64.ActiveCfg = Release|x64
 		{DB00F9CB-11EA-4E39-A496-EE5AA64D7FC1}.Release|x64.Build.0 = Release|x64
+		{38E9C269-57B1-4328-9AB1-DCF6ABE1F069}.Debug|Win32.ActiveCfg = Debug|Win32
+		{38E9C269-57B1-4328-9AB1-DCF6ABE1F069}.Debug|Win32.Build.0 = Debug|Win32
+		{38E9C269-57B1-4328-9AB1-DCF6ABE1F069}.Debug|x64.ActiveCfg = Debug|x64
+		{38E9C269-57B1-4328-9AB1-DCF6ABE1F069}.Debug|x64.Build.0 = Debug|x64
+		{38E9C269-57B1-4328-9AB1-DCF6ABE1F069}.Release|Win32.ActiveCfg = Release|Win32
+		{38E9C269-57B1-4328-9AB1-DCF6ABE1F069}.Release|Win32.Build.0 = Release|Win32
+		{38E9C269-57B1-4328-9AB1-DCF6ABE1F069}.Release|x64.ActiveCfg = Release|x64
+		{38E9C269-57B1-4328-9AB1-DCF6ABE1F069}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
