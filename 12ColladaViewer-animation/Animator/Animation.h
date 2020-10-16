@@ -52,7 +52,7 @@ class Animation{
 public:
 
 	
-	Animation(const std::string &path, const std::string &rootJoinName);
+	Animation(const std::string &path);
 	virtual ~Animation() {}
 
 	inline std::string getName() { return _name; }

@@ -6,7 +6,6 @@
 #include "Animation.h"
 
 class AnimatedModel;
-class Joint;
 
 class Animator{
 
@@ -14,7 +13,7 @@ public:
 	Animator(AnimatedModel* model);
 
 	void startAnimation(const std::string& animationName);
-	void addAnimation(const std::string &filename, const std::string &rootJoinName);
+	void addAnimation(const std::string &filename);
 	void Update(double elapsedTime);
 
 private:

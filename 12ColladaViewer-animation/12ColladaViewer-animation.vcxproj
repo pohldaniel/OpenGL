@@ -155,6 +155,7 @@
     <ClInclude Include="Animator\Animator.h" />
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="ColladaLoader\ColladaLoader.h" />
     <ClInclude Include="deps\stb_image.h" />
     <ClInclude Include="Depthmap.h" />
     <ClInclude Include="Extension.h" />
@@ -177,6 +178,7 @@
     <ClCompile Include="Animator\Animator.cpp" />
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="ColladaLoader\ColladaLoader.cpp" />
     <ClCompile Include="deps\stb_image.c" />
     <ClCompile Include="Depthmap.cpp" />
     <ClCompile Include="Extension.cpp" />

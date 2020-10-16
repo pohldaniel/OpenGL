@@ -36,7 +36,7 @@ glm::quat fromMatrix(const glm::mat4 &m) {
 }
 
 
-Animation::Animation(const std::string &path, const std::string &rootJoinName){
+Animation::Animation(const std::string &path){
 	
 	TiXmlDocument doc(path.c_str());
 	doc.LoadFile();
@@ -49,9 +49,7 @@ Animation::Animation(const std::string &path, const std::string &rootJoinName){
 
 	std::vector<float> times;
 
-	glm::mat4 CORRECTION = glm::mat4(1.0f);
-	CORRECTION = glm::rotate(CORRECTION, -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-
+	
 	bool firtsBoneAtAnimation = true;
 
 	while (animation != NULL) {

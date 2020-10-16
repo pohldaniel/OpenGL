@@ -121,8 +121,8 @@ void Animator::startAnimation(const std::string & animationName){
 	}
 }
 
-void Animator::addAnimation(const std::string &filename, const std::string &rootJoinName){
-	_animations.push_back(std::make_shared<Animation>(filename, rootJoinName));	
+void Animator::addAnimation(const std::string &filename){
+	_animations.push_back(std::make_shared<Animation>(filename));	
 }
 
 

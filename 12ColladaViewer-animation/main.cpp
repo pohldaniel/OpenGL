@@ -20,7 +20,6 @@ int width = 640;
 POINT g_OldCursorPos;
 bool g_enableVerticalSync;
 
-
 enum DIRECTION {
 	DIR_FORWARD = 1,
 	DIR_BACKWARD = 2,
@@ -31,7 +30,6 @@ enum DIRECTION {
 
 	DIR_FORCE_32BIT = 0x7FFFFFFF
 };
-
 
 std::vector<Object*> objects;
 
@@ -173,8 +171,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			start = std::chrono::high_resolution_clock::now();
 			deltaTime = start - end;
 		
-			
-
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glClearColor(1.0, 1.0, 1.0, 0.0);
 			mushroom.Update(deltaTime.count());

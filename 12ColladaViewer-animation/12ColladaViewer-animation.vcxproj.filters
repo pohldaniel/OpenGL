@@ -43,6 +43,12 @@
     <Filter Include="Source Files\deps">
       <UniqueIdentifier>{87480b84-d3c8-488d-8fb3-1a685ab0f427}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ColladaLoader">
+      <UniqueIdentifier>{1eb9acca-e5d8-4c92-9603-96a9f6481c1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ColladaLoader">
+      <UniqueIdentifier>{5e999fea-117b-4a1d-9a3a-a142e2fc6253}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bitmap.h">
@@ -104,6 +110,9 @@
     </ClInclude>
     <ClInclude Include="deps\stb_image.h">
       <Filter>Header Files\deps</Filter>
+    </ClInclude>
+    <ClInclude Include="ColladaLoader\ColladaLoader.h">
+      <Filter>Header Files\ColladaLoader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +184,9 @@
     </ClCompile>
     <ClCompile Include="deps\stb_image.c">
       <Filter>Source Files\deps</Filter>
+    </ClCompile>
+    <ClCompile Include="ColladaLoader\ColladaLoader.cpp">
+      <Filter>Source Files\ColladaLoader</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
