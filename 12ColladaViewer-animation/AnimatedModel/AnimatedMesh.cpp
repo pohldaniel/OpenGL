@@ -2,9 +2,7 @@
 #include <vector>
 #include "AnimatedMesh.h"
 
-AnimatedMesh::AnimatedMesh(const std::string & _path) : path(_path) {
-	
-	ColladaLoader loader(_path);
+AnimatedMesh::AnimatedMesh(ColladaLoader loader) : path(path), loader(loader) {
 	
 	std::vector<glm::vec3> positions;
 	std::vector<glm::vec2> texCoords;

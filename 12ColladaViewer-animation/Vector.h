@@ -8,11 +8,11 @@
 // Common math functions and constants.
 //-----------------------------------------------------------------------------
 #define PI  3.1415926535897932384
+#define HALF_PI  1.57079632679
 #define TWO_PI  6.2831853071795864769 
 #define PI_ON_180  0.0174532925199432957
 #define invPI  0.3183098861837906715
 #define	invTWO_PI  0.1591549430918953358
-
 
 class Vector2f{
 
@@ -110,6 +110,7 @@ class Matrix4f{
 	friend Vector3f operator*(const Matrix4f &rhs, const Vector4f &lhs);
 	friend Vector3f operator*(const Vector3f &lhs, const Matrix4f &rhs);
 	friend Vector3f operator*(const Matrix4f &lhs, const Vector3f &rhs);
+	friend Vector4f operator^(const Vector4f &rhs, const Matrix4f &lhs);
 	friend Vector4f operator^(const Matrix4f &lhs, const Vector4f &rhs);
 	friend Matrix4f operator*(float scalar, const Matrix4f &rhs);
 
@@ -148,6 +149,8 @@ public:
 	void lookAt(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
 	void invLookAt(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
 	
+	void fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees);
+	void toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const;
 
 	static Matrix4f &getNormalMatrix(const Matrix4f &modelViewMatrix);
 	static void transpose(Matrix4f &p);
@@ -156,9 +159,58 @@ private:
 	float mtx[4][4];
 };
 
+class Quaternion{
 
+	friend Quaternion operator*(float lhs, const Quaternion &rhs);
+	friend bool operator ==(const Quaternion &lhs, const Quaternion &rhs);
 
+public:
+	static const Quaternion IDENTITY;
 
+	Quaternion();
+	Quaternion(float w_, float x_, float y_, float z_);
+	Quaternion(float headDegrees, float pitchDegrees, float rollDegrees);
+	Quaternion(const Vector3f &axis, float degrees);
+	explicit Quaternion(const Matrix4f &m);
+	~Quaternion() {}
+
+	float &operator[](int index);
+	const float operator[](int index) const;
+	bool operator==(const Quaternion &rhs) const;
+	bool operator!=(const Quaternion &rhs) const;
+
+	Quaternion &operator+=(const Quaternion &rhs);
+	Quaternion &operator-=(const Quaternion &rhs);
+	Quaternion &operator*=(const Quaternion &rhs);
+	Quaternion &operator*=(float scalar);
+	Quaternion &operator/=(float scalar);
+
+	Quaternion operator+(const Quaternion &rhs) const;
+	Quaternion operator-(const Quaternion &rhs) const;
+	Quaternion operator*(const Quaternion &rhs) const;
+	Quaternion operator*(float scalar) const;
+	Quaternion operator/(float scalar) const;
+
+	void identity();
+	float magnitude() const;
+	void normalize();
+	void set(float w_, float x_, float y_, float z_);
+	Quaternion conjugate() const;
+	Quaternion inverse() const;
+
+	void fromAxisAngle(const Vector3f &axis, float degrees);	
+	void fromMatrix(const Matrix4f &m);
+	void fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees);
+	
+	void toAxisAngle(Vector3f &axis, float &degrees) const;
+	Matrix4f toMatrix4f() const;
+	void toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const;
+
+	//static Quaternion &fromMatrix(const Matrix4f &m);
+	static Quaternion normalize(Quaternion &p);
+private:
+	float quat[4];
+};
 #endif
 
 

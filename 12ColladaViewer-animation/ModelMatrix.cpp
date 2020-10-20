@@ -160,7 +160,6 @@ void ModelMatrix::rotate(const Vector3f &axis, float degrees){
 
 	}else{
 
-		
 		//T = (translate * invRotMtx * invTranslate) * T
 		float tmp1 = invRotMtx[0][3], tmp2 = invRotMtx[1][3], tmp3 = invRotMtx[2][3], tmp4 = invRotMtx[3][3];
 		invRotMtx[0][3] = startPosition[0] * (tmp4 - invRotMtx[0][0]) + tmp1 + tmp2 + tmp3 - startPosition[1] * invRotMtx[0][1] - startPosition[2] * invRotMtx[0][2];
@@ -169,15 +168,13 @@ void ModelMatrix::rotate(const Vector3f &axis, float degrees){
 		invRotMtx[3][3] = startPosition[0] * (tmp1 - invRotMtx[3][0]) + startPosition[1] * (tmp2 - invRotMtx[3][1]) + startPosition[2] * (tmp3 - invRotMtx[3][2]) + tmp4;
 		invT = invT ^ invRotMtx;
 
-		//invT = invT * translate * rotMtx * invTranslate
+		//invT = invT * (translate * rotMtx * invTranslate)
 		tmp1 = rotMtx[0][3], tmp2 = rotMtx[1][3], tmp3 = rotMtx[2][3], tmp4 = rotMtx[3][3];
 		rotMtx[0][3] = startPosition[0] * (tmp4 - rotMtx[0][0]) + tmp1 + tmp2 + tmp3 - startPosition[1] * rotMtx[0][1] - startPosition[2] * rotMtx[0][2];
 		rotMtx[1][3] = startPosition[1] * (tmp4 - rotMtx[1][1]) + tmp1 + tmp2 + tmp3 - startPosition[0] * rotMtx[1][0] - startPosition[2] * rotMtx[1][2];
 		rotMtx[2][3] = startPosition[2] * (tmp4 - rotMtx[2][2]) + tmp1 + tmp2 + tmp3 - startPosition[0] * rotMtx[2][0] - startPosition[1] * rotMtx[2][1];
 		rotMtx[3][3] = startPosition[0] * (tmp1 - rotMtx[3][0]) + startPosition[1] * (tmp2 - rotMtx[3][1]) + startPosition[2] * (tmp3 - rotMtx[3][2]) + tmp4;
-		T = rotMtx ^ T;
-		
-		
+		T = rotMtx ^ T;	
 	}
 }
 
@@ -222,5 +219,4 @@ const Matrix4f &ModelMatrix::getTransformationMatrix() const{
 const Matrix4f &ModelMatrix::getInvTransformationMatrix() const{
 
 	return invT;
-
 }

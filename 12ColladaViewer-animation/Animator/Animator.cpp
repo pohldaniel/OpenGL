@@ -11,49 +11,11 @@ glm::vec3 GetInterpolated(glm::vec3 start, glm::vec3 end, float progression) {
 	return glm::vec3(x, y, z);
 }
 
-glm::quat GetInterpolatedQuat(glm::quat start, glm::quat end, float progression) {
 
-	glm::quat rot = glm::slerp(start, end, progression);
-	return glm::normalize(rot);
-}
 
-glm::quat fromMatrix3(const glm::mat4 &m) {
-	float w, x, y, z;
-	float diagonal = m[0][0] + m[1][1] + m[2][2];
-	if (diagonal > 0) {
-		float w4 = (float)(sqrtf(diagonal + 1.0) * 2.0);
-		w = w4 / 4.0;
-		x = (m[2][1] - m[1][2]) / w4;
-		y = (m[0][2] - m[2][0]) / w4;
-		z = (m[1][0] - m[0][1]) / w4;
-	}
-	else if ((m[0][0] >  m[1][1]) && (m[0][0] > m[2][2])) {
-		float x4 = (float)(sqrtf(1.0 + m[0][0] - m[1][1] - m[2][2]) * 2.0);
-		w = (m[2][1] - m[1][2]) / x4;
-		x = x4 / 4.0;
-		y = (m[0][1] + m[1][0]) / x4;
-		z = (m[0][2] + m[2][0]) / x4;
-	}
-	else if (m[1][1] > m[2][2]) {
-		float y4 = (float)(sqrtf(1.0 + m[1][1] - m[0][0] - m[2][2]) * 2.0);
-		w = (m[0][2] - m[2][0]) / y4;
-		x = (m[0][1] + m[1][0]) / y4;
-		y = y4 / 4.0;
-		z = (m[1][2] + m[2][1]) / y4;
-	}
-	else {
-		float z4 = (float)(sqrtf(1.0 + m[2][2] - m[0][0] - m[1][1]) * 2.0);
-		w = (m[1][0] - m[0][1]) / z4;
-		x = (m[0][2] + m[2][0]) / z4;
-		y = (m[1][2] + m[2][1]) / z4;
-		z = z4 / 4.0;
-	}
-
-	return glm::quat(w, x, y, z);
-}
 
 glm::mat4 toRotationMatrix(glm::quat quat) {
-	glm::mat4 matrix = glm::mat4(1.0);
+	/*glm::mat4 matrix = glm::mat4(1.0);
 	float xy = quat.x * quat.y;
 	float xz = quat.x * quat.z;
 	float xw = quat.x * quat.w;
@@ -81,6 +43,43 @@ glm::mat4 toRotationMatrix(glm::quat quat) {
 	matrix[3][2] = 0;
 	matrix[3][3] = 1;
 
+	return matrix;*/
+
+	float x2 = quat.x + quat.x;
+	float y2 = quat.y + quat.y;
+	float z2 = quat.z + quat.z;
+	float xx = quat.x * x2;
+	float xy = quat.x * y2;
+	float xz = quat.x * z2;
+	float yy = quat.y * y2;
+	float yz = quat.y * z2;
+	float zz = quat.z * z2;
+	float wx = quat.w * x2;
+	float wy = quat.w * y2;
+	float wz = quat.w * z2;
+
+	glm::mat4 matrix = glm::mat4(1.0);
+
+	matrix[0][0] = 1.0f - (yy + zz);
+	matrix[0][1] = xy - wz;
+	matrix[0][2] = xz + wy;
+	matrix[0][3] = 0.0f;
+
+	matrix[1][0] = xy + wz;
+	matrix[1][1] = 1.0f - (xx + zz);
+	matrix[1][2] = yz - wx;
+	matrix[1][3] = 0.0f;
+
+	matrix[2][0] = xz - wy;
+	matrix[2][1] = yz + wx;
+	matrix[2][2] = 1.0f - (xx + yy);
+	matrix[2][3] = 0.0f;
+
+	matrix[3][0] = 0.0f;
+	matrix[3][1] = 0.0f;
+	matrix[3][2] = 0.0f;
+	matrix[3][3] = 1.0f;
+
 	return matrix;
 }
 
@@ -105,6 +104,28 @@ glm::quat interpolateQuat(glm::quat a, glm::quat b, float blend) {
 	return glm::normalize(result);
 }
 
+Quaternion interpolateQuat(Quaternion a, Quaternion b, float blend) {
+	Quaternion result = Quaternion(0.0, 0.0, 0.0, 1.0);
+	float dot = a[3] * b[3] + a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+	float blendI = 1.0 - blend;
+
+	if (dot < 0) {
+		result[3] = blendI * a[3] + blend * -b[3];
+		result[0] = blendI * a[0] + blend * -b[0];
+		result[1] = blendI * a[1] + blend * -b[1];
+		result[2] = blendI * a[2] + blend * -b[2];
+	}
+	else {
+		result[3] = blendI * a[3] + blend * b[3];
+		result[0] = blendI * a[0] + blend * b[0];
+		result[1] = blendI * a[1] + blend * b[1];
+		result[2] = blendI * a[2] + blend * b[2];
+	}
+
+	return Quaternion::normalize(result);
+}
+
+
 
 Animator::Animator(AnimatedModel *model){
 	_model = model;
@@ -121,8 +142,8 @@ void Animator::startAnimation(const std::string & animationName){
 	}
 }
 
-void Animator::addAnimation(const std::string &filename){
-	_animations.push_back(std::make_shared<Animation>(filename));	
+void Animator::addAnimation(ColladaLoader loader){
+	_animations.push_back(std::make_shared<Animation>(loader));
 }
 
 
@@ -165,6 +186,7 @@ std::unordered_map<std::string, glm::mat4> Animator::calculateCurrentAnimationPo
 	float progression = currentTime / totalTime;
 
 	std::unordered_map<std::string, glm::mat4> currentPose;
+	std::unordered_map<std::string, Matrix4f> currentPose2;
 
 	std::map<std::string, JointTransformData>::iterator it = previousFrame.pose.begin();
 	while (it != previousFrame.pose.end()) {
@@ -179,8 +201,26 @@ std::unordered_map<std::string, glm::mat4> Animator::calculateCurrentAnimationPo
 		//currentPose.insert(std::make_pair(name, glm::scale(scale) * glm::translate(position) *  glm::toMat4(rotation)));
 
 		/**Custom interpolation correspondets to the custom "fromMatrix function" at Animation.cpp*/
-		glm::quat rotation = interpolateQuat(previousFrame.pose.at(name).rotationKeys, nextFrame.pose.at(name).rotationKeys, progression);
-		currentPose.insert(std::make_pair(name, glm::scale(scale) * glm::translate(position) * toRotationMatrix(rotation)));
+		//glm::quat rotation = interpolateQuat(previousFrame.pose.at(name).rotationKeys, nextFrame.pose.at(name).rotationKeys, progression);
+		//currentPose.insert(std::make_pair(name, glm::scale(scale) * glm::translate(position) * toRotationMatrix(rotation)));
+
+		Quaternion rot = interpolateQuat(previousFrame.pose.at(name).rotation, nextFrame.pose.at(name).rotation, progression);
+		Matrix4f mat = rot.toMatrix4f();
+		Matrix4f trans;
+		trans.translate(position[0], position[1], position[2]);
+
+		Matrix4f sca;
+		sca.scale(scale[0], scale[1], scale[2]);
+
+		glm::mat4 tmp;
+
+		tmp[0][0] = mat[0][0]; tmp[0][1] = mat[0][1]; tmp[0][2] = mat[0][2]; tmp[0][3] = mat[0][3];
+		tmp[1][0] = mat[1][0]; tmp[1][1] = mat[1][1]; tmp[1][2] = mat[1][2]; tmp[1][3] = mat[1][3];
+		tmp[2][0] = mat[2][0]; tmp[2][1] = mat[2][1]; tmp[2][2] = mat[2][2]; tmp[2][3] = mat[2][3];
+		tmp[3][0] = mat[3][0]; tmp[3][1] = mat[3][1]; tmp[3][2] = mat[3][2]; tmp[3][3] = mat[3][3];
+
+		currentPose.insert(std::make_pair(name, glm::scale(scale) * glm::translate(position) * tmp));
+		//currentPose2.insert(std::make_pair(name, sca * trans * mat));
 		it++;
 	}
 	return currentPose;

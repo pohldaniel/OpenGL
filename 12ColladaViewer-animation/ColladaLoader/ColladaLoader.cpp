@@ -26,6 +26,7 @@ ColladaLoader::ColladaLoader(const std::string & _path) : path(_path) {
 	hasColors = false;
 
 	doc = TiXmlDocument(path.c_str());
+	doc.LoadFile();
 }
 
 ColladaLoader::~ColladaLoader() {
@@ -46,7 +47,6 @@ void ColladaLoader::loadData(std::vector<glm::vec3> &positions,
 							 std::vector<unsigned int> &indices, 
 							 std::vector<std::string> &jointsList) {
 
-	doc.LoadFile();
 	std::vector<VertexSkinData> skinningData;
 
 	loadGeometry(positions, texCoords, normals, indices);

@@ -102,9 +102,11 @@ public:
 	void loadVisualScene(std::vector<std::string> &jointsList);
 	void createJoints(Joint &joint);
 
+	TiXmlDocument doc;
+
 private:
 	const std::string& path;
-	TiXmlDocument doc;
+	
 
 	std::vector<float> m_vertexBuffer;
 	std::vector<unsigned int> m_indexBuffer;

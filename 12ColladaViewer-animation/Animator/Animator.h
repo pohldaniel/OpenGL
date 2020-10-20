@@ -13,7 +13,7 @@ public:
 	Animator(AnimatedModel* model);
 
 	void startAnimation(const std::string& animationName);
-	void addAnimation(const std::string &filename);
+	void addAnimation(ColladaLoader loader);
 	void Update(double elapsedTime);
 
 private:

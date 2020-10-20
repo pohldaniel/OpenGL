@@ -55,9 +55,12 @@ AnimatedModel::AnimatedModel() : _shader(".\\res\\animationShader") {
 
 void AnimatedModel::LoadModel(const std::string &filename, const std::string &texture){
 	
-	_meshes.push_back(std::make_shared<AnimatedMesh>(filename));
+	ColladaLoader loader(filename);
+
+
+	_meshes.push_back(std::make_shared<AnimatedMesh>(loader));
 	
-	_animator->addAnimation(filename);
+	_animator->addAnimation(loader);
 	_texture->setTexture(texture);	
 }
 

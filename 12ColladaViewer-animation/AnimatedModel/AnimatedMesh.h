@@ -29,7 +29,7 @@ struct Joint {
 class AnimatedMesh {
 
 public:
-	AnimatedMesh(const std::string & _path);
+	AnimatedMesh(ColladaLoader loader);
 	virtual ~AnimatedMesh();
 
 	void Draw();
@@ -60,6 +60,6 @@ private:
 	std::vector<std::string> jointsList;
 
 	Joint rootJoint;
-
+	ColladaLoader loader;
 };
 #endif
