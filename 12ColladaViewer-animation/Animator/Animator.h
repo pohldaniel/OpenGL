@@ -23,8 +23,7 @@ private:
 	std::shared_ptr<Animation> _currentAnimation;
 	double _animationTime;
 	
-	std::unordered_map<std::string, glm::mat4> calculateCurrentAnimationPose();
-
+	std::unordered_map<std::string, Matrix4f> calculateCurrentAnimationPose();
 };
 
 #endif

@@ -1,10 +1,6 @@
 #ifndef ANIMATEDMESH_H
 #define ANIMATEDMESH_H
 
-#include <glm\glm.hpp>
-#include <glm\gtx\transform.hpp>
-#include <glm\gtx\quaternion.hpp>
-#include <glm\gtc\type_ptr.hpp>
 #include <unordered_map>
 #include <queue>
 #include <iostream>
@@ -14,16 +10,17 @@
 
 #include "..\Extension.h"
 #include "..\ColladaLoader\ColladaLoader.h"
+#include "..\Vector.h"
 
 struct Joint {
 	int index;
 	std::string name;
 	std::vector<Joint> children;
 
-	glm::mat4 localBindTransform;
-	glm::mat4 inverseBindTransform;	
+	Matrix4f localBindTransform;
+	Matrix4f inverseBindTransform;
 
-	glm::mat4 animatedTransform;
+	Matrix4f animatedTransform;
 };
 
 class AnimatedMesh {
@@ -33,9 +30,9 @@ public:
 	virtual ~AnimatedMesh();
 
 	void Draw();
-	std::vector<glm::mat4> GetBoneArray();
-	void applyPoseToJoints(std::unordered_map<std::string, glm::mat4> currentPose);
+	std::vector<Matrix4f> GetBoneArray();
 
+	void applyPoseToJoints(std::unordered_map<std::string, Matrix4f> currentPose);
 private:
 	
 	enum MeshBufferPositions {
@@ -48,14 +45,13 @@ private:
 		NUM_BUFFERS
 	};
 
-	void addJointsToArray(Joint joint, std::vector<glm::mat4> &boneArray);
-	void applyPoseToJoints(std::unordered_map<std::string, glm::mat4> currentPose, Joint &joint, glm::mat4 parentTransform);
+	void addJointsToArray(Joint rootJoint, std::vector<Matrix4f> &boneArray);
+	void applyPoseToJoints(std::unordered_map<std::string, Matrix4f> currentPose, Joint &joint, Matrix4f parentTransform);
 
 	unsigned int _vao;
 	unsigned int _vbo[NUM_BUFFERS];
 	unsigned int _drawCount;
 	const std::string& path;
-	const glm::mat4 identity = glm::mat4(1.0f);
 	std::unordered_map<std::string, unsigned int> _boneIdMap;
 	std::vector<std::string> jointsList;
 

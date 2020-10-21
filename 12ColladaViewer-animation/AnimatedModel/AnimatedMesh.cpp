@@ -4,11 +4,11 @@
 
 AnimatedMesh::AnimatedMesh(ColladaLoader loader) : path(path), loader(loader) {
 	
-	std::vector<glm::vec3> positions;
-	std::vector<glm::vec2> texCoords;
-	std::vector<glm::vec3> normals;
-	std::vector<glm::uvec4> jointIds;
-	std::vector<glm::vec4> jointWeights;
+	std::vector<Vector3f> positions;
+	std::vector<Vector2f> texCoords;
+	std::vector<Vector3f> normals;
+	std::vector<std::array<unsigned int, 4>> jointIds;
+	std::vector<Vector4f> jointWeights;
 	std::vector<unsigned int> indices;
 
 	loader.loadData(positions, texCoords, normals, jointIds, jointWeights, indices, jointsList);
@@ -44,14 +44,14 @@ AnimatedMesh::AnimatedMesh(ColladaLoader loader) : path(path), loader(loader) {
 
 	//Joint Ids
 	glBindBuffer(GL_ARRAY_BUFFER, _vbo[JOINT_IDS]);
-	glBufferData(GL_ARRAY_BUFFER, jointIds.size() * sizeof(glm::uvec4), &jointIds.front(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, jointIds.size() * sizeof(std::array<unsigned int, 4>), &jointIds.front(), GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(3);
 	glVertexAttribIPointer(3, 4, GL_UNSIGNED_INT, 0, 0);
 
 	//Joint Weights
 	glBindBuffer(GL_ARRAY_BUFFER, _vbo[JOINT_WEIGHTS]);
-	glBufferData(GL_ARRAY_BUFFER, jointWeights.size() * sizeof(glm::vec4), &jointWeights.front(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, jointWeights.size() * sizeof(Vector4f), &jointWeights.front(), GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(4);
 	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 0, 0);
@@ -77,18 +77,16 @@ void AnimatedMesh::Draw() {
 	glBindVertexArray(0);
 }
 
+std::vector<Matrix4f> AnimatedMesh::GetBoneArray() {
+	std::vector<Matrix4f> boneArray;
 
-
-std::vector<glm::mat4> AnimatedMesh::GetBoneArray() {
-	std::vector<glm::mat4> boneArray;
-
-	boneArray.assign(jointsList.size(), glm::mat4());
+	boneArray.assign(jointsList.size(), Matrix4f::IDENTITY);
 	addJointsToArray(rootJoint, boneArray);
 
 	return boneArray;
 }
 
-void AnimatedMesh::addJointsToArray(Joint rootJoint, std::vector<glm::mat4> &boneArray) {
+void AnimatedMesh::addJointsToArray(Joint rootJoint, std::vector<Matrix4f> &boneArray) {
 
 	boneArray[rootJoint.index] = rootJoint.animatedTransform;
 	for (int i = 0; i < rootJoint.children.size(); i++) {
@@ -96,43 +94,48 @@ void AnimatedMesh::addJointsToArray(Joint rootJoint, std::vector<glm::mat4> &bon
 	}
 }
 
-void AnimatedMesh::applyPoseToJoints(std::unordered_map<std::string, glm::mat4> currentPose) {
-	applyPoseToJoints(currentPose, rootJoint, glm::mat4(1.0));
+void AnimatedMesh::applyPoseToJoints(std::unordered_map<std::string, Matrix4f> currentPose) {
+	applyPoseToJoints(currentPose, rootJoint, Matrix4f::IDENTITY);
 }
 
-void AnimatedMesh::applyPoseToJoints(std::unordered_map<std::string, glm::mat4> currentPose, Joint &joint, glm::mat4 parentTransform) {
-	
-	glm::mat4 currentTransform;
+void AnimatedMesh::applyPoseToJoints(std::unordered_map<std::string, Matrix4f> currentPose, Joint &joint, Matrix4f parentTransform) {
+
+	Matrix4f currentTransform;
 	if (currentPose.find(joint.name) == currentPose.end()) {
 		//check for identity maybe there is a bette way
-		const float *pParentTransform = (const float*)glm::value_ptr(parentTransform);
-		const float *pIdentity = (const float*)glm::value_ptr(identity);
-		//static const float pIdentity[] = { 1.0, 0.0 , 0.0 , 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 };
-		if (memcmp(pParentTransform, pIdentity, sizeof(float) * 16) == 0) {
-			currentTransform = joint.localBindTransform;
+		bool check = true;
+		for (short i = 0; i < 4; i++) {
+			check = check && memcmp(parentTransform[i], Matrix4f::IDENTITY[i], sizeof(float) * 4) == 0;
+		}
+
+		if (check) {
+			currentTransform = joint.localBindTransform;			
 		}else {
 			currentTransform = parentTransform * joint.localBindTransform;
 		}
-	}else {
 
+	}else {
 		currentTransform = parentTransform * currentPose.at(joint.name);
 	}
 
-	for (int i = 0; i < joint.children.size(); i++) {	
-		applyPoseToJoints(currentPose, joint.children[i], currentTransform);	
+	for (int i = 0; i < joint.children.size(); i++) {
+		applyPoseToJoints(currentPose, joint.children[i], currentTransform);
 	}
-	
+
 	if (currentPose.find(joint.name) == currentPose.end()) {
 		//check for identity maybe there is a bette way
-		const float *pParentTransform = (const float*)glm::value_ptr(parentTransform);
-		const float *pIdentity = (const float*)glm::value_ptr(identity);
-		//static const float pIdentity[] = { 1.0, 0.0 , 0.0 , 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 };
-		if (memcmp(pParentTransform, pIdentity, sizeof(float) * 16) == 0) {
-			joint.animatedTransform =  joint.localBindTransform * joint.inverseBindTransform;
+		bool check = true;
+		for (short i = 0; i < 4; i++) {
+			check = check && memcmp(parentTransform[i], Matrix4f::IDENTITY[i], sizeof(float) * 4) == 0;
+		}
+
+		if (check) {
+			joint.animatedTransform = joint.localBindTransform * joint.inverseBindTransform;
 		}else {
 			joint.animatedTransform = currentTransform * joint.inverseBindTransform;
 		}
-	}else {		
+
+	}else {
 		joint.animatedTransform = currentTransform * joint.inverseBindTransform;
 	}
 }

@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <glm\glm.hpp>
 
 #include "Shader2.h"
 #include "..\Extension.h"
@@ -21,7 +20,7 @@ public:
 	AnimationShader();
 	virtual ~AnimationShader();
 
-	void Update(const AnimatedModel& model, const Camera& camera, std::vector<glm::mat4> jointVector);
+	void Update(const AnimatedModel& model, const Camera& camera, std::vector<Matrix4f> jointVector);
 	void Bind();
 
 private:

@@ -39,11 +39,11 @@ ColladaLoader::~ColladaLoader() {
 	doc.Clear();
 }
 
-void ColladaLoader::loadData(std::vector<glm::vec3> &positions, 
-							 std::vector<glm::vec2> &texCoords, 
-							 std::vector<glm::vec3> &normals, 
-							 std::vector<glm::uvec4> &jointIds, 
-							 std::vector<glm::vec4> &jointWeights, 
+void ColladaLoader::loadData(std::vector<Vector3f> &positions,
+							 std::vector<Vector2f> &texCoords,
+							 std::vector<Vector3f> &normals,
+							 std::vector<std::array<unsigned int, 4>> &jointIds,
+							 std::vector<Vector4f> &jointWeights,
 							 std::vector<unsigned int> &indices, 
 							 std::vector<std::string> &jointsList) {
 
@@ -64,7 +64,7 @@ void ColladaLoader::loadData(std::vector<glm::vec3> &positions,
 	//std::vector<VertexSkinData>().swap(skinningData);
 }
 
-void ColladaLoader::loadGeometry(std::vector<glm::vec3> &positions, std::vector<glm::vec2> &texCoords, std::vector<glm::vec3> &normals, std::vector<unsigned int> &indices) {
+void ColladaLoader::loadGeometry(std::vector<Vector3f> &positions, std::vector<Vector2f> &texCoords, std::vector<Vector3f> &normals, std::vector<unsigned int> &indices) {
 
 	TiXmlElement* geometry = doc.RootElement()->FirstChildElement("library_geometries")->FirstChildElement("geometry");
 	TiXmlElement* mesh = geometry->FirstChildElement("mesh");
@@ -127,14 +127,11 @@ void ColladaLoader::loadGeometry(std::vector<glm::vec3> &positions, std::vector<
 			pos_count = pos_count / 3;
 
 			float x = atof(strtok(text, " "));  float y = atof(strtok(NULL, " ")); float z = atof(strtok(NULL, " "));
-
-			glm::vec4 position = glm::vec4(x, y, z, 1.0);
-			positions.push_back(glm::vec3(position[0], position[1], position[2]));
+			positions.push_back(Vector3f(x, y, z));
 
 			for (unsigned int index = 1; index < pos_count; index++) {
 				x = atof(strtok(NULL, " ")); y = atof(strtok(NULL, " ")); z = atof(strtok(NULL, " "));
-				position = glm::vec4(x, y, z, 1.0);
-				positions.push_back(glm::vec3(position[0], position[1], position[2]));
+				positions.push_back(Vector3f(x, y, z));
 			}
 
 			hasPositions = false;
@@ -148,16 +145,11 @@ void ColladaLoader::loadGeometry(std::vector<glm::vec3> &positions, std::vector<
 			norm_count = norm_count / 3;
 
 			float x = atof(strtok(text, " "));  float y = atof(strtok(NULL, " ")); float z = atof(strtok(NULL, " "));
-			glm::vec4 normal = glm::vec4(x, y, z, 0.0);
-			normals.push_back(glm::vec3(normal[0], normal[1], normal[2]));
+			normals.push_back(Vector3f(x, y, z));
 
 			for (unsigned int index = 1; index < norm_count; index++) {
 				x = atof(strtok(NULL, " ")); y = atof(strtok(NULL, " ")); z = atof(strtok(NULL, " "));
-				normal = glm::vec4(x, y, z, 0.0);
-
-
-
-				normals.push_back(glm::vec3(normal[0], normal[1], normal[2]));
+				normals.push_back(Vector3f(x, y, z));
 			}
 
 			hasNormals = false;
@@ -171,11 +163,11 @@ void ColladaLoader::loadGeometry(std::vector<glm::vec3> &positions, std::vector<
 			tex_count = tex_count / 2;
 
 			float u = atof(strtok(text, " "));  float v = atof(strtok(NULL, " "));
-			texCoords.push_back(glm::vec2(u, v));
+			texCoords.push_back(Vector2f(u, v));
 
 			for (unsigned int index = 1; index < tex_count; index++) {
 				u = atof(strtok(NULL, " ")); v = atof(strtok(NULL, " "));
-				texCoords.push_back(glm::vec2(u, v));
+				texCoords.push_back(Vector2f(u, v));
 			}
 
 			hasTexCoords = false;
@@ -198,7 +190,7 @@ void ColladaLoader::loadGeometry(std::vector<glm::vec3> &positions, std::vector<
 	}
 }
 
-void ColladaLoader::loadController(std::vector<glm::uvec4> &jointIds, std::vector<glm::vec4> &jointWeights, std::vector<std::string> &jointsList, std::vector<VertexSkinData> &skinningData) {
+void ColladaLoader::loadController(std::vector<std::array<unsigned int, 4>> &jointIds, std::vector<Vector4f> &jointWeights, std::vector<std::string> &jointsList, std::vector<VertexSkinData> &skinningData) {
 
 
 	char* text;
@@ -310,7 +302,7 @@ void ColladaLoader::loadController(std::vector<glm::uvec4> &jointIds, std::vecto
 	}	
 }
 
-void ColladaLoader::createIndexBuffer(std::vector<glm::vec3> &positions, std::vector<glm::vec2> &texCoords, std::vector<glm::vec3> &normals, std::vector<glm::uvec4> &jointIds, std::vector<glm::vec4> &jointWeights, std::vector<unsigned int> &indices, std::vector<VertexSkinData> &skinningData) {
+void ColladaLoader::createIndexBuffer(std::vector<Vector3f> &positions, std::vector<Vector2f> &texCoords, std::vector<Vector3f> &normals, std::vector<std::array<unsigned int, 4>> &jointIds, std::vector<Vector4f> &jointWeights, std::vector<unsigned int> &indices, std::vector<VertexSkinData> &skinningData) {
 
 	m_indexBuffer.resize(numberOfTriangles * 3);
 
@@ -355,11 +347,11 @@ void ColladaLoader::createIndexBuffer(std::vector<glm::vec3> &positions, std::ve
 
 	for (int i = 0; i < m_indexBuffer.size(); i++) {
 
-		glm::vec3 position = glm::vec3(m_vertexBuffer[m_indexBuffer[i] * 14], m_vertexBuffer[m_indexBuffer[i] * 14 + 1], m_vertexBuffer[m_indexBuffer[i] * 14 + 2]);
-		glm::vec3 normal = glm::vec3(m_vertexBuffer[m_indexBuffer[i] * 14 + 3], m_vertexBuffer[m_indexBuffer[i] * 14 + 4], m_vertexBuffer[m_indexBuffer[i] * 14 + 5]);
-		glm::vec2 texCoord = glm::vec2(m_vertexBuffer[m_indexBuffer[i] * 14 + 6], 1.0 - m_vertexBuffer[m_indexBuffer[i] * 14 + 7]);
-		glm::uvec4 jointId = glm::uvec4(m_vertexBuffer[m_indexBuffer[i] * 14 + 8], m_vertexBuffer[m_indexBuffer[i] * 14 + 9], m_vertexBuffer[m_indexBuffer[i] * 14 + 10], 0);
-		glm::vec4 jointWeight = glm::vec4(m_vertexBuffer[m_indexBuffer[i] * 14 + 11], m_vertexBuffer[m_indexBuffer[i] * 14 + 12], m_vertexBuffer[m_indexBuffer[i] * 14 + 13], 0.0);
+		Vector3f position = Vector3f(m_vertexBuffer[m_indexBuffer[i] * 14], m_vertexBuffer[m_indexBuffer[i] * 14 + 1], m_vertexBuffer[m_indexBuffer[i] * 14 + 2]);
+		Vector3f normal = Vector3f(m_vertexBuffer[m_indexBuffer[i] * 14 + 3], m_vertexBuffer[m_indexBuffer[i] * 14 + 4], m_vertexBuffer[m_indexBuffer[i] * 14 + 5]);
+		Vector2f texCoord = Vector2f(m_vertexBuffer[m_indexBuffer[i] * 14 + 6], 1.0 - m_vertexBuffer[m_indexBuffer[i] * 14 + 7]);
+		std::array<unsigned int, 4> jointId = { m_vertexBuffer[m_indexBuffer[i] * 14 + 8], m_vertexBuffer[m_indexBuffer[i] * 14 + 9], m_vertexBuffer[m_indexBuffer[i] * 14 + 10], 0 };
+		Vector4f jointWeight = Vector4f(m_vertexBuffer[m_indexBuffer[i] * 14 + 11], m_vertexBuffer[m_indexBuffer[i] * 14 + 12], m_vertexBuffer[m_indexBuffer[i] * 14 + 13], 0.0);
 
 		positions.push_back(position);
 		texCoords.push_back(texCoord);
@@ -419,20 +411,18 @@ void ColladaLoader::loadVisualScene(std::vector<std::string> &jointsList) {
 
 	char* text = (char*)rootNode->FirstChild()->FirstChild()->Value();
 
-	glm::mat4 offsetMatrix;
+	Matrix4f offsetMatrix;
 	offsetMatrix[0][0] = atof(strtok(text, " "));
 
 	short start = 1;
 	for (int i = 0; i < 4; i++) {
 		for (int j = start; j < 4; j++) {
-
 			offsetMatrix[i][j] = atof(strtok(NULL, " "));
-
 		}
 		start = 0;
 	}
 
-	offsetMatrix = glm::transpose(offsetMatrix);
+	Matrix4f::transpose(offsetMatrix);
 
 	std::string name = std::string(((TiXmlElement*)rootNode)->Attribute("sid"));
 	std::vector<std::string>::iterator it = std::find(jointsList.begin(), jointsList.end(), name);
@@ -453,7 +443,7 @@ JointData ColladaLoader::search(TiXmlNode* _node, std::vector<std::string> &join
 
 	char* text = (char*)_node->FirstChild()->FirstChild()->Value();
 
-	glm::mat4 offsetMatrix;
+	Matrix4f offsetMatrix;
 	offsetMatrix[0][0] = atof(strtok(text, " "));
 
 	short start = 1;
@@ -464,7 +454,7 @@ JointData ColladaLoader::search(TiXmlNode* _node, std::vector<std::string> &join
 		start = 0;
 	}
 
-	offsetMatrix = glm::transpose(offsetMatrix);
+	Matrix4f::transpose(offsetMatrix);
 
 	std::string name = ((TiXmlElement*)_node)->Attribute("sid");
 	std::vector<std::string>::iterator it = std::find(jointsList.begin(), jointsList.end(), name);
@@ -484,15 +474,15 @@ void ColladaLoader::createJoints(Joint &joint) {
 	joint.name = skeletonData.headJoint.nameId;
 	joint.localBindTransform = skeletonData.headJoint.bindLocalTransform;
 
-	glm::mat4 bindTransform = skeletonData.headJoint.bindLocalTransform;
-	joint.inverseBindTransform = glm::inverse(bindTransform);
+	Matrix4f bindTransform = skeletonData.headJoint.bindLocalTransform;
+	joint.inverseBindTransform = bindTransform.inverse();
 
 	for (JointData child : skeletonData.headJoint.children) {
 		joint.children.push_back(createJoints(child, bindTransform));
 	}
 }
 
-Joint ColladaLoader::createJoints(JointData data, glm::mat4 parentBindTransform) {
+Joint ColladaLoader::createJoints(JointData data, Matrix4f parentBindTransform2) {
 
 	Joint joint;
 
@@ -500,8 +490,8 @@ Joint ColladaLoader::createJoints(JointData data, glm::mat4 parentBindTransform)
 	joint.name = data.nameId;
 	joint.localBindTransform = data.bindLocalTransform;
 
-	glm::mat4 bindTransform = parentBindTransform * data.bindLocalTransform;
-	joint.inverseBindTransform = glm::inverse(bindTransform);
+	Matrix4f bindTransform = parentBindTransform2 * data.bindLocalTransform;
+	joint.inverseBindTransform = bindTransform.inverse();
 
 	for (JointData child : data.children) {
 		joint.children.push_back(createJoints(child, bindTransform));

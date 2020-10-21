@@ -38,7 +38,6 @@ public:
 	std::shared_ptr<Animator> getAnimator() { return _animator; }
 
 	AnimationShader						_shader;
-	glm::mat4							_inverseModelMatrix;
 
 	std::vector<std::shared_ptr<AnimatedMesh>>	_meshes;
 	std::shared_ptr<Texture>			_texture;	

@@ -2,9 +2,6 @@
 #define JOINT_ANIM_H
 
 #include <map>
-#include <glm\glm.hpp>
-#include <glm\gtx\quaternion.hpp>
-#include <glm\gtx\transform.hpp>
 #include <string>
 #include <vector>
 #include "..\ColladaLoader\ColladaLoader.h"
@@ -13,16 +10,14 @@
 struct JointTransformData {
 
 	std::string jointNameId;
-	glm::vec3 positonKeys;
-	glm::quat rotationKeys;
-	Quaternion rotation;
-	glm::vec3 scallingKeys;
+	Vector3f positonKeys;
+	Quaternion rotationKeys;
+	Vector3f scallingKeys;
 
-	JointTransformData(std::string _jointNameId, glm::vec3 _positon, glm::quat _rotationKeys, Quaternion _rotation, glm::vec3 _scallingKeys) {
+	JointTransformData(std::string _jointNameId, Vector3f _positonKeys,Quaternion _rotationKeys, Vector3f _scallingKeys) {
 		jointNameId = _jointNameId;
-		positonKeys = _positon;
+		positonKeys = _positonKeys;
 		rotationKeys = _rotationKeys;
-		rotation = _rotation;
 		scallingKeys = _scallingKeys;
 	}
 };

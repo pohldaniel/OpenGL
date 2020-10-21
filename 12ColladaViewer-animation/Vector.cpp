@@ -12,7 +12,7 @@ const Matrix4f Matrix4f::IDENTITY(1.0f, 0.0f, 0.0f, 0.0f,
 void Matrix4f::rotate(const Vector3f &axis, float degrees){
 
 	float rad = (degrees * PI) / 180.0f;
-	float magnitude = axis.magnitude();
+	float magnitude = axis.length();
 
 	float x = axis[0] * (1.0 / magnitude);
 	float y = axis[1] * (1.0 / magnitude);
@@ -44,7 +44,7 @@ void Matrix4f::rotate(const Vector3f &axis, float degrees){
 void Matrix4f::invRotate(const Vector3f &axis, float degrees){
 	
 	float rad = (degrees * PI) / 180.0f;
-	float magnitude = axis.magnitude();
+	float magnitude = axis.length();
 
 	float x = axis[0] * (1.0 / magnitude);
 	float y = axis[1] * (1.0 / magnitude);
@@ -624,6 +624,64 @@ void Matrix4f::transpose(Matrix4f &m) {
 	tmp = m[2][3]; m[2][3] = m[3][2]; m[3][2] = tmp;
 }
 
+float Matrix4f::determinant() const {
+
+	return (mtx[0][0] * mtx[1][1] - mtx[1][0] * mtx[0][1])
+		* (mtx[2][2] * mtx[3][3] - mtx[3][2] * mtx[2][3])
+		- (mtx[0][0] * mtx[2][1] - mtx[2][0] * mtx[0][1])
+		* (mtx[1][2] * mtx[3][3] - mtx[3][2] * mtx[1][3])
+		+ (mtx[0][0] * mtx[3][1] - mtx[3][0] * mtx[0][1])
+		* (mtx[1][2] * mtx[2][3] - mtx[2][2] * mtx[1][3])
+		+ (mtx[1][0] * mtx[2][1] - mtx[2][0] * mtx[1][1])
+		* (mtx[0][2] * mtx[3][3] - mtx[3][2] * mtx[0][3])
+		- (mtx[1][0] * mtx[3][1] - mtx[3][0] * mtx[1][1])
+		* (mtx[0][2] * mtx[2][3] - mtx[2][2] * mtx[0][3])
+		+ (mtx[2][0] * mtx[3][1] - mtx[3][0] * mtx[2][1])
+		* (mtx[0][2] * mtx[1][3] - mtx[1][2] * mtx[0][3]);
+}
+
+Matrix4f Matrix4f::inverse() const
+{
+	// This method of computing the inverse of a 4x4 matrix is based
+	// on a similar function found in Paul Nettle's matrix template
+	// class (http://www.fluidstudios.com).
+	//
+	// If the inverse doesn't exist for this matrix, then the identity
+	// matrix will be returned.
+
+	Matrix4f tmp;
+	float d = determinant();
+	
+	if (fabsf(d) < 0.0001f){
+		tmp.identity();
+
+	}else{
+		d = 1.0f / d;
+
+		tmp.mtx[0][0] = d * (mtx[1][1] * (mtx[2][2] * mtx[3][3] - mtx[3][2] * mtx[2][3]) + mtx[2][1] * (mtx[3][2] * mtx[1][3] - mtx[1][2] * mtx[3][3]) + mtx[3][1] * (mtx[1][2] * mtx[2][3] - mtx[2][2] * mtx[1][3]));
+		tmp.mtx[1][0] = d * (mtx[1][2] * (mtx[2][0] * mtx[3][3] - mtx[3][0] * mtx[2][3]) + mtx[2][2] * (mtx[3][0] * mtx[1][3] - mtx[1][0] * mtx[3][3]) + mtx[3][2] * (mtx[1][0] * mtx[2][3] - mtx[2][0] * mtx[1][3]));
+		tmp.mtx[2][0] = d * (mtx[1][3] * (mtx[2][0] * mtx[3][1] - mtx[3][0] * mtx[2][1]) + mtx[2][3] * (mtx[3][0] * mtx[1][1] - mtx[1][0] * mtx[3][1]) + mtx[3][3] * (mtx[1][0] * mtx[2][1] - mtx[2][0] * mtx[1][1]));
+		tmp.mtx[3][0] = d * (mtx[1][0] * (mtx[3][1] * mtx[2][2] - mtx[2][1] * mtx[3][2]) + mtx[2][0] * (mtx[1][1] * mtx[3][2] - mtx[3][1] * mtx[1][2]) + mtx[3][0] * (mtx[2][1] * mtx[1][2] - mtx[1][1] * mtx[2][2]));
+
+		tmp.mtx[0][1] = d * (mtx[2][1] * (mtx[0][2] * mtx[3][3] - mtx[3][2] * mtx[0][3]) + mtx[3][1] * (mtx[2][2] * mtx[0][3] - mtx[0][2] * mtx[2][3]) + mtx[0][1] * (mtx[3][2] * mtx[2][3] - mtx[2][2] * mtx[3][3]));
+		tmp.mtx[1][1] = d * (mtx[2][2] * (mtx[0][0] * mtx[3][3] - mtx[3][0] * mtx[0][3]) + mtx[3][2] * (mtx[2][0] * mtx[0][3] - mtx[0][0] * mtx[2][3]) + mtx[0][2] * (mtx[3][0] * mtx[2][3] - mtx[2][0] * mtx[3][3]));
+		tmp.mtx[2][1] = d * (mtx[2][3] * (mtx[0][0] * mtx[3][1] - mtx[3][0] * mtx[0][1]) + mtx[3][3] * (mtx[2][0] * mtx[0][1] - mtx[0][0] * mtx[2][1]) + mtx[0][3] * (mtx[3][0] * mtx[2][1] - mtx[2][0] * mtx[3][1]));
+		tmp.mtx[3][1] = d * (mtx[2][0] * (mtx[3][1] * mtx[0][2] - mtx[0][1] * mtx[3][2]) + mtx[3][0] * (mtx[0][1] * mtx[2][2] - mtx[2][1] * mtx[0][2]) + mtx[0][0] * (mtx[2][1] * mtx[3][2] - mtx[3][1] * mtx[2][2]));
+
+		tmp.mtx[0][2] = d * (mtx[3][1] * (mtx[0][2] * mtx[1][3] - mtx[1][2] * mtx[0][3]) + mtx[0][1] * (mtx[1][2] * mtx[3][3] - mtx[3][2] * mtx[1][3]) + mtx[1][1] * (mtx[3][2] * mtx[0][3] - mtx[0][2] * mtx[3][3]));
+		tmp.mtx[1][2] = d * (mtx[3][2] * (mtx[0][0] * mtx[1][3] - mtx[1][0] * mtx[0][3]) + mtx[0][2] * (mtx[1][0] * mtx[3][3] - mtx[3][0] * mtx[1][3]) + mtx[1][2] * (mtx[3][0] * mtx[0][3] - mtx[0][0] * mtx[3][3]));
+		tmp.mtx[2][2] = d * (mtx[3][3] * (mtx[0][0] * mtx[1][1] - mtx[1][0] * mtx[0][1]) + mtx[0][3] * (mtx[1][0] * mtx[3][1] - mtx[3][0] * mtx[1][1]) + mtx[1][3] * (mtx[3][0] * mtx[0][1] - mtx[0][0] * mtx[3][1]));
+		tmp.mtx[3][2] = d * (mtx[3][0] * (mtx[1][1] * mtx[0][2] - mtx[0][1] * mtx[1][2]) + mtx[0][0] * (mtx[3][1] * mtx[1][2] - mtx[1][1] * mtx[3][2]) + mtx[1][0] * (mtx[0][1] * mtx[3][2] - mtx[3][1] * mtx[0][2]));
+
+		tmp.mtx[0][3] = d * (mtx[0][1] * (mtx[2][2] * mtx[1][3] - mtx[1][2] * mtx[2][3]) + mtx[1][1] * (mtx[0][2] * mtx[2][3] - mtx[2][2] * mtx[0][3]) + mtx[2][1] * (mtx[1][2] * mtx[0][3] - mtx[0][2] * mtx[1][3]));
+		tmp.mtx[1][3] = d * (mtx[0][2] * (mtx[2][0] * mtx[1][3] - mtx[1][0] * mtx[2][3]) + mtx[1][2] * (mtx[0][0] * mtx[2][3] - mtx[2][0] * mtx[0][3]) + mtx[2][2] * (mtx[1][0] * mtx[0][3] - mtx[0][0] * mtx[1][3]));
+		tmp.mtx[2][3] = d * (mtx[0][3] * (mtx[2][0] * mtx[1][1] - mtx[1][0] * mtx[2][1]) + mtx[1][3] * (mtx[0][0] * mtx[2][1] - mtx[2][0] * mtx[0][1]) + mtx[2][3] * (mtx[1][0] * mtx[0][1] - mtx[0][0] * mtx[1][1]));
+		tmp.mtx[3][3] = d * (mtx[0][0] * (mtx[1][1] * mtx[2][2] - mtx[2][1] * mtx[1][2]) + mtx[1][0] * (mtx[2][1] * mtx[0][2] - mtx[0][1] * mtx[2][2]) + mtx[2][0] * (mtx[0][1] * mtx[1][2] - mtx[1][1] * mtx[0][2]));
+	}
+
+	return tmp;
+}
+
 //friend operator
 Matrix4f operator*(float scalar, const Matrix4f &rhs){
 	
@@ -829,14 +887,14 @@ float Vector3f::dot(const Vector3f &p, const Vector3f &q){
 
 
 
-float Vector3f::magnitude() const{
+float Vector3f::length() const{
 
     return sqrtf((vec[0] * vec[0]) + (vec[1] * vec[1]) + (vec[2] * vec[2]));
 }
 
 void Vector3f::normalize(Vector3f &p){
 
-	float invMag = 1.0f / p.magnitude();
+	float invMag = 1.0f / p.length();
 	p.vec[0] *= invMag, p.vec[1] *= invMag, p.vec[2] *= invMag;
 }
 
@@ -852,7 +910,7 @@ Vector3f Vector3f::Max(const Vector3f &p, const Vector3f &q){
 
 Vector3f Vector3f::normalize(){
 
-	float invMag = 1.0f / magnitude();
+	float invMag = 1.0f / length();
 	return Vector3f(vec[0] * invMag, vec[1] * invMag, vec[2] * invMag);
 }
 
@@ -1192,6 +1250,13 @@ Quaternion Quaternion::normalize(Quaternion &q) {
 	float invMag = 1.0f / q.magnitude();
 	return Quaternion(q[0] *= invMag, q[1] *= invMag, q[2] *= invMag, q[3] *= invMag);
 	//return Quaternion(q[3] *= invMag, q[0] *= invMag, q[1] *= invMag, q[2] *= invMag);
+}
+
+Quaternion &Quaternion::fromMatrix(Matrix4f &m) {
+	Quaternion quat;
+	quat.fromMatrix(m);
+
+	return quat;
 }
 
 //friend operator

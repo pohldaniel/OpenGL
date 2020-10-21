@@ -62,7 +62,7 @@ public:
 	static Vector3f Max(const Vector3f &p, const Vector3f &q);
 
 	Vector3f normalize();
-	float magnitude() const;
+	float length() const;
 	
     void set(float x_, float y_, float z_); 
 
@@ -133,7 +133,9 @@ public:
 	Matrix4f operator*(const Matrix4f &rhs) const;
 	Matrix4f operator^(const Matrix4f &rhs) const;
 	Matrix4f transpose();
-
+	Matrix4f inverse() const;
+	float Matrix4f::determinant() const;
+	
 	void identity();
 	void rotate(const Vector3f &axis, float degrees);
 	void invRotate(const Vector3f &axis, float degrees);
@@ -206,7 +208,7 @@ public:
 	Matrix4f toMatrix4f() const;
 	void toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const;
 
-	//static Quaternion &fromMatrix(const Matrix4f &m);
+	static Quaternion &fromMatrix(Matrix4f &m);
 	static Quaternion normalize(Quaternion &p);
 private:
 	float quat[4];

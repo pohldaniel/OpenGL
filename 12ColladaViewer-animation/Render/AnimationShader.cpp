@@ -1,8 +1,7 @@
-#include "AnimationShader.h"
-#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <fstream>
 
+#include "AnimationShader.h"
 #include "../AnimatedModel/AnimatedModel.h"
 
 AnimationShader::AnimationShader() {
@@ -36,16 +35,15 @@ AnimationShader::AnimationShader(const std::string& filename){
 	_uniforms[JOINT_TRANSFORMS_U] = glGetUniformLocation(_program, "jointTransforms");
 }
 
-void AnimationShader::Update(const AnimatedModel& model, const Camera& camera, std::vector<glm::mat4> jointVector){
+void AnimationShader::Update(const AnimatedModel& model, const Camera& camera, std::vector<Matrix4f> jointVector){
 
-	glm::mat4 jointTransforms[MAX_JOINTS];
+	Matrix4f jointTransforms[MAX_JOINTS];
 
-	for (unsigned int i = 0; i < (jointVector.size() < MAX_JOINTS ? jointVector.size() : MAX_JOINTS); ++i){
+	for (unsigned int i = 0; i < (jointVector.size() < MAX_JOINTS ? jointVector.size() : MAX_JOINTS); ++i) {
 		jointTransforms[i] = jointVector[i];
 	}
-	glUniformMatrix4fv(_uniforms[JOINT_TRANSFORMS_U], MAX_JOINTS, GL_FALSE, glm::value_ptr(jointTransforms[0]));
-	
-	
+	glUniformMatrix4fv(_uniforms[JOINT_TRANSFORMS_U], MAX_JOINTS, GL_FALSE, jointTransforms[0][0]);
+
 	glUniformMatrix4fv(glGetUniformLocation(_program, "u_model"), 1, GL_TRUE, &model.getTransformationMatrix()[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(_program, "u_view"), 1, GL_TRUE, &camera.getViewMatrix()[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(_program, "u_projection"), 1, GL_TRUE, &camera.getProjectionMatrix()[0][0]);
