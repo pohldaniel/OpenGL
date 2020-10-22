@@ -4,7 +4,7 @@
 #include <sstream>
 #include <chrono>
 
-#include "AnimatedModel\AnimatedModel.h"
+#include "Animation\AnimatedModel\AnimatedModel.h"
 #include "Bitmap.h"
 #include "Model.h"
 #include "GL.h"
