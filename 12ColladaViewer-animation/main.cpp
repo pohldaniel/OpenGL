@@ -136,14 +136,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	initApp(hwnd);
 
 	AnimatedModel mushroom;
-	mushroom.LoadModel(".\\res\\mushroom.dae", ".\\res\\mushroom.png");
+	mushroom.loadModel(".\\res\\mushroom.dae", ".\\res\\mushroom.png");
 	
 	AnimatedModel cowboy;
-	cowboy.LoadModel(".\\res\\cowboy.dae", ".\\res\\cowboy.png");
+	cowboy.loadModel(".\\res\\cowboy.dae", ".\\res\\cowboy.png");
 	cowboy.translate(-5.0, 0.0, 0.0);
 
 	AnimatedModel dragon;
-	dragon.LoadModel(".\\res\\dragon.dae", ".\\res\\dragon.png");
+	dragon.loadModel(".\\res\\dragon.dae", ".\\res\\dragon.png");
 	dragon.translate(5.0, 0.0, 0.0);
 
 	std::chrono::steady_clock::time_point start = std::chrono::high_resolution_clock::now();
@@ -173,14 +173,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glClearColor(1.0, 1.0, 1.0, 0.0);
-			mushroom.Update(deltaTime.count());
-			mushroom.Draw(*camera);
+			mushroom.update(deltaTime.count());
+			mushroom.draw(*camera);
 
-			cowboy.Update(deltaTime.count());
-			cowboy.Draw(*camera);
+			cowboy.update(deltaTime.count());
+			cowboy.draw(*camera);
 
-			dragon.Update(deltaTime.count());
-			dragon.Draw(*camera);
+			dragon.update(deltaTime.count());
+			dragon.draw(*camera);
 
 			//render();
 			processInput(hwnd);

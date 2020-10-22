@@ -2,7 +2,7 @@
 #define TEXTURE_H
 
 #include <string>
-#include "../Extension.h"
+#include "..\..\Extension.h"
 
 class Texture{
 
@@ -12,10 +12,10 @@ public:
 	void setTexture(const std::string& fileName);
 	virtual ~Texture();
 
-	void Bind(unsigned int unit);
+	void bind(unsigned int unit);
 
 private:
-	GLuint _texture;
+	GLuint m_texture;
 };
 
 #endif

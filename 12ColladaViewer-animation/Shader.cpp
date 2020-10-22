@@ -18,8 +18,6 @@ Shader::Shader(Shader* shader){
 	m_program = shader->m_program;
 }
 
-
-
 Shader::~Shader(){
 	cleanup();
 }
@@ -273,17 +271,19 @@ void Shader::loadSampler(const char* location, int sampler){
 }
 
 //OpenGL specifies matrices as column-major to get row-major just transpose it
-
 void Shader::loadMatrix(const char* location, const Matrix4f matrix){
 
 	glUniformMatrix4fv(glGetUniformLocation(m_program, location), 1, true, &matrix[0][0]);
+}
 
+void Shader::loadMatrixArray(const char* location, const std::vector<Matrix4f> matrixArray, const short count) {
+
+	glUniformMatrix4fv(glGetUniformLocation(m_program, location), count, GL_FALSE, matrixArray[0][0]);
 }
 
 void Shader::loadVector(const char* location,  Vector3f vector){
 
 	glUniform3fv(glGetUniformLocation(m_program, location), 1, &vector[0]);
-
 }
 
 void Shader::loadFloat2(const char* location, float value[2]){
@@ -323,25 +323,17 @@ void Shader::loadLightSource(LightSource &lightsource, int index = -1){
 
 		tmp = "u_lightPos[" + std::to_string(index) + "]";
 		glUniform3fv(glGetUniformLocation(m_program, tmp.c_str()), 1, &lightsource.position[0]);
-
-	}
-	
+	}	
 }
 
 void Shader::loadLightSources(std::vector<LightSource> lights){
 	
 	for (int i = 0; i < lights.size(); i++){
-
 		loadLightSource(lights[i], i);
-
-	}
-	
+	}	
 }
 
 void Shader::loadMaterial(const Mesh::Material material){
-	
-	
-
 	glUseProgram(m_program);
 	glUniform3fv(glGetUniformLocation(m_program, "material.ambient"), 1, &material.ambient[0]);
 	glUniform3fv(glGetUniformLocation(m_program, "material.diffuse"), 1, &material.diffuse[0]);
@@ -351,11 +343,8 @@ void Shader::loadMaterial(const Mesh::Material material){
 }
 
 GLuint Shader::createProgram(std::string vertex, std::string fragment) {
-
-
 	GLuint vshader = loadShaderProgram(GL_VERTEX_SHADER, vertex.c_str());
 	GLuint fshader = loadShaderProgram(GL_FRAGMENT_SHADER, fragment.c_str());
-
 	return linkShaders(vshader, fshader);
 
 }
@@ -364,10 +353,9 @@ void Shader::readTextFile(const char *pszFilename, std::string &buffer){
 
 	std::ifstream file(pszFilename, std::ios::binary);
 
-	if (file.is_open())
-	{
-		file.seekg(0, std::ios::end);
+	if (file.is_open()){
 
+		file.seekg(0, std::ios::end);
 		std::ifstream::pos_type fileSize = file.tellg();
 
 		buffer.resize(static_cast<unsigned int>(fileSize));
@@ -382,10 +370,7 @@ GLuint Shader::loadShaderProgram(GLenum type, const char *pszFilename){
 	std::string buffer;
 	readTextFile(pszFilename, buffer);
 
-	if (buffer.length() > 0)
-	{
-
-
+	if (buffer.length() > 0){
 		shader = compileShader(type, reinterpret_cast<const char *>(&buffer[0]));
 	}
 
@@ -396,8 +381,7 @@ GLuint Shader::compileShader(GLenum type, const char *pszSource){
 
 	GLuint shader = glCreateShader(type);
 
-	if (shader)
-	{
+	if (shader){
 		GLint compiled = 0;
 
 		glShaderSource(shader, 1, &pszSource, NULL);
@@ -424,8 +408,7 @@ GLuint Shader::linkShaders(GLuint vertShader, GLuint fragShader){
 
 	GLuint program = glCreateProgram();
 
-	if (program)
-	{
+	if (program){
 		GLint linked = 0;
 
 		if (vertShader)
@@ -438,8 +421,7 @@ GLuint Shader::linkShaders(GLuint vertShader, GLuint fragShader){
 
 		glGetProgramiv(program, GL_LINK_STATUS, &linked);
 
-		if (!linked)
-		{
+		if (!linked){
 			GLsizei infoLogSize = 0;
 			std::string infoLog;
 
@@ -466,22 +448,16 @@ GLuint Shader::linkShaders(GLuint vertShader, GLuint fragShader){
 }
 
 void Shader::cleanup(){
-
-
 	if (m_program){
 		glDeleteProgram(m_program);
 		m_program = 0;
 	}
-
 }
 
 
 //////////////////////////////////////////SkyboxShader/////////////////////////////////////
-
 SkyboxShader::SkyboxShader(std::string vertex, std::string fragment, GLuint cubemap) : Shader(vertex, fragment){
-
 	m_cubemap = cubemap;
-
 }
 
 SkyboxShader::~SkyboxShader(){

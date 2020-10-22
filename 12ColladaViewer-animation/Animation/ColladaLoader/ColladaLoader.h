@@ -5,17 +5,17 @@
 #include <map>
 #include <array>
 
-#include "..\tinyxml\tinyxml.h"
-#include"..\Vector.h"
+#include "..\..\Third\tinyxml\tinyxml.h"
+#include"..\..\Vector.h"
 
-struct S {
+struct WeightData {
 	int jointId;
 	float weight;
 
 
-	S(int jointId, float weight) : jointId(jointId), weight(weight) {}
+	WeightData(int jointId, float weight) : jointId(jointId), weight(weight) {}
 
-	bool operator<(const struct S& other) const {
+	bool operator<(const struct WeightData& other) const {
 		return weight < other.weight;
 	}
 };
@@ -23,7 +23,7 @@ struct S {
 struct VertexSkinData {
 public:
 	void addJointEffect(int jointId, float weight) {
-		pq.push(S(jointId, weight));
+		pq.push(WeightData(jointId, weight));
 	}
 
 	void fill() {
@@ -37,12 +37,7 @@ public:
 	void limitJointNumber(int max) {
 		fillEmptyWeights(max);
 	}
-	std::priority_queue<S> pq;
-	std::vector<int> jointIds;
-	std::vector<float> weights;
-
-private:
-
+	
 	void fillEmptyWeights(int max) {
 
 		while (jointIds.size() < max) {
@@ -50,6 +45,10 @@ private:
 			weights.push_back(0.0);
 		}
 	}
+
+	std::priority_queue<WeightData> pq;
+	std::vector<int> jointIds;
+	std::vector<float> weights;
 };
 
 struct JointData {
@@ -85,6 +84,7 @@ struct SkeletonData {
 };
 
 struct Joint;
+struct KeyFrameData;
 
 class ColladaLoader {
 
@@ -103,10 +103,12 @@ public:
 	void loadVisualScene(std::vector<std::string> &jointsList);
 	void createJoints(Joint &joint);
 
+	void loadAnimation(std::vector<KeyFrameData> &m_keyFrames, float &duration, std::string &name);
+
 	TiXmlDocument doc;
 
 private:
-	const std::string& path;
+	const std::string& m_path;
 	
 
 	std::vector<float> m_vertexBuffer;

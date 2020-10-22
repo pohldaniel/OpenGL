@@ -9,10 +9,6 @@
 #include "Vector.h"
 #include "Model.h"
 
-
-
-
-
 struct LightSource{
 	Vector3f ambient;
 	Vector3f diffuse;
@@ -22,8 +18,6 @@ struct LightSource{
 
 
 class Shader{
-
-	
 
 public:
 	
@@ -37,6 +31,7 @@ public:
 
 	void Shader::loadSampler(const char* location, int sampler);
 	void loadMatrix(const char* location, const Matrix4f matrix);
+	void loadMatrixArray(const char* location, const std::vector<Matrix4f> matrixArray, const short count);
 	void loadVector(const char* location, Vector3f vector);
 	void loadFloat2(const char* location, float value[2]);
 	void loadFloat(const char* location, float value);
@@ -45,8 +40,6 @@ public:
 	virtual void bindAttributes(Mesh *a_mesh, GLuint texture);
 	virtual void unbindAttributes(Mesh *a_mesh);
 	
-	
-
 	void loadMaterial(const Mesh::Material material);
 	void loadLightSource(LightSource &lightsource, int index);
 	void loadLightSources(std::vector<LightSource> lights);
@@ -77,8 +70,6 @@ public:
 	SkyboxShader(std::string vertex, std::string fragment, GLuint cubemap);
 	~SkyboxShader();
 
-	
-	
 	void bindAttributes();
 	void unbindAttributes();
 
@@ -94,8 +85,6 @@ public:
 	EnvironmentMap(std::string vertex, std::string fragment, GLuint cubemap);
 	EnvironmentMap(EnvironmentMap* shader);
 	~EnvironmentMap();
-
-	
 
 	void bindAttributes(Mesh *a_mesh, GLuint texture);
 	void unbindAttributes(Mesh *a_mesh);
@@ -141,9 +130,6 @@ public:
 
 	//void bindAttributes(Mesh *a_mesh, GLuint texture);
 	//void unbindAttributes(Mesh *a_mesh);
-	
-
-
 };
 
 

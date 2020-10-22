@@ -32,43 +32,43 @@ Quaternion interpolateQuat(Quaternion a, Quaternion b, float blend) {
 }
 
 Animator::Animator(AnimatedModel *model){
-	_model = model;
+	m_model = model;
 }
 
 void Animator::startAnimation(const std::string & animationName){
 
-	for (auto animation : _animations){
+	for (auto animation : m_animations){
 
 		if (animation->getName() == animationName){
-			_animationTime = 0;
-			_currentAnimation = animation;
+			m_animationTime = 0;
+			m_currentAnimation = animation;
 		}
 	}
 }
 
 void Animator::addAnimation(ColladaLoader loader){
-	_animations.push_back(std::make_shared<Animation>(loader));
+	m_animations.push_back(std::make_shared<Animation>(loader));
 }
 
 
-void Animator::Update(double elapsedTime){
+void Animator::update(double elapsedTime){
 
 	//increase animationTime
-	_animationTime += elapsedTime;
-	if (_animationTime > _currentAnimation->getDuration()) {
-		_animationTime = fmod(_animationTime, _currentAnimation->getDuration());
+	m_animationTime += elapsedTime;
+	if (m_animationTime > m_currentAnimation->getDuration()) {
+		m_animationTime = fmod(m_animationTime, m_currentAnimation->getDuration());
 	}
 
 	std::unordered_map<std::string, Matrix4f> currentPose = calculateCurrentAnimationPose();
-	_model->_meshes[0]->applyPoseToJoints(currentPose);
+	m_model->m_meshes[0]->applyPoseToJoints(currentPose);
 }
 
 std::unordered_map<std::string, Matrix4f> Animator::calculateCurrentAnimationPose() {
 
-	std::vector<KeyFrameData> keyFrames = _currentAnimation->keyFrames;
+	std::vector<KeyFrameData> keyFrames = m_currentAnimation->m_keyFrames;
 
 	/**c++ implementation*/
-	std::vector<KeyFrameData>::iterator upper = std::upper_bound(keyFrames.begin() + 1, keyFrames.end(), _animationTime, KeyFrameData::greater_than());
+	std::vector<KeyFrameData>::iterator upper = std::upper_bound(keyFrames.begin() + 1, keyFrames.end(), m_animationTime, KeyFrameData::greater_than());
 	KeyFrameData  nextFrame = *upper;
 	KeyFrameData  previousFrame = *(std::prev(upper));
 
@@ -77,7 +77,7 @@ std::unordered_map<std::string, Matrix4f> Animator::calculateCurrentAnimationPos
 	KeyFrameData  nextFrame = keyFrames[0];
 	for (int i = 1; i < keyFrames.size(); i++) {
 	nextFrame = keyFrames[i];
-	if (nextFrame.time >  _animationTime) {
+	if (nextFrame.time >  m_animationTime) {
 	break;
 	}
 	previousFrame = keyFrames[i];
@@ -85,7 +85,7 @@ std::unordered_map<std::string, Matrix4f> Animator::calculateCurrentAnimationPos
 
 
 	float totalTime = nextFrame.time - previousFrame.time;
-	float currentTime = _animationTime - previousFrame.time;
+	float currentTime = m_animationTime - previousFrame.time;
 	float progression = currentTime / totalTime;
 
 	std::unordered_map<std::string, Matrix4f> currentPose;

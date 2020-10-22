@@ -1,11 +1,12 @@
-#ifndef JOINT_ANIM_H
-#define JOINT_ANIM_H
+#ifndef ANIMATION_H
+#define ANIMATION_H
 
 #include <map>
 #include <string>
 #include <vector>
+#include "..\..\Vector.h"
 #include "..\ColladaLoader\ColladaLoader.h"
-#include "..\Vector.h"
+
 
 struct JointTransformData {
 
@@ -34,33 +35,22 @@ struct KeyFrameData {
 	};
 };
 
-#endif
-
-#ifndef ANIMATION_H
-#define ANIMATION_H
-
-#include <vector>
-
-#include "..\tinyxml\tinyxml.h"
-
-
 class Animation{
 
-public:
+	friend class Animator;
 
-	
+public:	
 	Animation(ColladaLoader loader);
 	virtual ~Animation() {}
 
-	inline std::string getName() { return _name; }
-	inline double getDuration() { return duration; }
-
-	std::string _name;
-	std::vector<KeyFrameData> keyFrames;
-	double duration;
+	inline std::string getName() { return m_name; }
+	inline float getDuration() { return m_duration; }
+	
 private:
 	
-
+	std::string m_name;
+	std::vector<KeyFrameData> m_keyFrames;
+	float m_duration;
 
 
 };

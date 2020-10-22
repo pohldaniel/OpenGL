@@ -14,14 +14,14 @@ public:
 
 	void startAnimation(const std::string& animationName);
 	void addAnimation(ColladaLoader loader);
-	void Update(double elapsedTime);
+	void update(double elapsedTime);
 
 private:
-	AnimatedModel* _model;
+	AnimatedModel* m_model;
 
-	std::vector<std::shared_ptr<Animation>> _animations;
-	std::shared_ptr<Animation> _currentAnimation;
-	double _animationTime;
+	std::vector<std::shared_ptr<Animation>> m_animations;
+	std::shared_ptr<Animation> m_currentAnimation;
+	double m_animationTime;
 	
 	std::unordered_map<std::string, Matrix4f> calculateCurrentAnimationPose();
 };

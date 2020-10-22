@@ -13,41 +13,53 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\tinyxml">
-      <UniqueIdentifier>{7001a077-b8d1-42cb-aa35-bc95bb6117d9}</UniqueIdentifier>
+    <Filter Include="Header Files\Animation">
+      <UniqueIdentifier>{89b9645e-9f94-4c04-817e-f5cc1a072713}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\tinyxml">
-      <UniqueIdentifier>{74b97ed6-2d30-4cf8-a763-6768ff14a87e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\AnimatedModel">
+    <Filter Include="Header Files\Animation\AnimatedModel">
       <UniqueIdentifier>{59731dbe-5e64-4b3b-9b17-b699c36fb7d4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\AnimatedModel">
-      <UniqueIdentifier>{c77f82d1-9228-423b-9cd4-b21980c778ef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Animator">
+    <Filter Include="Header Files\Animation\Animator">
       <UniqueIdentifier>{52fa0e3a-029a-48bf-baf9-173f9531cd5f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Animator">
-      <UniqueIdentifier>{edef7e5a-4837-4703-8fab-aef4afa38a85}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Render">
-      <UniqueIdentifier>{32726373-cfea-4a50-b2d9-8f9301db5f08}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Render">
-      <UniqueIdentifier>{2470c29d-19d8-4535-a00f-f9ffe5302617}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\deps">
-      <UniqueIdentifier>{10884415-f1da-4e45-912c-5193268b50ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\deps">
-      <UniqueIdentifier>{87480b84-d3c8-488d-8fb3-1a685ab0f427}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ColladaLoader">
+    <Filter Include="Header Files\Animation\ColladaLoader">
       <UniqueIdentifier>{1eb9acca-e5d8-4c92-9603-96a9f6481c1a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\ColladaLoader">
-      <UniqueIdentifier>{5e999fea-117b-4a1d-9a3a-a142e2fc6253}</UniqueIdentifier>
+    <Filter Include="Header Files\Animation\Render">
+      <UniqueIdentifier>{32726373-cfea-4a50-b2d9-8f9301db5f08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Animation">
+      <UniqueIdentifier>{5fbfff92-5dd1-4b79-a04f-dfa411a9672e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Animation\AnimatedModel">
+      <UniqueIdentifier>{cbad4dd0-bbfb-4e1f-b632-9ee6b5e8ef32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Animation\Animator">
+      <UniqueIdentifier>{b3d1ffc2-ceed-4704-a8d7-33031f5b46ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Animation\ColladaLoader">
+      <UniqueIdentifier>{ee6d3f84-8008-42e0-893d-e7d8b987b279}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Animation\Render">
+      <UniqueIdentifier>{cdfee395-d95f-472e-bda4-877f22fa5245}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Third">
+      <UniqueIdentifier>{c1e41d1a-5b3a-446e-9dfb-c538a62f4196}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Third\deps">
+      <UniqueIdentifier>{9e463f59-515b-4565-aa6b-90dd554646bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Third">
+      <UniqueIdentifier>{00d6a7b0-5845-4a03-aa72-d7dd0fd020df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Third\deps">
+      <UniqueIdentifier>{519924ec-5c74-46ee-b901-e455bd7724cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Third\tinyxml">
+      <UniqueIdentifier>{0d7123bb-16be-46df-9978-f7783080eb1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Third\tinyxml">
+      <UniqueIdentifier>{b1574e1c-9ce8-4617-a616-5ab4fa36ed8f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -81,38 +93,35 @@
     <ClInclude Include="Vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tinyxml\tinystr.h">
-      <Filter>Header Files\tinyxml</Filter>
+    <ClInclude Include="Animation\AnimatedModel\AnimatedMesh.h">
+      <Filter>Header Files\Animation\AnimatedModel</Filter>
     </ClInclude>
-    <ClInclude Include="tinyxml\tinyxml.h">
-      <Filter>Header Files\tinyxml</Filter>
+    <ClInclude Include="Animation\AnimatedModel\AnimatedModel.h">
+      <Filter>Header Files\Animation\AnimatedModel</Filter>
     </ClInclude>
-    <ClInclude Include="AnimatedModel\Texture.h">
-      <Filter>Header Files\AnimatedModel</Filter>
+    <ClInclude Include="Animation\AnimatedModel\Texture.h">
+      <Filter>Header Files\Animation\AnimatedModel</Filter>
     </ClInclude>
-    <ClInclude Include="AnimatedModel\AnimatedMesh.h">
-      <Filter>Header Files\AnimatedModel</Filter>
+    <ClInclude Include="Animation\Animator\Animation.h">
+      <Filter>Header Files\Animation\Animator</Filter>
     </ClInclude>
-    <ClInclude Include="AnimatedModel\AnimatedModel.h">
-      <Filter>Header Files\AnimatedModel</Filter>
+    <ClInclude Include="Animation\Animator\Animator.h">
+      <Filter>Header Files\Animation\Animator</Filter>
     </ClInclude>
-    <ClInclude Include="Animator\Animation.h">
-      <Filter>Header Files\Animator</Filter>
+    <ClInclude Include="Animation\ColladaLoader\ColladaLoader.h">
+      <Filter>Header Files\Animation\ColladaLoader</Filter>
     </ClInclude>
-    <ClInclude Include="Animator\Animator.h">
-      <Filter>Header Files\Animator</Filter>
+    <ClInclude Include="Animation\Render\AnimationShader.h">
+      <Filter>Header Files\Animation\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Render\AnimationShader.h">
-      <Filter>Header Files\Render</Filter>
+    <ClInclude Include="Third\deps\stb_image.h">
+      <Filter>Header Files\Third\deps</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Shader2.h">
-      <Filter>Header Files\Render</Filter>
+    <ClInclude Include="Third\tinyxml\tinystr.h">
+      <Filter>Header Files\Third\tinyxml</Filter>
     </ClInclude>
-    <ClInclude Include="deps\stb_image.h">
-      <Filter>Header Files\deps</Filter>
-    </ClInclude>
-    <ClInclude Include="ColladaLoader\ColladaLoader.h">
-      <Filter>Header Files\ColladaLoader</Filter>
+    <ClInclude Include="Third\tinyxml\tinyxml.h">
+      <Filter>Header Files\Third\tinyxml</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -149,44 +158,41 @@
     <ClCompile Include="Vector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tinyxml\tinystr.cpp">
-      <Filter>Source Files\tinyxml</Filter>
+    <ClCompile Include="Animation\AnimatedModel\AnimatedMesh.cpp">
+      <Filter>Source Files\Animation\AnimatedModel</Filter>
     </ClCompile>
-    <ClCompile Include="tinyxml\tinyxml.cpp">
-      <Filter>Source Files\tinyxml</Filter>
+    <ClCompile Include="Animation\AnimatedModel\AnimatedModel.cpp">
+      <Filter>Source Files\Animation\AnimatedModel</Filter>
     </ClCompile>
-    <ClCompile Include="tinyxml\tinyxmlerror.cpp">
-      <Filter>Source Files\tinyxml</Filter>
+    <ClCompile Include="Animation\AnimatedModel\Texture.cpp">
+      <Filter>Source Files\Animation\AnimatedModel</Filter>
     </ClCompile>
-    <ClCompile Include="tinyxml\tinyxmlparser.cpp">
-      <Filter>Source Files\tinyxml</Filter>
+    <ClCompile Include="Animation\Animator\Animation.cpp">
+      <Filter>Source Files\Animation\Animator</Filter>
     </ClCompile>
-    <ClCompile Include="AnimatedModel\Texture.cpp">
-      <Filter>Source Files\AnimatedModel</Filter>
+    <ClCompile Include="Animation\Animator\Animator.cpp">
+      <Filter>Source Files\Animation\Animator</Filter>
     </ClCompile>
-    <ClCompile Include="AnimatedModel\AnimatedMesh.cpp">
-      <Filter>Source Files\AnimatedModel</Filter>
+    <ClCompile Include="Animation\ColladaLoader\ColladaLoader.cpp">
+      <Filter>Source Files\Animation\ColladaLoader</Filter>
     </ClCompile>
-    <ClCompile Include="AnimatedModel\AnimatedModel.cpp">
-      <Filter>Source Files\AnimatedModel</Filter>
+    <ClCompile Include="Animation\Render\AnimationShader.cpp">
+      <Filter>Source Files\Animation\Render</Filter>
     </ClCompile>
-    <ClCompile Include="Animator\Animation.cpp">
-      <Filter>Source Files\Animator</Filter>
+    <ClCompile Include="Third\deps\stb_image.c">
+      <Filter>Source Files\Third\deps</Filter>
     </ClCompile>
-    <ClCompile Include="Animator\Animator.cpp">
-      <Filter>Source Files\Animator</Filter>
+    <ClCompile Include="Third\tinyxml\tinystr.cpp">
+      <Filter>Source Files\Third\tinyxml</Filter>
     </ClCompile>
-    <ClCompile Include="Render\AnimationShader.cpp">
-      <Filter>Source Files\Render</Filter>
+    <ClCompile Include="Third\tinyxml\tinyxml.cpp">
+      <Filter>Source Files\Third\tinyxml</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Shader2.cpp">
-      <Filter>Source Files\Render</Filter>
+    <ClCompile Include="Third\tinyxml\tinyxmlerror.cpp">
+      <Filter>Source Files\Third\tinyxml</Filter>
     </ClCompile>
-    <ClCompile Include="deps\stb_image.c">
-      <Filter>Source Files\deps</Filter>
-    </ClCompile>
-    <ClCompile Include="ColladaLoader\ColladaLoader.cpp">
-      <Filter>Source Files\ColladaLoader</Filter>
+    <ClCompile Include="Third\tinyxml\tinyxmlparser.cpp">
+      <Filter>Source Files\Third\tinyxml</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

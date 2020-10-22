@@ -2,13 +2,16 @@
 #define ANIMATEDMODEL_H
 
 #include <vector>
-#include "AnimatedMesh.h"
-#include "..\Animator\Animator.h"
-#include "..\Camera.h"
-#include "..\ModelMatrix.h"
-#include "..\Render\AnimationShader.h"
-#include "Texture.h"
 #include <memory>
+#include "..\..\Camera.h"
+#include "..\..\ModelMatrix.h"
+
+#include "AnimatedMesh.h"
+#include "Texture.h"
+#include "..\Animator\Animator.h"
+#include "..\Render\AnimationShader.h"
+
+
 
 class AnimatedModel : public std::enable_shared_from_this<AnimatedModel>{
 
@@ -30,21 +33,21 @@ public:
 	void translate(float dx, float dy, float dz);
 	void scale(float a, float b, float c);
 
-	void LoadModel(const std::string &filename, const std::string &texture);
+	void loadModel(const std::string &filename, const std::string &texture);
 	
-	void Update(double elapsedTime);
-	void Draw(Camera camera);
+	void update(double elapsedTime);
+	void draw(Camera camera);
 
-	std::shared_ptr<Animator> getAnimator() { return _animator; }
+	std::shared_ptr<Animator> getAnimator() { return m_animator; }
 
-	AnimationShader						_shader;
+	AnimationShader						m_shader;
 
-	std::vector<std::shared_ptr<AnimatedMesh>>	_meshes;
-	std::shared_ptr<Texture>			_texture;	
-	std::shared_ptr<Animator>			_animator;
+	std::vector<std::shared_ptr<AnimatedMesh>>	m_meshes;
+	std::shared_ptr<Texture>			m_texture;	
+	std::shared_ptr<Animator>			m_animator;
 
 private:
-	ModelMatrix *modelMatrix;
+	ModelMatrix m_modelMatrix;
 
 
 
