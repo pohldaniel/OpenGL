@@ -3,16 +3,10 @@
 
 #include "Vector.h"
 
-
-
-
-class Camera
-{
-
+class Camera{
 
 public:
 	enum CameraBehavior{CAMERA_BEHAVIOR_FIRST_PERSON, CAMERA_BEHAVIOR_FLIGHT, CAMERA_BEHAVIOR_SPACECRAFT};
-
 
 	Camera();
 	~Camera();
@@ -26,11 +20,8 @@ public:
 	const Matrix4f &getProjectionMatrix() const;
 	const Vector3f &getPosition() const;
 
-
-
 	void setPosition(float x, float y, float z);
 	void setPosition(const Vector3f &position);
-
 
 private:
 
@@ -59,7 +50,5 @@ private:
 	Vector3f		m_viewDir;
 	Matrix4f		m_viewMatrix;
 	Matrix4f		m_projMatrix;
-
-
 };
 #endif // __cameraH__

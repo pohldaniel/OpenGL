@@ -53,13 +53,10 @@ void createCube();
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
 	Vector3f camPos{ 0, 0, 5.0f };
-	Vector3f xAxis{ 1, 0, 0 };
-	Vector3f yAxis{ 0, 1, 0 };
-	Vector3f zAxis{ 0, 0, 1 };
 	Vector3f target(0.0, 0.0, 0.0);
 	Vector3f up(0.0, 1.0, 0.0);
 
-	camera = new Camera(camPos, xAxis, yAxis, zAxis, target, up);
+	camera = new Camera(camPos, target, up);
 
 	AllocConsole();
 	AttachConsole(GetCurrentProcessId());

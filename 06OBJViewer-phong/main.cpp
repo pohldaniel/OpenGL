@@ -78,24 +78,19 @@ void cleanup();
 
 
 // the main windows entry point
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
-{
-	Vector3f camPos{ 0, 0.0, 30.0 };
-	Vector3f xAxis{ 1, 0, 0 };
-	Vector3f yAxis{ 0, 1, 0 };
-	Vector3f zAxis{ 0, 0, 1 };
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd){
+
+	Vector3f camPos{ 0, 0.0, -30.0 };	
 	Vector3f target(0.0, 1.0, 1.0);
 	Vector3f up(0.0, 1.0, 0.0);
 	
-	
+	camera = new Camera(camPos, target, up);
 
 	AllocConsole();
 	AttachConsole(GetCurrentProcessId());
 	freopen("CON", "w", stdout);
 	SetConsoleTitle("Debug console");
 	MoveWindow(GetConsoleWindow(), 790, 0, 500, 200, true);
-
-	camera = new Camera(camPos, xAxis, yAxis, zAxis, target, up);
 
 	WNDCLASSEX		windowClass;		// window class
 	HWND			hwnd;				// window handle

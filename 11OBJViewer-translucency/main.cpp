@@ -80,16 +80,10 @@ void enableVerticalSync(bool enableVerticalSync);
 // the main windows entry point
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
 
-	Vector3f xAxis(1, 0, 0);
-	Vector3f yAxis(0, 1, 0);
-	Vector3f zAxis(0, 0, 1);
-
 	Vector3f camPos(0.0f, 0.0f, 3.0f);	
 	Vector3f target(0.0f, 0.0f, 0.0f);
 	Vector3f up(0.0, 1.0, 0.0);
-
-
-	camera = new Camera(camPos, xAxis, yAxis, zAxis, target, up);
+	camera = new Camera(camPos, target, up);
 
 	AllocConsole();
 	AttachConsole(GetCurrentProcessId());
@@ -107,7 +101,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MSG				msg;				// message
 	HDC				hdc;				// device context handle
 
-										// fill out the window class structure
+	// fill out the window class structure
 	windowClass.cbSize = sizeof(WNDCLASSEX);
 	windowClass.style = CS_HREDRAW | CS_VREDRAW;
 	windowClass.lpfnWndProc = winProc;
@@ -128,7 +122,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// class registered, so now create our window
 	hwnd = CreateWindowEx(NULL,									// extended style
 		L"WINDOWCLASS",						// class name
-		L"ColladaViewer",					// app name
+		L"OBJViewer",						// app name
 		WS_OVERLAPPEDWINDOW,
 		0, 0,									// x,y coordinate
 		width,
@@ -144,7 +138,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	ShowWindow(hwnd, SW_SHOW);			// display the window
 	UpdateWindow(hwnd);					// update the window
-
 
 	minDepthImage = (float**)malloc(1024 * sizeof(float*));
 	for (int j = 0; j < 1024; j++) {

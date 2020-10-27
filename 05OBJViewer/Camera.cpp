@@ -24,38 +24,14 @@ Camera::Camera(){
 	updateViewMatrix(false);
 }
 
-Camera::Camera(const Vector3f &eye, const Vector3f &xAxis, const Vector3f &yAxis, const Vector3f &zAxis){
-
+Camera::Camera(const Vector3f &eye, const Vector3f &target, const Vector3f &up) {
 	m_eye = eye;
-	m_xAxis = xAxis;
-	m_yAxis = yAxis;
-	m_zAxis = zAxis;
-
 	m_projMatrix.identity();
 	m_orthMatrix.identity();
-
-	updateViewMatrix(true);
-}
-
-Camera::Camera(const Vector3f &eye, const Vector3f &xAxis, const Vector3f &yAxis, const Vector3f &zAxis, const Vector3f &target, const Vector3f &up){
-
-	m_eye = eye;
-	m_xAxis = xAxis;
-	m_yAxis = yAxis;
-	m_zAxis = zAxis;
-
-	m_projMatrix.identity();
-	m_orthMatrix.identity();
-
 	updateViewMatrix(eye, target, up);
 }
 
-
-
-Camera::~Camera()
-{
-}
-
+Camera::~Camera() {}
 
 void Camera::updateViewMatrix(bool orthogonalizeAxes)
 {
@@ -99,16 +75,14 @@ void Camera::updateViewMatrix(bool orthogonalizeAxes)
 
 void Camera::updateViewMatrix(const Vector3f &eye, const Vector3f &target, const Vector3f &up){
 	
-	m_eye = eye;
-
 	m_zAxis = eye - target;
 	Vector3f::normalize(m_zAxis);
 
-	m_yAxis = Vector3f::cross(m_zAxis, m_xAxis);
-	Vector3f::normalize(m_yAxis);
-
 	m_xAxis = Vector3f::cross(up, m_zAxis);
 	Vector3f::normalize(m_xAxis);
+
+	m_yAxis = Vector3f::cross(m_zAxis, m_xAxis);
+	Vector3f::normalize(m_yAxis);
 
 	m_viewDir = -m_zAxis;
 

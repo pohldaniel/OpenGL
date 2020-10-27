@@ -11,19 +11,7 @@ class Camera
 public:
 
 	Camera();
-
-	Camera(const Vector3f &eye,
-		const Vector3f &xAxis,
-		const Vector3f &yAxis,
-		const Vector3f &zAxis);
-
-	Camera(const Vector3f &eye,
-		const Vector3f &xAxis,
-		const Vector3f &yAxis,
-		const Vector3f &zAxis,
-		const Vector3f &target,
-		const Vector3f &up);
-
+	Camera(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
 	~Camera();
 
 	void perspective(float fovx, float aspect, float znear, float zfar);

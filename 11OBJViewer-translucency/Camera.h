@@ -8,16 +8,7 @@ class Camera{
 public:
 
 	Camera();
-
-	Camera(const Vector3f &eye, const Vector3f &xAxis, const Vector3f &yAxis, const Vector3f &zAxis);
-
-	Camera(const Vector3f &eye,
-		const Vector3f &xAxis,
-		const Vector3f &yAxis,
-		const Vector3f &zAxis,
-		const Vector3f &target,
-		const Vector3f &up);
-
+	Camera(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
 	~Camera();
 
 	void perspective(float fovx, float aspect, float znear, float zfar);
@@ -39,20 +30,15 @@ public:
 	void setPosition(float x, float y, float z);
 	void setPosition(const Vector3f &position);
 
-	
-
 private:
-
 	
     void rotateFirstPerson(float pitch, float yaw);
 	void updateViewMatrix(bool orthogonalizeAxes);
 	void updateViewMatrix(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
 
-
     Vector3f WORLD_XAXIS;
 	Vector3f WORLD_YAXIS;
 	Vector3f WORLD_ZAXIS;
-
 	
     float			m_fovx;
     float			m_znear;

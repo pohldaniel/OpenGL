@@ -1,7 +1,6 @@
 #include <windows.h>			// standard Windows app include
 #include <GL.h>					// standard OpenGL include
 
-
 #include "Terrain.h";
 #include "Timer.h";
 #include "Camera.h";

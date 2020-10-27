@@ -9,14 +9,12 @@
 #include "Vector.h"
 #include "Model.h"
 
-
 struct LightSource{
 	Vector3f ambient;
 	Vector3f diffuse;
 	Vector3f specular;
 	Vector3f position;
 };
-
 
 class Shader{
 

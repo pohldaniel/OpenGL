@@ -8,8 +8,8 @@ const Vector3f Camera::WORLD_XAXIS(1.0f, 0.0f, 0.0f);
 const Vector3f Camera::WORLD_YAXIS(0.0f, 1.0f, 0.0f);
 const Vector3f Camera::WORLD_ZAXIS(0.0f, 0.0f, 1.0f);
 
-Camera::Camera()
-{
+Camera::Camera(){
+
     m_behavior = CAMERA_BEHAVIOR_SPACECRAFT;
     
     m_fovx = DEFAULT_FOVX;
@@ -22,33 +22,26 @@ Camera::Camera()
     m_yAxis.set(0.0f, 1.0f, 0.0f);
     m_zAxis.set(0.0f, 0.0f, 1.0f);
     m_viewDir.set(0.0f, 0.0f, -1.0f);
-    
-   
-    
+
     m_viewMatrix.identity();
     m_projMatrix.identity();
 }
 
-Camera::~Camera()
-{
-}
+Camera::~Camera(){}
 
-
-void Camera::updateViewMatrix(bool orthogonalizeAxes)
-{
+void Camera::updateViewMatrix(bool orthogonalizeAxes){
     
         // Regenerate the camera's local axes to orthogonalize them.
-        if (orthogonalizeAxes)
-		{
-        m_zAxis.normalize();
+        if (orthogonalizeAxes){
+			m_zAxis.normalize();
         
-        m_yAxis = Vector3f::cross(m_zAxis, m_xAxis);
-        m_yAxis.normalize();
+			m_yAxis = Vector3f::cross(m_zAxis, m_xAxis);
+			m_yAxis.normalize();
         
-        m_xAxis = Vector3f::cross(m_yAxis, m_zAxis);
-        m_xAxis.normalize();
+			m_xAxis = Vector3f::cross(m_yAxis, m_zAxis);
+			m_xAxis.normalize();
 
-        m_viewDir = -m_zAxis;
+			m_viewDir = -m_zAxis;
 		}
 
     // Reconstruct the view matrix.
@@ -74,8 +67,7 @@ void Camera::updateViewMatrix(bool orthogonalizeAxes)
     m_viewMatrix[3][3] = 1.0f;
 }
 
-void Camera::perspective(float fovx, float aspect, float znear, float zfar)
-{
+void Camera::perspective(float fovx, float aspect, float znear, float zfar){
     // Construct a projection matrix based on the horizontal field of view
     // 'fovx' rather than the more traditional vertical field of view 'fovy'.
 
@@ -111,8 +103,8 @@ void Camera::perspective(float fovx, float aspect, float znear, float zfar)
     m_zfar = zfar;
 }
 
-void Camera::lookAt(const Vector3f &eye, const Vector3f &target, const Vector3f &up)
-{
+void Camera::lookAt(const Vector3f &eye, const Vector3f &target, const Vector3f &up){
+
     m_eye = eye;
 
     m_zAxis = eye - target;
@@ -165,9 +157,8 @@ void Camera::move(float dx, float dy, float dz)
 
         forwards = Vector3f::cross(WORLD_YAXIS, m_xAxis);
         forwards.normalize();
-    }
-    else
-    {
+
+    }else{
         forwards = m_viewDir;
     }
 
@@ -180,8 +171,8 @@ void Camera::move(float dx, float dy, float dz)
 
 
 
-void Camera::rotate(float yaw, float pitch, float roll)
-{
+void Camera::rotate(float yaw, float pitch, float roll){
+
     // Rotates the camera based on its current behavior.
     // Note that not all behaviors support rolling.
 
@@ -206,14 +197,12 @@ void Camera::rotateFirstPerson(float pitch, float yaw)
 {
     m_accumPitchDegrees += pitch;
 
-    if (m_accumPitchDegrees > 90.0f)
-    {
+    if (m_accumPitchDegrees > 90.0f) {
         pitch = 90.0f - (m_accumPitchDegrees - pitch);
         m_accumPitchDegrees = 90.0f;
     }
 
-    if (m_accumPitchDegrees < -90.0f)
-    {
+    if (m_accumPitchDegrees < -90.0f){
         pitch = -90.0f - (m_accumPitchDegrees - pitch);
         m_accumPitchDegrees = -90.0f;
     }
@@ -221,76 +210,70 @@ void Camera::rotateFirstPerson(float pitch, float yaw)
     Matrix4f rotMtx;
 
     // Rotate camera's existing x and z axes about the world y axis.
-    if (yaw != 0.0f)
-    {
+    if (yaw != 0.0f){
         rotMtx.rotate(WORLD_YAXIS, yaw);
         m_xAxis = m_xAxis * rotMtx;
         m_zAxis = m_zAxis * rotMtx;
     }
 
     // Rotate camera's existing y and z axes about its existing x axis.
-    if (pitch != 0.0f)
-    {
+    if (pitch != 0.0f){
         rotMtx.rotate(m_xAxis, pitch);
         m_yAxis = m_yAxis * rotMtx;
         m_zAxis = m_zAxis * rotMtx;
     }
 }
 
-void Camera::rotateFlight(float pitch, float yaw, float roll)
-{
+void Camera::rotateFlight(float pitch, float yaw, float roll){
+
     Matrix4f rotMtx;
 
     // Rotate camera's existing x and z axes about its existing y axis.
-    if (yaw != 0.0f)
-    {
+    if (yaw != 0.0f){
+
         rotMtx.rotate(m_yAxis, yaw);
         m_xAxis = m_xAxis * rotMtx;
         m_zAxis = m_zAxis * rotMtx;
     }
 
     // Rotate camera's existing y and z axes about its existing x axis.
-    if (pitch != 0.0f)
-    {
+    if (pitch != 0.0f){
+
         rotMtx.rotate(m_xAxis, pitch);
         m_yAxis = m_yAxis * rotMtx;
         m_zAxis = m_zAxis * rotMtx;
     }
 
     // Rotate camera's existing x and y axes about its existing z axis.
-    if (roll != 0.0f)
-    {
+    if (roll != 0.0f){
+
         rotMtx.rotate(m_zAxis, roll);
         m_xAxis = m_xAxis * rotMtx;
         m_yAxis = m_yAxis * rotMtx;
     }
 }
 
-
-
-
-void Camera::setPosition(float x, float y, float z)
-{
+void Camera::setPosition(float x, float y, float z){
     m_eye.set(x, y, z);
     updateViewMatrix(false);
 }
 
-void Camera::setPosition(const Vector3f &position)
-{
+void Camera::setPosition(const Vector3f &position){
     m_eye = position;
     updateViewMatrix(false);
 }
 
+const Matrix4f &Camera::getViewMatrix() const{ 
+	return m_viewMatrix; 
+}
 
+const Matrix4f &Camera::getProjectionMatrix() const{ 
+	return m_projMatrix; 
+}
 
-const Matrix4f &Camera::getViewMatrix() const
-{ return m_viewMatrix; }
-
- const Matrix4f &Camera::getProjectionMatrix() const
-{ return m_projMatrix; }
-
-const Vector3f &Camera::getPosition() const
-{ return m_eye; }
+const Vector3f &Camera::getPosition() const{ 
+	return m_eye; 
+}
 
 
 

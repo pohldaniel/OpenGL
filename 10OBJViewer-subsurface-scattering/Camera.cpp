@@ -2,10 +2,6 @@
 #include <iostream>
 #include "camera.h"
 
-
-
-
-
 Camera::Camera(){
 	
 	WORLD_XAXIS = Vector3f(1.0f, 0.0f, 0.0f);
@@ -29,39 +25,14 @@ Camera::Camera(){
 	updateViewMatrix(false);
 }
 
-Camera::Camera(const Vector3f &eye, const Vector3f &xAxis, const Vector3f &yAxis, const Vector3f &zAxis){
-
+Camera::Camera(const Vector3f &eye, const Vector3f &target, const Vector3f &up) {
 	m_eye = eye;
-	m_xAxis = xAxis;
-	m_yAxis = yAxis;
-	m_zAxis = zAxis;
-
 	m_projMatrix.identity();
 	m_orthMatrix.identity();
-
-	updateViewMatrix(true);
-}
-
-Camera::Camera(const Vector3f &eye, const Vector3f &xAxis, const Vector3f &yAxis, const Vector3f &zAxis, const Vector3f &target, const Vector3f &up){
-
-	m_eye = eye;
-	m_xAxis = xAxis;
-	m_yAxis = yAxis;
-	m_zAxis = zAxis;
-
-	m_projMatrix.identity();
-	m_orthMatrix.identity();
-
 	updateViewMatrix(eye, target, up);
-
 }
 
-
-
-Camera::~Camera()
-{
-}
-
+Camera::~Camera() {}
 
 void Camera::updateViewMatrix(bool orthogonalizeAxes){
 
@@ -111,7 +82,6 @@ void Camera::updateViewMatrix(bool orthogonalizeAxes){
 	m_invViewMatrix[2][1] = m_yAxis[2];
 	m_invViewMatrix[3][1] = 0.0f;
 
-
 	m_invViewMatrix[0][2] = m_zAxis[0];
 	m_invViewMatrix[1][2] = m_zAxis[1];
 	m_invViewMatrix[2][2] = m_zAxis[2];
@@ -121,13 +91,9 @@ void Camera::updateViewMatrix(bool orthogonalizeAxes){
 	m_invViewMatrix[1][3] = m_eye[1];
 	m_invViewMatrix[2][3] = m_eye[2];
 	m_invViewMatrix[3][3] = 1.0f;
-
 }
 
-
-
 void Camera::updateViewMatrix(const Vector3f &eye, const Vector3f &target, const Vector3f &up){
-
 
 	m_zAxis = eye - target;
 	Vector3f::normalize(m_zAxis);
@@ -166,10 +132,6 @@ void Camera::updateViewMatrix(const Vector3f &eye, const Vector3f &target, const
 	Matrix4f invView;
 	invView.invLookAt(eye, target, up);
 	m_invViewMatrix = invView;
-
-	
-
-
 }
 
 void Camera::perspective(float fovx, float aspect, float znear, float zfar){
@@ -204,9 +166,7 @@ void Camera::perspective(float fovx, float aspect, float znear, float zfar){
 	m_fovx = fovx;
 	m_aspectRatio = aspect;
 	m_znear = znear;
-	m_zfar = zfar;
-
-	
+	m_zfar = zfar;	
 }
 
 void Camera::orthographic(float left, float right, float bottom, float top, float znear, float zfar){
@@ -251,7 +211,6 @@ void Camera::lookAt(const Vector3f &eye, const Vector3f &target, const Vector3f 
 
 	m_viewDir = -m_zAxis;
 
-
 	m_viewMatrix[0][0] = m_xAxis[0];
 	m_viewMatrix[1][0] = m_yAxis[0];
 	m_viewMatrix[2][0] = m_zAxis[0];
@@ -274,30 +233,18 @@ void Camera::lookAt(const Vector3f &eye, const Vector3f &target, const Vector3f 
 
 	// Extract the pitch angle from the view matrix.
 	m_accumPitchDegrees = -asinf(m_viewMatrix[1][2])*180.f / PI;
-
-
-
 }
 
 void Camera::move(float dx, float dy, float dz){
-
 	Vector3f eye = m_eye;
-
 	eye += m_xAxis * dx;
 	eye += WORLD_YAXIS * dy;
 	eye += m_viewDir * dz;
-
 	setPosition(eye);
 }
 
-
-
 void Camera::rotate(float yaw, float pitch, float roll){
-
-	// Rotates the camera based on its current behavior.
-	// Note that not all behaviors support rolling.
 	rotateFirstPerson(pitch, yaw);
-
 	updateViewMatrix(true);
 }
 
@@ -336,25 +283,17 @@ void Camera::rotateFirstPerson(float pitch, float yaw){
 	}
 }
 
-
-
-
-
-
-void Camera::setPosition(float x, float y, float z)
-{
+void Camera::setPosition(float x, float y, float z){
 	m_eye.set(x, y, z);
 	updateViewMatrix(false);
 }
 
-void Camera::setPosition(const Vector3f &position)
-{
+void Camera::setPosition(const Vector3f &position){
 	m_eye = position;
 	updateViewMatrix(false);
 }
 
-const Vector3f &Camera::getPosition() const
-{
+const Vector3f &Camera::getPosition() const{
 	return m_eye;
 }
 
@@ -366,33 +305,26 @@ const Vector3f &Camera::getCamY() const{
 	return m_yAxis;
 }
 
-
-
 const Vector3f &Camera::getViewDirection() const{
 	return m_viewDir;
 }
 
 const Matrix4f &Camera::getProjectionMatrix() const{
-
 	return m_projMatrix;
 }
 
 const Matrix4f &Camera::getInvProjectionMatrix() const{
-
 	return  m_invProjMatrix;
 }
 
 const Matrix4f &Camera::getOrthographicMatrix() const{
-
 	return m_orthMatrix;
 }
 
 const Matrix4f &Camera::getViewMatrix() const{
-
 	return m_viewMatrix;
 }
 
 const Matrix4f &Camera::getInvViewMatrix() const{
-
 	return m_invViewMatrix;
 }

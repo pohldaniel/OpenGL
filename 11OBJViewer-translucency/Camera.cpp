@@ -2,10 +2,6 @@
 #include <iostream>
 #include "camera.h"
 
-
-
-
-
 Camera::Camera(){
 	
 	WORLD_XAXIS = Vector3f(1.0f, 0.0f, 0.0f);
@@ -29,42 +25,16 @@ Camera::Camera(){
 	updateViewMatrix(false);
 }
 
-Camera::Camera(const Vector3f &eye, const Vector3f &xAxis, const Vector3f &yAxis, const Vector3f &zAxis){
-
+Camera::Camera(const Vector3f &eye, const Vector3f &target, const Vector3f &up) {
 	m_eye = eye;
-	m_xAxis = xAxis;
-	m_yAxis = yAxis;
-	m_zAxis = zAxis;
-
 	m_projMatrix.identity();
 	m_orthMatrix.identity();
-
-	updateViewMatrix(true);
-}
-
-Camera::Camera(const Vector3f &eye, const Vector3f &xAxis, const Vector3f &yAxis, const Vector3f &zAxis, const Vector3f &target, const Vector3f &up){
-
-	m_eye = eye;
-	m_xAxis = xAxis;
-	m_yAxis = yAxis;
-	m_zAxis = zAxis;
-
-	m_projMatrix.identity();
-	m_orthMatrix.identity();
-
 	updateViewMatrix(eye, target, up);
-
 }
 
-
-
-Camera::~Camera()
-{
-}
-
+Camera::~Camera() {}
 
 void Camera::updateViewMatrix(bool orthogonalizeAxes){
-
 	// Regenerate the camera's local axes to orthogonalize them.
 	if (orthogonalizeAxes){
 
@@ -124,10 +94,7 @@ void Camera::updateViewMatrix(bool orthogonalizeAxes){
 
 }
 
-
-
 void Camera::updateViewMatrix(const Vector3f &eye, const Vector3f &target, const Vector3f &up){
-
 
 	m_zAxis = eye - target;
 	Vector3f::normalize(m_zAxis);
@@ -166,10 +133,6 @@ void Camera::updateViewMatrix(const Vector3f &eye, const Vector3f &target, const
 	Matrix4f invView;
 	invView.invLookAt(eye, target, up);
 	m_invViewMatrix = invView;
-
-	
-
-
 }
 
 void Camera::perspective(float fovx, float aspect, float znear, float zfar){
