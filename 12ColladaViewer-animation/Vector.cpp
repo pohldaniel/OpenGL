@@ -969,7 +969,7 @@ const float Vector4f::operator[](int index) const{
 
 
 //////////////////////////////////////////////////////////////////////
-const Quaternion Quaternion::IDENTITY(1.0f, 0.0f, 0.0f, 0.0f);
+const Quaternion Quaternion::IDENTITY(0.0f, 0.0f, 0.0f, 1.0f);
 
 Quaternion::Quaternion() {
 }
@@ -994,7 +994,6 @@ Quaternion::Quaternion(const Matrix4f &m){
 }
 
 float &Quaternion::operator[](int index) {
-
 	return quat[index];
 }
 
@@ -1025,18 +1024,18 @@ Quaternion &Quaternion::operator*=(const Quaternion &rhs){
 
 	// Multiply so that rotations are applied in a left to right order.
 	Quaternion tmp(
-		(quat[3] * rhs[3]) - (quat[0] * rhs[0]) - (quat[1] * rhs[1]) - (quat[2] * rhs[2]),
 		(quat[3] * rhs[0]) + (quat[0] * rhs[3]) - (quat[1] * rhs[2]) + (quat[2] * rhs[1]),
 		(quat[3] * rhs[1]) + (quat[0] * rhs[2]) + (quat[1] * rhs[3]) - (quat[2] * rhs[0]),
-		(quat[3] * rhs[2]) - (quat[0] * rhs[1]) + (quat[1] * rhs[0]) + (quat[2] * rhs[3]));
+		(quat[3] * rhs[2]) - (quat[0] * rhs[1]) + (quat[1] * rhs[0]) + (quat[2] * rhs[3]),
+		(quat[3] * rhs[3]) - (quat[0] * rhs[0]) - (quat[1] * rhs[1]) - (quat[2] * rhs[2]));
 
 	
 	// Multiply so that rotations are applied in a right to left order.
-	/*Quaternion tmp(
-	(quat[3] * rhs[3]) - (quat[0] * rhs[0]) - (quat[1] * rhs[1]) - (quat[2] * rhs[2]),
+	/*Quaternion tmp(	
 	(quat[3] * rhs[0]) + (quat[0] * rhs[3]) + (quat[1] * rhs[2]) - (quat[2] * rhs[1]),
 	(quat[3] * rhs[1]) - (quat[0] * rhs[2]) + (quat[1] * rhs[3]) + (quat[2] * rhs[0]),
-	(quat[3] * rhs[2]) + (quat[0] * rhs[1]) - (quat[1] * rhs[0]) + (quat[2] * rhs[3]));*/
+	(quat[3] * rhs[2]) + (quat[0] * rhs[1]) - (quat[1] * rhs[0]) + (quat[2] * rhs[3]),
+	(quat[3] * rhs[3]) - (quat[0] * rhs[0]) - (quat[1] * rhs[1]) - (quat[2] * rhs[2]));*/
 	
 
 	*this = tmp;
@@ -1105,8 +1104,8 @@ void Quaternion::normalize(){
 	quat[3] *= invMag, quat[0] *= invMag, quat[1] *= invMag, quat[2] *= invMag;
 }
 
-void Quaternion::set(float w_, float x_, float y_, float z_){
-	quat[3] = w_, quat[0] = x_, quat[1] = y_, quat[2] = z_;
+void Quaternion::set(float x, float y, float z, float w){
+	 quat[0] = x, quat[1] = y, quat[2] = z, quat[3] = w;
 }
 
 Quaternion Quaternion::conjugate() const{

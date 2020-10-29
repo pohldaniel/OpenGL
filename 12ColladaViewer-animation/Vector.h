@@ -196,7 +196,7 @@ public:
 	void identity();
 	float magnitude() const;
 	void normalize();
-	void set(float w_, float x_, float y_, float z_);
+	void set(float x, float y, float z, float w);
 	Quaternion conjugate() const;
 	Quaternion inverse() const;
 
