@@ -974,11 +974,11 @@ const Quaternion Quaternion::IDENTITY(1.0f, 0.0f, 0.0f, 0.0f);
 Quaternion::Quaternion() {
 }
 
-Quaternion::Quaternion(float w_, float x_, float y_, float z_) {
-	quat[0] = x_;
-	quat[1] = y_;
-	quat[2] = z_;
-	quat[3] = w_;
+Quaternion::Quaternion(float x, float y, float z, float w) {
+	quat[0] = x;
+	quat[1] = y;
+	quat[2] = z;
+	quat[3] = w;
 }
 
 Quaternion::Quaternion(float headDegrees, float pitchDegrees, float rollDegrees){
@@ -1163,7 +1163,7 @@ void Quaternion::fromMatrix(const Matrix4f &m){
 		q[k] = (m[k][i] + m[i][k]) * s;
 	}
 
-	quat[0] = q[3], quat[1] = q[0], quat[2] = q[1], quat[3] = q[2];
+	quat[0] = q[0], quat[1] = q[1], quat[2] = q[2], quat[3] = q[3];
 }
 
 void Quaternion::fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees) {

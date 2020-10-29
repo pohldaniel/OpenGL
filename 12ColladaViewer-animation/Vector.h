@@ -170,7 +170,7 @@ public:
 	static const Quaternion IDENTITY;
 
 	Quaternion();
-	Quaternion(float w_, float x_, float y_, float z_);
+	Quaternion(float x, float y, float z, float w);
 	Quaternion(float headDegrees, float pitchDegrees, float rollDegrees);
 	Quaternion(const Vector3f &axis, float degrees);
 	explicit Quaternion(const Matrix4f &m);
