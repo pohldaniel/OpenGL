@@ -26,10 +26,10 @@ int width = 1280;
 
 int g_windowWidth = 640;
 int g_windowHeight = 480;
-bool g_enableWireframe;
 
 POINT g_OldCursorPos;
 bool g_enableVerticalSync;
+bool g_enableWireframe;
 
 enum DIRECTION {
 	DIR_FORWARD = 1,
@@ -46,7 +46,7 @@ Entity3D ballEntity;
 Entity3D cowboyEntity;
 
 SkyBox* skyBox;
-ThirdPersonCamera g_camera;
+ThirdPersonCamera camera;
 MeshSphere *sphere;
 MeshQuad *quad;
 MeshCube *cube;
@@ -173,22 +173,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			glClearColor(1.0, 1.0, 1.0, 0.0);
 						
 			cowboy.update(deltaTime.count());
-			cowboy.draw(g_camera, cowboyEntity);
+			cowboy.draw(camera, cowboyEntity);
 
 			mushroom.update(deltaTime.count());
-			mushroom.draw(g_camera);
+			mushroom.draw(camera);
 
 			dragon.update(deltaTime.count());
-			dragon.draw(g_camera);
+			dragon.draw(camera);
 			
-			//sphere->draw(g_camera, ballEntity);
-			cube->draw(g_camera);
+			//sphere->draw(camera, ballEntity);
+			cube->draw(camera);
 
-			quad->draw(g_camera);
-			torus->draw(g_camera);
-			spiral->draw(g_camera);
+			quad->draw(camera);
+			torus->draw(camera);
+			spiral->draw(camera);
 
-			skyBox->render(g_camera);
+			skyBox->render(camera);
 
 			updateFrame(hwnd, deltaTime.count());
 			processInput(hwnd);
@@ -286,9 +286,9 @@ LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		}
 
 		glViewport(0, 0, _width, _height);
-		g_camera.perspective(45.0f, static_cast<float>(_width) / static_cast<float>(_height), 1.0f, 5000.0f);
+		camera.perspective(45.0f, static_cast<float>(_width) / static_cast<float>(_height), 1.0f, 5000.0f);
 
-		if (skyBox) skyBox->setProjectionMatrix(g_camera.getProjectionMatrix());
+		if (skyBox) skyBox->setProjectionMatrix(camera.getProjectionMatrix());
 
 		return 0;
 	}break;
@@ -340,13 +340,13 @@ void initApp(HWND hWnd) {
 	glEnable(GL_CULL_FACE);						// do not calculate inside of poly's
 
 	// Setup the camera.
-	g_camera.perspective(45.0f, static_cast<float>(g_windowWidth) / static_cast<float>(g_windowHeight), 1.0f, 5000.0f);
-	g_camera.lookAt(Vector3f(0.0f, 120.0f, 220.f), Vector3f(0.0f, 20.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f));
+	camera.perspective(45.0f, static_cast<float>(g_windowWidth) / static_cast<float>(g_windowHeight), 1.0f, 5000.0f);
+	camera.lookAt(Vector3f(0.0f, 120.0f, 220.f), Vector3f(0.0f, 20.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f));
 
 	// Initialize the skybox
 	// sometimes the iamges from the box have to be flipped vertical, horizontal
 	skyBox = new SkyBox("../skyboxes/sor_sea", 1000, true, false, Vector3f(0.0f, 0.5f, 0.0f));
-	skyBox->setProjectionMatrix(g_camera.getProjectionMatrix());
+	skyBox->setProjectionMatrix(camera.getProjectionMatrix());
 
 	// Initialize the ball.
 	ballEntity.constrainToWorldYAxis(true);
@@ -463,7 +463,7 @@ void processInput(HWND hWnd) {
 			UPDATEFRAME = false;
 			// Rotate camera
 			if (X || Y) {
-				g_camera.rotate(X, Y, 0.0f);
+				camera.rotate(X, Y, 0.0f);
 
 			} // End if any rotation
 
@@ -478,7 +478,7 @@ void processInput(HWND hWnd) {
 				if (Direction & DIR_UP) dy = speed;
 				if (Direction & DIR_DOWN) dy = -speed;
 
-				g_camera.move(dx, dy, dz);
+				camera.move(dx, dy, dz);
 			}
 
 		}// End if any movement
@@ -510,42 +510,44 @@ void updateFrame(HWND hWnd, float elapsedTimeSec) {
 
 		if (Direction) UPDATEFRAME = true;
 
-		if (Direction & DIR_FORWARD){
-			forwardSpeed = FORWARD_SPEED;
-			pitch = -ROLLING_SPEED;
-		}
-
-		if (Direction & DIR_BACKWARD){
-			forwardSpeed = -FORWARD_SPEED;
-			pitch = ROLLING_SPEED;
-		}
-
-		if (Direction & DIR_RIGHT)
-			heading = -HEADING_SPEED;
-
-		if (Direction & DIR_LEFT)
-			heading = HEADING_SPEED;
-
-		// Prevent the ball from rolling off the edge of the floor.
-		forwardSpeed = clipToFloor(ballEntity, forwardSpeed, elapsedTimeSec);
-
-		// First move the ball.
-		ballEntity.setVelocity(0.0f, 0.0f, forwardSpeed);
-		ballEntity.orient(heading, 0.0f, 0.0f);
-		ballEntity.rotate(0.0f, pitch, 0.0f);
-		ballEntity.update(elapsedTimeSec);
-
-		cowboyEntity.setVelocity(0.0f, 0.0f, forwardSpeed);
-		cowboyEntity.orient(heading, 0.0f, 0.0f);
-		cowboyEntity.update(elapsedTimeSec);
-		// Then move the camera based on where the ball has moved to.
-		// When the ball is moving backwards rotations are inverted to match
-		// the direction of travel. Consequently the camera's rotation needs to be
-		// inverted as well.
 		if (UPDATEFRAME) {
-			g_camera.rotate((forwardSpeed >= 0.0f) ? heading : -heading, 0.0f);
-			g_camera.lookAt(cowboyEntity.getPosition() + Vector3f(0.0f, 30.0f, 0.0f));
-			g_camera.update(elapsedTimeSec);
+
+			if (Direction & DIR_FORWARD){
+				forwardSpeed = FORWARD_SPEED;
+				pitch = -ROLLING_SPEED;
+			}
+
+			if (Direction & DIR_BACKWARD){
+				forwardSpeed = -FORWARD_SPEED;
+				pitch = ROLLING_SPEED;
+			}
+
+			if (Direction & DIR_RIGHT)
+				heading = -HEADING_SPEED;
+
+			if (Direction & DIR_LEFT)
+				heading = HEADING_SPEED;
+
+			// Prevent the ball from rolling off the edge of the floor.
+			forwardSpeed = clipToFloor(ballEntity, forwardSpeed, elapsedTimeSec);
+
+			// First move the ball.
+			ballEntity.setVelocity(0.0f, 0.0f, forwardSpeed);
+			ballEntity.orient(heading, 0.0f, 0.0f);
+			ballEntity.rotate(0.0f, pitch, 0.0f);
+			ballEntity.update(elapsedTimeSec);
+
+			cowboyEntity.setVelocity(0.0f, 0.0f, forwardSpeed);
+			cowboyEntity.orient(heading, 0.0f, 0.0f);
+			cowboyEntity.update(elapsedTimeSec);
+
+			// Then move the camera based on where the ball has moved to.
+			// When the ball is moving backwards rotations are inverted to match
+			// the direction of travel. Consequently the camera's rotation needs to be
+			// inverted as well.		
+			camera.rotate((forwardSpeed >= 0.0f) ? heading : -heading, 0.0f);
+			camera.lookAt(cowboyEntity.getPosition() + Vector3f(0.0f, 30.0f, 0.0f));
+			camera.update(elapsedTimeSec);
 		}
 	}
 }
