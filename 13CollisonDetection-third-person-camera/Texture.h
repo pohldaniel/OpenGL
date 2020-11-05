@@ -2,7 +2,7 @@
 #define TEXTURE_H
 
 #include <string>
-#include "..\..\Extension.h"
+#include "Extension.h"
 
 class Texture{
 

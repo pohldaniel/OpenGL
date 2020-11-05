@@ -1,12 +1,12 @@
 #include <iostream>
 #include <fstream>
 
-#include "Texture.h"
+#include "..\..\Texture.h"
 #include "AnimatedModel.h"
 
 
 
-AnimatedModel::AnimatedModel() : m_shader("./Animation/animationShader.vert", "./Animation/animationShader.frag") {
+AnimatedModel::AnimatedModel() : m_shader("./shader/animationShader.vert", "./shader/animationShader.frag") {
 	m_animator = std::make_shared<Animator>(this);
 	
 

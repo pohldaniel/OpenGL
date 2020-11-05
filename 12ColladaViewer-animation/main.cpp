@@ -178,7 +178,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			dragon.update(deltaTime.count());
 			dragon.draw(*camera);
 
-			render();
+			//render();
 			processInput(hwnd);
 			hdc = GetDC(hwnd);
 			SwapBuffers(hdc);

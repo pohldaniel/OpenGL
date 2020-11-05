@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cassert>
-#include "..\..\Third\deps\stb_image.h"
+#include "Third\deps\stb_image.h"
 
 #include "Texture.h"
 

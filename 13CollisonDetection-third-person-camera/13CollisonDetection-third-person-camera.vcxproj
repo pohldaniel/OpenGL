@@ -150,7 +150,6 @@
   <ItemGroup>
     <ClInclude Include="Animation\AnimatedModel\AnimatedMesh.h" />
     <ClInclude Include="Animation\AnimatedModel\AnimatedModel.h" />
-    <ClInclude Include="Animation\AnimatedModel\Texture.h" />
     <ClInclude Include="Animation\Animator\Animation.h" />
     <ClInclude Include="Animation\Animator\Animator.h" />
     <ClInclude Include="Animation\ColladaLoader\ColladaLoader.h" />
@@ -160,17 +159,17 @@
     <ClInclude Include="Depthmap.h" />
     <ClInclude Include="Entity3D.h" />
     <ClInclude Include="Extension.h" />
-    <ClInclude Include="Image.h" />
-    <ClInclude Include="MeshCube.h" />
-    <ClInclude Include="MeshQuad.h" />
-    <ClInclude Include="MeshSphere.h" />
-    <ClInclude Include="MeshSpiral.h" />
-    <ClInclude Include="MeshTorus.h" />
+    <ClInclude Include="MeshObject\MeshCube.h" />
+    <ClInclude Include="MeshObject\MeshQuad.h" />
+    <ClInclude Include="MeshObject\MeshSphere.h" />
+    <ClInclude Include="MeshObject\MeshSpiral.h" />
+    <ClInclude Include="MeshObject\MeshTorus.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelMatrix.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Skybox.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Third\deps\stb_image.h" />
     <ClInclude Include="Third\tinyxml\tinystr.h" />
     <ClInclude Include="Third\tinyxml\tinyxml.h" />
@@ -179,7 +178,6 @@
   <ItemGroup>
     <ClCompile Include="Animation\AnimatedModel\AnimatedMesh.cpp" />
     <ClCompile Include="Animation\AnimatedModel\AnimatedModel.cpp" />
-    <ClCompile Include="Animation\AnimatedModel\Texture.cpp" />
     <ClCompile Include="Animation\Animator\Animation.cpp" />
     <ClCompile Include="Animation\Animator\Animator.cpp" />
     <ClCompile Include="Animation\ColladaLoader\ColladaLoader.cpp" />
@@ -189,18 +187,18 @@
     <ClCompile Include="Depthmap.cpp" />
     <ClCompile Include="Entity3D.cpp" />
     <ClCompile Include="Extension.cpp" />
-    <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MeshCube.cpp" />
-    <ClCompile Include="MeshQuad.cpp" />
-    <ClCompile Include="MeshSphere.cpp" />
-    <ClCompile Include="MeshSpiral.cpp" />
-    <ClCompile Include="MeshTorus.cpp" />
+    <ClCompile Include="MeshObject\MeshCube.cpp" />
+    <ClCompile Include="MeshObject\MeshQuad.cpp" />
+    <ClCompile Include="MeshObject\MeshSphere.cpp" />
+    <ClCompile Include="MeshObject\MeshSpiral.cpp" />
+    <ClCompile Include="MeshObject\MeshTorus.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelMatrix.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Skybox.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Third\deps\stb_image.c" />
     <ClCompile Include="Third\tinyxml\tinystr.cpp" />
     <ClCompile Include="Third\tinyxml\tinyxml.cpp" />

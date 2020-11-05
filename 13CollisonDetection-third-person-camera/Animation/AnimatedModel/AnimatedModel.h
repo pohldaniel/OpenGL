@@ -6,9 +6,9 @@
 #include "..\..\Camera.h"
 #include "..\..\Entity3D.h"
 #include "..\..\ModelMatrix.h"
+#include "..\..\Texture.h"
 
 #include "AnimatedMesh.h"
-#include "Texture.h"
 #include "..\Animator\Animator.h"
 #include "..\Render\AnimationShader.h"
 

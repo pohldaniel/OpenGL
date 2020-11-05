@@ -6,20 +6,16 @@
 
 #include "GL.h"
 #include "Extension.h"
-
-#include "Bitmap.h"
-#include "Image.h"
 #include "Animation\AnimatedModel\AnimatedModel.h"
+#include "MeshObject\MeshSphere.h"
+#include "MeshObject\MeshQuad.h"
+#include "MeshObject\MeshCube.h"
+#include "MeshObject\MeshTorus.h"
+#include "MeshObject\MeshSpiral.h"
 #include "Model.h"
 #include "Camera.h";
 #include "Entity3D.h"
-
 #include "Skybox.h"
-#include "MeshSphere.h"
-#include "MeshQuad.h"
-#include "MeshCube.h"
-#include "MeshTorus.h"
-#include "MeshSpiral.h"
 
 int height = 960;
 int width = 1280;
@@ -361,15 +357,15 @@ void initApp(HWND hWnd) {
 	sphere->buildMesh();
 
 	quad = new MeshQuad(1024, 1024, ".\\res\\floor_color_map.png");
-	quad->setPrecision(50, 50);
+	quad->setPrecision(10, 10);
 	quad->buildMesh();
 
 	cube = new MeshCube(Vector3f(0.0f, 50.01f, -200.0f), 100, 100, 100, ".\\res\\marble.png");
-	cube->setPrecision(1, 1);
+	cube->setPrecision(100, 100);
 	cube->buildMesh();
 
 	torus = new MeshTorus(Vector3f(-150.0f, 25.01f, -200.0f), 50.0f, 30.0f, ".\\res\\darkchecker.png");
-	torus->setPrecision(10, 10);
+	torus->setPrecision(50, 50);
 	torus->buildMesh();
 	
 	spiral = new MeshSpiral(Vector3f(150.0f, 25.01f, -200.0f), 50.0f, 30.0f, 2, 150.0f, ".\\res\\darkchecker.png");

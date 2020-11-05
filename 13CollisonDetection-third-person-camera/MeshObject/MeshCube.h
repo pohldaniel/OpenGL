@@ -4,12 +4,11 @@
 #include <vector>
 #include <memory>
 
-#include "Animation\AnimatedModel\Texture.h"
-#include "Extension.h"
-#include "Camera.h"
-#include "Shader.h"
-#include "Bitmap.h"
-#include "Vector.h"
+#include "..\Texture.h"
+#include "..\Extension.h"
+#include "..\Camera.h"
+#include "..\Shader.h"
+#include "..\Vector.h"
 
 class MeshCube {
 

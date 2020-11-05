@@ -1,34 +1,35 @@
-#ifndef _MESHQUAD_H
-#define _MESHQUAD_H
+#ifndef _MESHSPHERE_H
+#define _MESHSPHERE_H
 
 #include <vector>
 #include <memory>
 
-#include "Animation\AnimatedModel\Texture.h"
-#include "Extension.h"
-#include "Vector.h"
-#include "Camera.h"
-#include "Shader.h"
-#include "Bitmap.h"
+#include "..\Texture.h"
+#include "..\Extension.h"
+#include "..\Camera.h"
+#include "..\Shader.h"
+#include "..\Vector.h"
+#include "..\Entity3D.h"
 
-class MeshQuad {
+
+class MeshSphere {
 
 public:
 
-	MeshQuad(float width, float height, const std::string &texture);
-	MeshQuad(float width, float height, bool generateTexels, const std::string &texture);
-	~MeshQuad();
+	MeshSphere(float radius, const std::string &texture);
+	MeshSphere(float radius, bool generateTexels, bool generateNormals, bool generateTangents, bool generateNormalDerivatives, const std::string &texture);
+	~MeshSphere();
 
 	void setPrecision(int uResolution, int vResolution);
 	void buildMesh();
-	void draw(const Camera camera);
+	void draw(const Camera camera, Entity3D entity);
 
 private:
 
 	int m_uResolution;
 	int m_vResolution;
-	float m_width;
-	float m_height;
+	float m_radius;
+	float m_invRadius;
 
 	bool m_generateNormals;
 	bool m_generateTexels;

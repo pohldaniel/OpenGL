@@ -61,6 +61,12 @@
     <Filter Include="Header Files\Animation\ColladaLoader\Animator">
       <UniqueIdentifier>{1a963827-3e30-48c7-96c3-d97d315bcd9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\MeshObject">
+      <UniqueIdentifier>{b69eed67-67de-4a0c-a691-e65a45d88068}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\MeshObject">
+      <UniqueIdentifier>{035ee242-a073-4297-a849-9565e25ce6e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bitmap.h">
@@ -99,9 +105,6 @@
     <ClInclude Include="Animation\AnimatedModel\AnimatedModel.h">
       <Filter>Header Files\Animation\AnimatedModel</Filter>
     </ClInclude>
-    <ClInclude Include="Animation\AnimatedModel\Texture.h">
-      <Filter>Header Files\Animation\AnimatedModel</Filter>
-    </ClInclude>
     <ClInclude Include="Animation\Animator\Animation.h">
       <Filter>Header Files\Animation\ColladaLoader\Animator</Filter>
     </ClInclude>
@@ -123,25 +126,25 @@
     <ClInclude Include="Third\tinyxml\tinyxml.h">
       <Filter>Header Files\Third\tinyxml</Filter>
     </ClInclude>
-    <ClInclude Include="Image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshSphere.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshQuad.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshCube.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshTorus.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshSpiral.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Entity3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshObject\MeshCube.h">
+      <Filter>Header Files\MeshObject</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshObject\MeshQuad.h">
+      <Filter>Header Files\MeshObject</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshObject\MeshSphere.h">
+      <Filter>Header Files\MeshObject</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshObject\MeshSpiral.h">
+      <Filter>Header Files\MeshObject</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshObject\MeshTorus.h">
+      <Filter>Header Files\MeshObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -185,9 +188,6 @@
     <ClCompile Include="Animation\AnimatedModel\AnimatedModel.cpp">
       <Filter>Source Files\Animation\AnimatedModel</Filter>
     </ClCompile>
-    <ClCompile Include="Animation\AnimatedModel\Texture.cpp">
-      <Filter>Source Files\Animation\AnimatedModel</Filter>
-    </ClCompile>
     <ClCompile Include="Animation\Animator\Animation.cpp">
       <Filter>Source Files\Animation\Animator</Filter>
     </ClCompile>
@@ -215,25 +215,25 @@
     <ClCompile Include="Third\tinyxml\tinyxmlparser.cpp">
       <Filter>Source Files\Third\tinyxml</Filter>
     </ClCompile>
-    <ClCompile Include="Image.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshSphere.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshQuad.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshCube.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshTorus.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshSpiral.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Entity3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshObject\MeshCube.cpp">
+      <Filter>Source Files\MeshObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshObject\MeshQuad.cpp">
+      <Filter>Source Files\MeshObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshObject\MeshSphere.cpp">
+      <Filter>Source Files\MeshObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshObject\MeshSpiral.cpp">
+      <Filter>Source Files\MeshObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshObject\MeshTorus.cpp">
+      <Filter>Source Files\MeshObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
