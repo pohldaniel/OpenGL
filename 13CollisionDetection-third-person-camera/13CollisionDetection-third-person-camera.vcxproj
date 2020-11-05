@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{35204863-9C39-4D84-AB9B-38EDB0716B2B}</ProjectGuid>
+    <ProjectGuid>{9C40E0D2-3FFF-407B-869F-63506F2E8C4D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>My13CollisonDetectionthirdpersoncamera</RootNamespace>
+    <RootNamespace>My13CollisionDetectionthirdpersoncamera</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
