@@ -234,27 +234,24 @@ void MeshSpiral::buildMesh() {
 
 		for (unsigned int j = 0; j < m_tubeSegments; j++) {
 
-			unsigned int vertexIndexA = currentVertexOffset;
-			unsigned int vertexIndexB = currentVertexOffset + m_tubeSegments + 1;
+			unsigned int vertexIndexA, vertexIndexB, vertexIndexC, vertexIndexD, vertexIndexE, vertexIndexF;
 
-
-			unsigned int vertexIndexD = currentVertexOffset + 1;
-			unsigned int vertexIndexE = currentVertexOffset + m_tubeSegments + 1;
-
-			unsigned int vertexIndexC;
-			unsigned int vertexIndexF;
-
-			if ((currentVertexOffset + 1) == m_tubeSegments) {
-
-				vertexIndexC = currentVertexOffset + 1 - m_tubeSegments;
-				vertexIndexF = currentVertexOffset + m_tubeSegments + 2 - m_tubeSegments;
+			if ((j > 0) && ((j + 1) % (m_tubeSegments + 1)) == 0) {
+				currentVertexOffset = ((i + 1) * (m_tubeSegments + 1));
 			}else {
+
+				vertexIndexA = currentVertexOffset;
+				vertexIndexB = currentVertexOffset + m_tubeSegments + 1;
 				vertexIndexC = currentVertexOffset + 1;
+
+				vertexIndexD = currentVertexOffset + m_tubeSegments + 1;
 				vertexIndexF = currentVertexOffset + m_tubeSegments + 2;
+				vertexIndexE = currentVertexOffset + 1;
+
+				indexBuffer.push_back(vertexIndexA); indexBuffer.push_back(vertexIndexC); indexBuffer.push_back(vertexIndexB);
+				indexBuffer.push_back(vertexIndexD); indexBuffer.push_back(vertexIndexE); indexBuffer.push_back(vertexIndexF);
+				currentVertexOffset++;
 			}
-			indexBuffer.push_back(vertexIndexA); indexBuffer.push_back(vertexIndexC); indexBuffer.push_back(vertexIndexB);
-			indexBuffer.push_back(vertexIndexD); indexBuffer.push_back(vertexIndexF); indexBuffer.push_back(vertexIndexE);
-			currentVertexOffset++;
 		}
 		currentVertexOffset++;
 	}

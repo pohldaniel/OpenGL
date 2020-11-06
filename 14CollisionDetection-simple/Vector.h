@@ -62,6 +62,7 @@ public:
 
 	Vector3f normalize();
 	float length() const;
+	float lengthSq() const;
 
 	void set(float x_, float y_, float z_);
 

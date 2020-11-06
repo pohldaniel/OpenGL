@@ -361,15 +361,15 @@ void initApp(HWND hWnd) {
 	quad->buildMesh();
 
 	cube = new MeshCube(Vector3f(0.0f, 50.01f, -200.0f), 100, 100, 100, ".\\res\\marble.png");
-	cube->setPrecision(100, 100);
+	cube->setPrecision(1, 1);
 	cube->buildMesh();
 
 	torus = new MeshTorus(Vector3f(-150.0f, 25.01f, -200.0f), 50.0f, 30.0f, ".\\res\\darkchecker.png");
 	torus->setPrecision(50, 50);
 	torus->buildMesh();
 	
-	spiral = new MeshSpiral(Vector3f(150.0f, 25.01f, -200.0f), 50.0f, 30.0f, 2, 150.0f, ".\\res\\darkchecker.png");
-	spiral->setPrecision(10, 10);
+	spiral = new MeshSpiral(Vector3f(150.0f, 25.01f, -200.0f), 50.0f, 30.0f, 2, 150.0f, ".\\res\\checker.png");
+	spiral->setPrecision(50, 50);
 	spiral->buildMesh();
 }
 

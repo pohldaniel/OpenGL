@@ -27,8 +27,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "12ColladaViewer-animation",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "11OBJViewer-translucency", "11OBJViewer-translucency\11OBJViewer-translucency.vcxproj", "{38E9C269-57B1-4328-9AB1-DCF6ABE1F069}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "13CollisonDetection-third-person-camera", "13CollisonDetection-third-person-camera\13CollisonDetection-third-person-camera.vcxproj", "{35204863-9C39-4D84-AB9B-38EDB0716B2B}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "14CollisionDetection-simple", "14CollisionDetection-simple\14CollisionDetection-simple.vcxproj", "{02F4A1E1-B342-4FEA-A5E0-BB26EEBAC20F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "13CollisionDetection-third-person-camera", "13CollisionDetection-third-person-camera\13CollisionDetection-third-person-camera.vcxproj", "{9C40E0D2-3FFF-407B-869F-63506F2E8C4D}"
@@ -119,14 +117,6 @@ Global
 		{38E9C269-57B1-4328-9AB1-DCF6ABE1F069}.Release|Win32.Build.0 = Release|Win32
 		{38E9C269-57B1-4328-9AB1-DCF6ABE1F069}.Release|x64.ActiveCfg = Release|x64
 		{38E9C269-57B1-4328-9AB1-DCF6ABE1F069}.Release|x64.Build.0 = Release|x64
-		{35204863-9C39-4D84-AB9B-38EDB0716B2B}.Debug|Win32.ActiveCfg = Debug|Win32
-		{35204863-9C39-4D84-AB9B-38EDB0716B2B}.Debug|Win32.Build.0 = Debug|Win32
-		{35204863-9C39-4D84-AB9B-38EDB0716B2B}.Debug|x64.ActiveCfg = Debug|x64
-		{35204863-9C39-4D84-AB9B-38EDB0716B2B}.Debug|x64.Build.0 = Debug|x64
-		{35204863-9C39-4D84-AB9B-38EDB0716B2B}.Release|Win32.ActiveCfg = Release|Win32
-		{35204863-9C39-4D84-AB9B-38EDB0716B2B}.Release|Win32.Build.0 = Release|Win32
-		{35204863-9C39-4D84-AB9B-38EDB0716B2B}.Release|x64.ActiveCfg = Release|x64
-		{35204863-9C39-4D84-AB9B-38EDB0716B2B}.Release|x64.Build.0 = Release|x64
 		{02F4A1E1-B342-4FEA-A5E0-BB26EEBAC20F}.Debug|Win32.ActiveCfg = Debug|Win32
 		{02F4A1E1-B342-4FEA-A5E0-BB26EEBAC20F}.Debug|Win32.Build.0 = Debug|Win32
 		{02F4A1E1-B342-4FEA-A5E0-BB26EEBAC20F}.Debug|x64.ActiveCfg = Debug|x64
