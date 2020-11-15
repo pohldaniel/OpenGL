@@ -23,13 +23,15 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "09OBJViewer-depthmap", "09O
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "10OBJViewer-subsurface-scattering", "10OBJViewer-subsurface-scattering\10OBJViewer-subsurface-scattering.vcxproj", "{7F7702BF-4B43-42EA-A75D-72529D5CEACC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "12ColladaViewer-animation", "12ColladaViewer-animation\12ColladaViewer-animation.vcxproj", "{DB00F9CB-11EA-4E39-A496-EE5AA64D7FC1}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "11OBJViewer-translucency", "11OBJViewer-translucency\11OBJViewer-translucency.vcxproj", "{38E9C269-57B1-4328-9AB1-DCF6ABE1F069}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "14CollisionDetection-simple", "14CollisionDetection-simple\14CollisionDetection-simple.vcxproj", "{02F4A1E1-B342-4FEA-A5E0-BB26EEBAC20F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "12RenderTo3DTexture", "12RenderTo3DTexture\12RenderTo3DTexture.vcxproj", "{4923B068-409B-4521-897F-257447653601}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "13CollisionDetection-third-person-camera", "13CollisionDetection-third-person-camera\13CollisionDetection-third-person-camera.vcxproj", "{9C40E0D2-3FFF-407B-869F-63506F2E8C4D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "13ColladaViewer-animation", "13ColladaViewer-animation\13ColladaViewer-animation.vcxproj", "{DB00F9CB-11EA-4E39-A496-EE5AA64D7FC1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "14CollisionDetection-third-person-camera", "14CollisionDetection-third-person-camera\14CollisionDetection-third-person-camera.vcxproj", "{9C40E0D2-3FFF-407B-869F-63506F2E8C4D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "15CollisionDetection-simple", "15CollisionDetection-simple\15CollisionDetection-simple.vcxproj", "{02F4A1E1-B342-4FEA-A5E0-BB26EEBAC20F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -133,6 +135,14 @@ Global
 		{9C40E0D2-3FFF-407B-869F-63506F2E8C4D}.Release|Win32.Build.0 = Release|Win32
 		{9C40E0D2-3FFF-407B-869F-63506F2E8C4D}.Release|x64.ActiveCfg = Release|x64
 		{9C40E0D2-3FFF-407B-869F-63506F2E8C4D}.Release|x64.Build.0 = Release|x64
+		{4923B068-409B-4521-897F-257447653601}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4923B068-409B-4521-897F-257447653601}.Debug|Win32.Build.0 = Debug|Win32
+		{4923B068-409B-4521-897F-257447653601}.Debug|x64.ActiveCfg = Debug|x64
+		{4923B068-409B-4521-897F-257447653601}.Debug|x64.Build.0 = Debug|x64
+		{4923B068-409B-4521-897F-257447653601}.Release|Win32.ActiveCfg = Release|Win32
+		{4923B068-409B-4521-897F-257447653601}.Release|Win32.Build.0 = Release|Win32
+		{4923B068-409B-4521-897F-257447653601}.Release|x64.ActiveCfg = Release|x64
+		{4923B068-409B-4521-897F-257447653601}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

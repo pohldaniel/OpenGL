@@ -1,0 +1,8 @@
+newmtl default
+Ka 0.8 0.8 0.8
+Kd 1 1 1
+Ks 0.803922 0.803922 0.803922
+Ns 150
+map_Kd bricks2_dif.bmp
+map_bump bricks2_normal.bmp
+map_disp bricks2_disp.bmp

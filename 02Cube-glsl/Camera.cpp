@@ -16,7 +16,7 @@ Camera::Camera(){
     m_xAxis.set(1.0f, 0.0f, 0.0f);
     m_yAxis.set(0.0f, 1.0f, 0.0f);
     m_zAxis.set(0.0f, 0.0f, 1.0f);
-    m_viewDir.set(0.0f, 0.0f, -1.0f);
+	m_viewDir.set(0.0f, 0.0f, -1.0f);
     
     m_projMatrix.identity();
 	m_orthMatrix.identity();
