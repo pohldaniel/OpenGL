@@ -1,0 +1,246 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Animation">
+      <UniqueIdentifier>{09ec0e48-b3c4-44b6-94f2-3d6dce3eda05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\MeshObject">
+      <UniqueIdentifier>{c815dd07-a554-4cec-b018-9b5077c5da31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Third">
+      <UniqueIdentifier>{55014aba-f627-41d5-ac75-1a45532f37a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Third\deps">
+      <UniqueIdentifier>{c62548a3-f065-4b55-be4e-26faaa725e0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Third\tinyxml">
+      <UniqueIdentifier>{dc0c30da-92c0-4fb6-9dce-1bf2296eb509}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Animation\AnimatedModel">
+      <UniqueIdentifier>{1e77cae3-8e97-43e9-ab75-eb985b85df0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Animation\Animator">
+      <UniqueIdentifier>{bb2c4621-c466-4936-ae05-b6cf9ea97952}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Animation\ColladaLoader">
+      <UniqueIdentifier>{2ff80ae6-cae5-47eb-bc5c-b75ec633bad7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Animation\Render">
+      <UniqueIdentifier>{56d6b69a-419a-4864-99f9-2fbcf144aeee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Animation">
+      <UniqueIdentifier>{ca30e376-71fd-4dc7-a108-a2bd4427cccc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\MeshObject">
+      <UniqueIdentifier>{c52debf1-67b6-4f33-9dd4-b6a846de2c9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Third">
+      <UniqueIdentifier>{d49f2025-1f5e-4801-bc27-77388a47cc09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Animation\AnimatedModel">
+      <UniqueIdentifier>{1541620e-bc27-4106-bec9-dacd157e8f48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Animation\Animator">
+      <UniqueIdentifier>{b39b1b8f-fc12-4992-8564-2e95914ed0a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Animation\ColladaLoader">
+      <UniqueIdentifier>{838ec4be-b3f7-4e61-9c9a-cd4ef49a551a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Animation\Render">
+      <UniqueIdentifier>{b87521ce-0058-4414-bfd1-9e99ab453a24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Third\deps">
+      <UniqueIdentifier>{90d7f0e6-90ab-4479-8dba-9eb9284289b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Third\tinyxml">
+      <UniqueIdentifier>{4daa019c-86db-42ab-8254-61f356f9b7be}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Animation\AnimatedModel\AnimatedMesh.h">
+      <Filter>Header Files\Animation\AnimatedModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\AnimatedModel\AnimatedModel.h">
+      <Filter>Header Files\Animation\AnimatedModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\Animator\Animation.h">
+      <Filter>Header Files\Animation\Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\Animator\Animator.h">
+      <Filter>Header Files\Animation\Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\ColladaLoader\ColladaLoader.h">
+      <Filter>Header Files\Animation\ColladaLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\Render\AnimationShader.h">
+      <Filter>Header Files\Animation\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Third\deps\stb_image.h">
+      <Filter>Header Files\Third\deps</Filter>
+    </ClInclude>
+    <ClInclude Include="Third\tinyxml\tinystr.h">
+      <Filter>Header Files\Third\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="Third\tinyxml\tinyxml.h">
+      <Filter>Header Files\Third\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshObject\MeshCube.h">
+      <Filter>Header Files\MeshObject</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshObject\MeshQuad.h">
+      <Filter>Header Files\MeshObject</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshObject\MeshSphere.h">
+      <Filter>Header Files\MeshObject</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshObject\MeshSpiral.h">
+      <Filter>Header Files\MeshObject</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshObject\MeshTorus.h">
+      <Filter>Header Files\MeshObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Bitmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Depthmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Extension.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelMatrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Animation\AnimatedModel\AnimatedMesh.cpp">
+      <Filter>Source Files\Animation\AnimatedModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\AnimatedModel\AnimatedModel.cpp">
+      <Filter>Source Files\Animation\AnimatedModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\Animator\Animation.cpp">
+      <Filter>Source Files\Animation\Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\Animator\Animator.cpp">
+      <Filter>Source Files\Animation\Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\ColladaLoader\ColladaLoader.cpp">
+      <Filter>Source Files\Animation\ColladaLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\Render\AnimationShader.cpp">
+      <Filter>Source Files\Animation\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshObject\MeshCube.cpp">
+      <Filter>Source Files\MeshObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshObject\MeshQuad.cpp">
+      <Filter>Source Files\MeshObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshObject\MeshSphere.cpp">
+      <Filter>Source Files\MeshObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshObject\MeshSpiral.cpp">
+      <Filter>Source Files\MeshObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshObject\MeshTorus.cpp">
+      <Filter>Source Files\MeshObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Third\deps\stb_image.c">
+      <Filter>Source Files\Third\deps</Filter>
+    </ClCompile>
+    <ClCompile Include="Third\tinyxml\tinystr.cpp">
+      <Filter>Source Files\Third\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="Third\tinyxml\tinyxml.cpp">
+      <Filter>Source Files\Third\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="Third\tinyxml\tinyxmlerror.cpp">
+      <Filter>Source Files\Third\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="Third\tinyxml\tinyxmlparser.cpp">
+      <Filter>Source Files\Third\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="Bitmap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Depthmap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Extension.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelMatrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
