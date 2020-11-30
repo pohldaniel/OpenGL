@@ -133,7 +133,7 @@ public:
 	Matrix4f operator^(const Matrix4f &rhs) const;
 	Matrix4f transpose();
 	Matrix4f inverse() const;
-	float Matrix4f::determinant() const;
+	float determinant() const;
 
 	void identity();
 	void rotate(const Vector3f &axis, float degrees);

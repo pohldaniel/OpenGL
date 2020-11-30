@@ -12,8 +12,6 @@ layout(location = 4) in vec4 i_jointWeights;
 out vec2 v_texCoord;
 out vec3 v_normal;
 
-uniform mat4 transform;
-//uniform mat4 viewProjection;
 uniform mat4 jointTransforms[MAX_JOINTS];
 
 uniform mat4 u_model;
@@ -36,14 +34,8 @@ void main()
         totalNormal += worldNormal * i_jointWeights[i];
     }
 
-    //totalLocalPos = vec4(i_position, 1.0);
-
-
-	mat4 modelViewProjection = u_projection * u_view * u_model;
-	//mat4 modelViewProjection = viewProjection * transform;
-
-	gl_Position = modelViewProjection * totalLocalPos;
-
+	gl_Position = u_projection * u_view * u_model * totalLocalPos;
 	v_texCoord = i_texCoord;
-    v_normal = (totalLocalPos * vec4(i_normal, 0.0)).xyz;
+    v_normal = totalNormal.xyz;
+	//v_normal = (totalLocalPos * vec4(i_normal, 0.0)).xyz;
 }

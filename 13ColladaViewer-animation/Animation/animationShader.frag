@@ -5,8 +5,8 @@ in vec3 v_normal;
 
 uniform sampler2D diffuse;
 
-void main()
-{
+void main(){
+
     gl_FragColor = texture2D(diffuse, v_texCoord);
-		//*clamp(dot(-vec3(0, 0, 1), v_normal), 0.0, 1.0);
+	//gl_FragColor = vec4(v_normal, 1.0);
 }

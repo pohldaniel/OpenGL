@@ -166,7 +166,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			end = start;
 			start = std::chrono::high_resolution_clock::now();
 			deltaTime = start - end;
-		
+			
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glClearColor(1.0, 1.0, 1.0, 0.0);
 			mushroom.update(deltaTime.count());

@@ -32,7 +32,7 @@ Camera::Camera(const Vector3f &eye, const Vector3f &target, const Vector3f &up) 
 	updateViewMatrix(eye, target, up);
 }
 
-Camera::~Camera() {}
+Camera::~Camera() = default;
 
 void Camera::updateViewMatrix(bool orthogonalizeAxes){
 
