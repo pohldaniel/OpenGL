@@ -15,7 +15,7 @@ class MeshQuad {
 public:
 
 	MeshQuad(float width, float height, const std::string &texture);
-	MeshQuad(float width, float height, bool generateTexels, const std::string &texture);
+	MeshQuad(float width, float height, bool generateTexels, bool generateNormals, const std::string &texture);
 	~MeshQuad();
 
 	void setPrecision(int uResolution, int vResolution);
@@ -24,7 +24,9 @@ public:
 
 	std::vector<unsigned int> m_indexBuffer;
 	std::vector<Vector3f> m_positions;
-
+	std::vector<Vector2f> m_texels;
+	std::vector<Vector3f> m_normals;
+	
 private:
 
 	int m_uResolution;

@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Entity3D.h"
 
-Entity3D::Entity3D(){
+Entity3D::Entity3D() {
 
 	m_worldMatrix.identity();
 	m_orientation.identity();
@@ -17,7 +17,7 @@ Entity3D::Entity3D(){
 	m_eulerRotate.set(0.0f, 0.0f, 0.0f);
 
 	// the following force related values are used in conjunction with 'update' only
-	m_gravity = Vector3f(0.0f, -2000.0f, 0.0f);
+	m_gravity = Vector3f(0.0f, -20.0f, 0.0f);
 	m_appliedForce = Vector3f(0.0f, 0.0f, 0.0f);
 	m_traction = 1.0f;
 	m_airResistance = 0.001f;
@@ -27,18 +27,18 @@ Entity3D::Entity3D(){
 	m_constrainedToWorldYAxis = false;
 }
 
-Entity3D::~Entity3D(){
+Entity3D::~Entity3D() {
 
 }
 
-void Entity3D::constrainToWorldYAxis(bool constrain){
+void Entity3D::constrainToWorldYAxis(bool constrain) {
 	// Constraining rotations to the world Y axis means that all heading
 	// changes are applied to the world Y axis rather than the entity's
 	// local Y axis.
 	m_constrainedToWorldYAxis = constrain;
 }
 
-void Entity3D::orient(float headingDegrees, float pitchDegrees, float rollDegrees){
+void Entity3D::orient(float headingDegrees, float pitchDegrees, float rollDegrees) {
 	// orient() changes the direction the entity is facing. This directly
 	// affects the orientation of the entity's right, up, and forward vectors.
 	// orient() is usually called in response to the user's input if the entity
@@ -66,7 +66,7 @@ void Entity3D::orient(float headingDegrees, float pitchDegrees, float rollDegree
 		m_eulerOrient[2] += 360.0f;
 }
 
-void Entity3D::rotate(float headingDegrees, float pitchDegrees, float rollDegrees){
+void Entity3D::rotate(float headingDegrees, float pitchDegrees, float rollDegrees) {
 	// rotate() does not change the direction the entity is facing. This method
 	// allows the entity to freely spin around without affecting its orientation
 	// and its right, up, and forward vectors. For example, if this entity is
@@ -96,39 +96,39 @@ void Entity3D::rotate(float headingDegrees, float pitchDegrees, float rollDegree
 		m_eulerRotate[2] += 360.0f;
 }
 
-const Vector3f &Entity3D::getForwardVector() const{
+const Vector3f &Entity3D::getForwardVector() const {
 	return m_forward;
 }
 
-const Vector3f &Entity3D::getPosition() const{
+const Vector3f &Entity3D::getPosition() const {
 	return m_position;
 }
 
-const Vector3f &Entity3D::getRightVector() const{
+const Vector3f &Entity3D::getRightVector() const {
 	return m_right;
 }
 
-const Vector3f &Entity3D::getUpVector() const{
+const Vector3f &Entity3D::getUpVector() const {
 	return m_up;
 }
 
-const Vector3f &Entity3D::getVelocity() const{
+const Vector3f &Entity3D::getVelocity() const {
 	return m_velocity;
 }
 
-const Matrix4f &Entity3D::getWorldMatrix() const{
+const Matrix4f &Entity3D::getWorldMatrix() const {
 	return m_worldMatrix;
 }
 
-void Entity3D::setPosition(float x, float y, float z){
+void Entity3D::setPosition(float x, float y, float z) {
 	m_position.set(x, y, z);
 }
 
-void Entity3D::setVelocity(float x, float y, float z){
+void Entity3D::setVelocity(float x, float y, float z) {
 	m_velocity.set(x, y, z);
 }
 
-void Entity3D::setWorldMatrix(const Matrix4f &worldMatrix){
+void Entity3D::setWorldMatrix(const Matrix4f &worldMatrix) {
 	m_worldMatrix = worldMatrix;
 	m_orientation.fromMatrix(worldMatrix);
 	m_position.set(worldMatrix[0][3], worldMatrix[1][3], worldMatrix[2][3]);
@@ -141,7 +141,7 @@ void Entity3D::update(float elapsedTimeSec) {
 	Vector3f oldPos, heading;
 	Quaternion temp;
 
-	velocityElapsed = m_velocity * elapsedTimeSec;
+	velocityElapsed = m_velocityCol * elapsedTimeSec;
 	eulerOrientElapsed = m_eulerOrient * elapsedTimeSec;
 	eulerRotateElapsed = m_eulerRotate * elapsedTimeSec;
 
@@ -150,9 +150,11 @@ void Entity3D::update(float elapsedTimeSec) {
 
 	oldPos = m_position;
 
-	m_position += m_right * velocityElapsed[0];
+
+
+	/*m_position += m_right * velocityElapsed[0];
 	m_position += m_up * velocityElapsed[1];
-	m_position += m_forward * velocityElapsed[2];
+	m_position += m_forward * velocityElapsed[2];*/
 
 	heading = m_position - oldPos;
 	heading.normalize();
@@ -179,17 +181,14 @@ void Entity3D::update(float elapsedTimeSec) {
 	temp = m_rotation * m_orientation;
 	temp.normalize();
 
-	m_worldMatrix = temp.toMatrix4f();
-	m_worldMatrix[0][3] = m_position[0];
-	m_worldMatrix[1][3] = m_position[1];
-	m_worldMatrix[2][3] = m_position[2];
+
 
 	// clear the entity's cached euler rotations and velocity for this frame.
 	m_velocity.set(0.0f, 0.0f, 0.0f);
 	m_eulerOrient.set(0.0f, 0.0f, 0.0f);
 	m_eulerRotate.set(0.0f, 0.0f, 0.0f);
 
-	Vector3f      vecTractive, vecDrag, vecFriction, vecForce, vecAccel;
+	/*Vector3f      vecTractive, vecDrag, vecFriction, vecForce, vecAccel;
 	float         speed;
 
 	// scale our traction force by the amount we have available.
@@ -217,10 +216,19 @@ void Entity3D::update(float elapsedTimeSec) {
 	m_velocityCol += vecAccel * elapsedTimeSec;
 
 	// reset our 'motor' force.
-	m_appliedForce = Vector3f(0.0f, 0.0f, 0.0f);
+	m_appliedForce = Vector3f(0.0f, 0.0f, 0.0f);*/
+
+	//m_velocityCol = m_velocityCol;
+
+	m_position += m_velocityCol* elapsedTimeSec;
+
+	m_worldMatrix = temp.toMatrix4f();
+	m_worldMatrix[0][3] = m_position[0];
+	m_worldMatrix[1][3] = m_position[1];
+	m_worldMatrix[2][3] = m_position[2];
 }
 
-Quaternion Entity3D::eulerToQuaternion(const Matrix4f &m, float headingDegrees, float pitchDegrees, float rollDegrees) const{
+Quaternion Entity3D::eulerToQuaternion(const Matrix4f &m, float headingDegrees, float pitchDegrees, float rollDegrees) const {
 	// construct a quaternion from an euler transformation. We do this rather
 	// than use Quaternion::fromHeadPitchRoll() to support constraining heading
 	// changes to the world Y axis.
@@ -233,19 +241,19 @@ Quaternion Entity3D::eulerToQuaternion(const Matrix4f &m, float headingDegrees, 
 
 	if (headingDegrees != 0.0f) {
 		if (m_constrainedToWorldYAxis)
-		  rotation.fromAxisAngle(Vector3f(0.0f, 1.0f, 0.0f), headingDegrees);
-		else 
-		  rotation.fromAxisAngle(localYAxis, headingDegrees);
-		
+			rotation.fromAxisAngle(Vector3f(0.0f, 1.0f, 0.0f), headingDegrees);
+		else
+			rotation.fromAxisAngle(localYAxis, headingDegrees);
+
 		result *= rotation;
 	}
 
-	if (pitchDegrees != 0.0f){
+	if (pitchDegrees != 0.0f) {
 		rotation.fromAxisAngle(localXAxis, pitchDegrees);
 		result *= rotation;
 	}
 
-	if (rollDegrees != 0.0f){
+	if (rollDegrees != 0.0f) {
 		rotation.fromAxisAngle(localZAxis, rollDegrees);
 		result *= rotation;
 	}
@@ -253,7 +261,7 @@ Quaternion Entity3D::eulerToQuaternion(const Matrix4f &m, float headingDegrees, 
 	return result;
 }
 
-void Entity3D::extractAxes(){
+void Entity3D::extractAxes() {
 	Matrix4f m = m_orientation.toMatrix4f();
 
 	m_right.set(m[0][0], m[1][0], m[2][0]);
@@ -276,7 +284,7 @@ void Entity3D::applyForce(unsigned long Direction, float Force) {
 	if (Direction & DIR_LEFT) vecShift -= m_right;
 	if (Direction & DIR_UP) vecShift += m_up;
 	if (Direction & DIR_DOWN) vecShift -= m_up;
-	
+
 	//normalize the direction vector
 	Vector3f::Normalize(vecShift);
 	m_appliedForce += vecShift * Force;

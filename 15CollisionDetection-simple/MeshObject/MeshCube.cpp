@@ -1,6 +1,6 @@
 #include "MeshCube.h"
 
-MeshCube::MeshCube(const Vector3f &position, float width, float height, float depth, bool generateTexels, const std::string &texture) {
+MeshCube::MeshCube(const Vector3f &position, float width, float height, float depth, bool generateTexels, bool generateNormals, const std::string &texture) {
 
 	m_numBuffers = 4;
 
@@ -10,6 +10,7 @@ MeshCube::MeshCube(const Vector3f &position, float width, float height, float de
 	m_position = position;
 
 	m_generateTexels = generateTexels;
+	m_generateNormals = generateNormals;
 
 	m_hasTexels = false;
 
@@ -22,9 +23,9 @@ MeshCube::MeshCube(const Vector3f &position, float width, float height, float de
 	m_modelMatrix = ModelMatrix();
 }
 
-MeshCube::MeshCube(const Vector3f &position, float width, float height, float depth, const std::string &texture) : MeshCube(position, width, height, depth, true, texture) {}
+MeshCube::MeshCube(const Vector3f &position, float width, float height, float depth, const std::string &texture) : MeshCube(position, width, height, depth, true, true, texture) {}
 
-MeshCube::MeshCube(float width, float height, float depth, const std::string &texture) : MeshCube(Vector3f(0.0f, 0.0f, 0.0f), width, height, depth, true, texture) {}
+MeshCube::MeshCube(float width, float height, float depth, const std::string &texture) : MeshCube(Vector3f(0.0f, 0.0f, 0.0f), width, height, depth, true, true, texture) {}
 
 MeshCube::~MeshCube() {}
 
@@ -36,8 +37,7 @@ void MeshCube::setPrecision(int uResolution, int vResolution) {
 
 void MeshCube::buildMesh() {
 
-	std::vector<Vector2f> texels;
-	std::vector<Vector3f> normals;
+	
 
 	float vStep = (1.0f / m_vResolution) * m_height;
 	float uStep = (1.0f / m_uResolution) * m_width;
@@ -54,11 +54,15 @@ void MeshCube::buildMesh() {
 			Vector3f position = Vector3f(x, y, z) + m_position;
 			m_positions.push_back(position);
 
+			if (m_generateNormals) {
+				m_normals.push_back(Vector3f(0.0f, 0.0f, 1.0f));
+			}
+
 			if (m_generateTexels) {
 				float u = (float)j / m_uResolution;
 				float v = (float)i / m_vResolution;
 				Vector2f textureCoordinate = Vector2f(u, 1 - v);
-				texels.push_back(textureCoordinate);
+				m_texels.push_back(textureCoordinate);
 			}
 		}
 	}
@@ -78,11 +82,15 @@ void MeshCube::buildMesh() {
 			Vector3f position = Vector3f(x, y, z) + m_position;
 			m_positions.push_back(position);
 
+			if (m_generateNormals) {
+				m_normals.push_back(Vector3f(1.0f, 0.0f, 0.0f));
+			}
+
 			if (m_generateTexels) {
 				float u = (float)j / m_uResolution;
 				float v = (float)i / m_vResolution;				
 				Vector2f textureCoordinate = Vector2f(u, v);
-				texels.push_back(textureCoordinate);
+				m_texels.push_back(textureCoordinate);
 			}
 		}
 	}
@@ -100,12 +108,17 @@ void MeshCube::buildMesh() {
 
 			Vector3f position = Vector3f(x, y, z) + m_position;
 			m_positions.push_back(position);
+
+			if (m_generateNormals) {
+				m_normals.push_back(Vector3f(0.0f, 0.0f, -1.0f));
+			}
+
 			if (m_generateTexels) {
 				float u = (float)j / m_uResolution;
 				float v = (float)i / m_vResolution;
 
 				Vector2f textureCoordinate = Vector2f(1 - u, v);
-				texels.push_back(textureCoordinate);
+				m_texels.push_back(textureCoordinate);
 				m_hasTexels = true;
 			}
 		}
@@ -125,12 +138,16 @@ void MeshCube::buildMesh() {
 			Vector3f position = Vector3f(x, y, z) + m_position;
 			m_positions.push_back(position);
 
+			if (m_generateNormals) {
+				m_normals.push_back(Vector3f(-1.0f, 0.0f, 0.0f));
+			}
+
 			if (m_generateTexels) {
 				float u = (float)j / m_uResolution;
 				float v = (float)i / m_vResolution;
 
 				Vector2f textureCoordinate = Vector2f(1 - u, v);
-				texels.push_back(textureCoordinate);
+				m_texels.push_back(textureCoordinate);
 			}
 		}
 	}
@@ -149,12 +166,16 @@ void MeshCube::buildMesh() {
 			Vector3f position = Vector3f(x, y, z) + m_position;
 			m_positions.push_back(position);
 
+			if (m_generateNormals) {
+				m_normals.push_back(Vector3f(0.0f, -1.0f, 0.0f));
+			}
+
 			if (m_generateTexels) {
 				float u = (float)j / m_uResolution;
 				float v = (float)i / m_vResolution;
 
 				Vector2f textureCoordinate = Vector2f(u,v);			
-				texels.push_back(textureCoordinate);
+				m_texels.push_back(textureCoordinate);
 			}
 		}
 	}
@@ -174,12 +195,16 @@ void MeshCube::buildMesh() {
 			Vector3f position = Vector3f(x, y, z) + m_position;
 			m_positions.push_back(position);
 
+			if (m_generateNormals) {
+				m_normals.push_back(Vector3f(0.0f, 1.0f, 0.0f));
+			}
+
 			if (m_generateTexels) {
 				float u = (float)j / m_uResolution;
 				float v = (float)i / m_vResolution;
 
 				Vector2f textureCoordinate = Vector2f(u, v);
-				texels.push_back(textureCoordinate);
+				m_texels.push_back(textureCoordinate);
 			}
 		}
 	}
@@ -300,14 +325,14 @@ void MeshCube::buildMesh() {
 
 	//Texture Coordinates
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, texels.size() * sizeof(texels[0]), &texels[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_texels.size() * sizeof(m_texels[0]), &m_texels[0], GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	//Normals
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[2]);
-	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(normals[0]), &normals[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_normals.size() * sizeof(m_normals[0]), &m_normals[0], GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -318,25 +343,23 @@ void MeshCube::buildMesh() {
 
 	glBindVertexArray(0);
 
-	/*positions.clear();
-	positions.shrink_to_fit();*/
-	texels.clear();
-	texels.shrink_to_fit();
-	normals.clear();
-	normals.shrink_to_fit();
-	/*indexBuffer.clear();
-	indexBuffer.shrink_to_fit();*/
+	/*m_positions.clear();
+	m_positions.shrink_to_fit();
+	m_texels.clear();
+	m_texels.shrink_to_fit();
+	m_normals.clear();
+	m_normals.shrink_to_fit();
+	m_indexBuffer.clear();
+	m_indexBuffer.shrink_to_fit();*/
 
 	m_isInitialized = true;
 }
 
 void MeshCube::buildMesh4Q() {
 
-	std::vector<Vector2f> texels;
-	std::vector<Vector3f> normals;
-
 	float vStep = (1.0f / m_vResolution) * m_height;
 	float uStep = (1.0f / m_uResolution) * m_width;
+
 	//front
 	for (unsigned int i = 0; i <= m_vResolution; i++) {
 		for (unsigned int j = 0; j <= m_uResolution; j++) {
@@ -349,12 +372,16 @@ void MeshCube::buildMesh4Q() {
 			Vector3f position = Vector3f(x, y, z) + m_position;
 			m_positions.push_back(position);
 
+			if (m_generateNormals) {
+				m_normals.push_back(Vector3f(0.0f, 0.0f, 1.0f));
+			}
+
 			if (m_generateTexels) {
 				float u = (float)j / m_uResolution;
 				float v = (float)i / m_vResolution;
 
 				Vector2f textureCoordinate = Vector2f(u, v);
-				texels.push_back(textureCoordinate);
+				m_texels.push_back(textureCoordinate);
 			}
 		}
 	}
@@ -374,12 +401,16 @@ void MeshCube::buildMesh4Q() {
 			Vector3f position = Vector3f(x, y, z) + m_position;
 			m_positions.push_back(position);
 
+			if (m_generateNormals) {
+				m_normals.push_back(Vector3f(1.0f, 0.0f, 0.0f));
+			}
+
 			if (m_generateTexels) {
 				float u = (float)j / m_uResolution;
 				float v = (float)i / m_vResolution;
 
 				Vector2f textureCoordinate = Vector2f(1 -u, v);
-				texels.push_back(textureCoordinate);
+				m_texels.push_back(textureCoordinate);
 			}
 		}
 	}
@@ -399,18 +430,23 @@ void MeshCube::buildMesh4Q() {
 			Vector3f position = Vector3f(x, y, z) + m_position;
 			m_positions.push_back(position);
 
+			if (m_generateNormals) {
+				m_normals.push_back(Vector3f(-1.0f, 0.0f, 0.0f));
+			}
+
 			if (m_generateTexels) {
 				float u = (float)j / m_uResolution;
 				float v = (float)i / m_vResolution;
 
 				Vector2f textureCoordinate = Vector2f(u, v);
-				texels.push_back(textureCoordinate);
+				m_texels.push_back(textureCoordinate);
 			}
 		}
 	}
 
 	vStep = (1.0f / m_vResolution) * m_height;
 	uStep = (1.0f / m_uResolution) * m_width;
+
 	//back
 	for (unsigned int i = 0; i <= m_vResolution; i++) {
 		for (unsigned int j = 0; j <= m_uResolution; j++) {
@@ -423,12 +459,16 @@ void MeshCube::buildMesh4Q() {
 			Vector3f position = Vector3f(x, y, z) + m_position;
 			m_positions.push_back(position);
 
+			if (m_generateNormals) {
+				m_normals.push_back(Vector3f(0.0f, 0.0f, -1.0f));
+			}
+
 			if (m_generateTexels) {
 				float u = (float)j / m_uResolution;
 				float v = (float)i / m_vResolution;
 
 				Vector2f textureCoordinate = Vector2f(1 - u, v);
-				texels.push_back(textureCoordinate);
+				m_texels.push_back(textureCoordinate);
 				m_hasTexels = true;
 			}
 		}
@@ -436,6 +476,7 @@ void MeshCube::buildMesh4Q() {
 
 	vStep = (1.0f / m_vResolution) * m_depth;
 	uStep = (1.0f / m_uResolution) * m_width;
+
 	//bottom
 	for (unsigned int i = 0; i <= m_vResolution; i++) {
 		for (unsigned int j = 0; j <= m_uResolution; j++) {
@@ -448,18 +489,23 @@ void MeshCube::buildMesh4Q() {
 			Vector3f position = Vector3f(x, y, z) + m_position;
 			m_positions.push_back(position);
 
+			if (m_generateNormals) {
+				m_normals.push_back(Vector3f(0.0f, -1.0f, 0.0f));
+			}
+
 			if (m_generateTexels) {
 				float u = (float)j / m_uResolution;
 				float v = (float)i / m_vResolution;
 
 				Vector2f textureCoordinate = Vector2f(u, v);
-				texels.push_back(textureCoordinate);
+				m_texels.push_back(textureCoordinate);
 			}
 		}
 	}
 
 	vStep = (1.0f / m_vResolution) * m_depth;
 	uStep = (1.0f / m_uResolution) * m_width;
+
 	//top
 	for (unsigned int i = 0; i <= m_vResolution; i++) {
 		for (unsigned int j = 0; j <= m_uResolution; j++) {
@@ -472,12 +518,16 @@ void MeshCube::buildMesh4Q() {
 			Vector3f position = Vector3f(x, y, z) + m_position;
 			m_positions.push_back(position);
 
+			if (m_generateNormals) {
+				m_normals.push_back(Vector3f(0.0f, 1.0f, 0.0f));
+			}
+
 			if (m_generateTexels) {
 				float u = (float)j / m_uResolution;
 				float v = (float)i / m_vResolution;
 
 				Vector2f textureCoordinate = Vector2f(u, v);
-				texels.push_back(textureCoordinate);
+				m_texels.push_back(textureCoordinate);
 			}
 		}
 	}
@@ -525,14 +575,14 @@ void MeshCube::buildMesh4Q() {
 
 	//Texture Coordinates
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, texels.size() * sizeof(texels[0]), &texels[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_texels.size() * sizeof(m_texels[0]), &m_texels[0], GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	//Normals
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[2]);
-	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(normals[0]), &normals[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_normals.size() * sizeof(m_normals[0]), &m_normals[0], GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -543,14 +593,14 @@ void MeshCube::buildMesh4Q() {
 
 	glBindVertexArray(0);
 
-	/*positions.clear();
-	positions.shrink_to_fit();*/
-	texels.clear();
-	texels.shrink_to_fit();
-	normals.clear();
-	normals.shrink_to_fit();
-	/*indexBuffer.clear();
-	indexBuffer.shrink_to_fit();*/
+	/*m_positions.clear();
+	m_positions.shrink_to_fit();
+	m_texels.clear();
+	m_texels.shrink_to_fit();
+	m_normals.clear();
+	m_normals.shrink_to_fit();
+	m_indexBuffer.clear();
+	m_indexBuffer.shrink_to_fit();*/
 
 	m_isInitialized = true;
 }

@@ -97,6 +97,7 @@ private:
 	static const float DEFAULT_DAMPING_CONSTANT;
 
 	void updateOrientation(float elapsedTimeSec);
+	void updateViewMatrix(const Entity3D& entity);
 	void updateViewMatrix();
 	void updateViewMatrix(float elapsedTimeSecfloat, const Entity3D& entity);
 	void updateViewMatrix(float elapsedTimeSecfloat);

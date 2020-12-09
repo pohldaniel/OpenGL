@@ -288,12 +288,12 @@ void Camera::rotateFirstPerson(float pitch, float yaw){
 
 void Camera::setPosition(float x, float y, float z){
 	m_eye.set(x, y, z);
-	updateViewMatrix(false);
+	updateViewMatrix(true);
 }
 
 void Camera::setPosition(const Vector3f &position){
 	m_eye = position;
-	updateViewMatrix(false);
+	updateViewMatrix(true);
 }
 
 const Vector3f &Camera::getPosition() const{
@@ -337,7 +337,7 @@ const Matrix4f &Camera::getInvViewMatrix() const{
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-const float ThirdPersonCamera::DEFAULT_SPRING_CONSTANT = 16.0f;
+const float ThirdPersonCamera::DEFAULT_SPRING_CONSTANT = 32.0f;
 const float ThirdPersonCamera::DEFAULT_DAMPING_CONSTANT = 8.0f;
 
 ThirdPersonCamera::ThirdPersonCamera(){
@@ -522,7 +522,7 @@ void ThirdPersonCamera::update(float elapsedTimeSec, const Entity3D& entity) {
 	if (m_enableSpringSystem)
 		updateViewMatrix(elapsedTimeSec, entity);
 	else
-		updateViewMatrix();
+		updateViewMatrix(entity);
 }
 
 void ThirdPersonCamera::updateViewMatrix(float elapsedTimeSec, const Entity3D& entity){
@@ -627,6 +627,52 @@ void ThirdPersonCamera::updateViewMatrix() {
 	m_viewMatrix[0][3] = -Vector3f::Dot(m_xAxis, m_eye);
 	m_viewMatrix[1][3] = -Vector3f::Dot(m_yAxis, m_eye);
 	m_viewMatrix[2][3] = -Vector3f::Dot(m_zAxis, m_eye);
+}
+
+void ThirdPersonCamera::updateViewMatrix(const Entity3D& entity) {
+
+	m_viewMatrix = m_orientation.toMatrix4f();
+
+	m_xAxis.set(m_viewMatrix[0][0], m_viewMatrix[0][1], m_viewMatrix[0][2]);
+	m_yAxis.set(m_viewMatrix[1][0], m_viewMatrix[1][1], m_viewMatrix[1][2]);
+	m_zAxis.set(m_viewMatrix[2][0], m_viewMatrix[2][1], m_viewMatrix[2][2]);
+	m_viewDir = -m_zAxis;
+
+	m_eye = entity.getPosition() - entity.getForwardVector() * m_offsetDistance + entity.getUpVector() * 150.f;
+	m_target = entity.getPosition();
+
+	m_zAxis = m_eye - m_target;
+	Vector3f::Normalize(m_zAxis);
+
+	m_xAxis = Vector3f::Cross(m_up, m_zAxis);
+	Vector3f::Normalize(m_xAxis);
+
+	m_yAxis = Vector3f::Cross(m_zAxis, m_xAxis);
+	Vector3f::Normalize(m_yAxis);
+
+	m_viewMatrix.identity();
+
+	m_viewMatrix[0][0] = m_xAxis[0];
+	m_viewMatrix[0][1] = m_xAxis[1];
+	m_viewMatrix[0][2] = m_xAxis[2];
+	m_viewMatrix[0][3] = -Vector3f::Dot(m_xAxis, m_eye);
+
+	m_viewMatrix[1][0] = m_yAxis[0];
+	m_viewMatrix[1][1] = m_yAxis[1];
+	m_viewMatrix[1][2] = m_yAxis[2];
+	m_viewMatrix[1][3] = -Vector3f::Dot(m_yAxis, m_eye);
+
+	m_viewMatrix[2][0] = m_zAxis[0];
+	m_viewMatrix[2][1] = m_zAxis[1];
+	m_viewMatrix[2][2] = m_zAxis[2];
+	m_viewMatrix[2][3] = -Vector3f::Dot(m_zAxis, m_eye);
+
+	m_viewMatrix[3][0] = 0.0f;
+	m_viewMatrix[3][1] = 0.0f;
+	m_viewMatrix[3][2] = 0.0f;
+	m_viewMatrix[3][3] = 1.0f;
+
+	m_viewDir = -m_zAxis;
 }
 
 float ThirdPersonCamera::getDampingConstant() const{

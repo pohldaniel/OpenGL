@@ -96,7 +96,7 @@ public:
 
 	bool readMaterial(const char* filename);
 
-	const int *getIndexBuffer() const;
+	const unsigned int *getIndexBuffer() const;
 	const float *getVertexBuffer() const;
 	
 
@@ -137,11 +137,17 @@ public:
 
 	bool m_hasTextureCoords, m_hasNormals, m_hasTangents;
 	
+	std::vector<unsigned int> m_indexBuffer;
+	std::vector<Vector3f> m_positions;
+	std::vector<Vector2f> m_texels;
+	std::vector<Vector3f> m_normals;
 
 private:
 
+	void generateBuffer();
+
 	std::vector <float> m_vertexBuffer;
-	std::vector<int> m_indexBuffer;
+	
 		
 	unsigned int m_numberTriangles, m_numberOfBytes;
 	

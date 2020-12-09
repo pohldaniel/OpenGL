@@ -456,6 +456,11 @@ bool Model::loadObject(const char* a_filename, Vector3f& translate, float scale)
 			}			
 		}
 	}
+
+	for (int j = 0; j < m_numberOfMeshes; j++) {
+	
+		mesh[j]->generateBuffer();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -465,7 +470,7 @@ void Mesh::generateNormals(){
 	
 	std::vector<float> tmpVertex;
 
-	const int *pTriangle = 0;
+	const unsigned int *pTriangle = 0;
 	float *pVertex0 = 0;
 	float *pVertex1 = 0;
 	float *pVertex2 = 0;
@@ -560,7 +565,7 @@ void Mesh::generateTangents(){
 	}
 
 	std::vector<float> tmpVertex;
-	const int *pTriangle = 0;
+	const unsigned int *pTriangle = 0;
 	float *pVertex0 = 0;
 	float *pVertex1 = 0;
 	float *pVertex2 = 0;
@@ -918,7 +923,7 @@ Mesh::~Mesh(){
 
 }
 
-const int *Mesh::getIndexBuffer() const{
+const unsigned int *Mesh::getIndexBuffer() const{
 
 	return &m_indexBuffer[0];
 }
@@ -1068,4 +1073,18 @@ int Mesh::addVertex(int hash, const float *pVertex, int numberOfBytes){
 	}
 
 	return index;
+}
+
+
+void Mesh::generateBuffer(){
+
+	short stride = 8;
+
+	for (int i = 0; i < m_indexBuffer.size(); i= i + 8) {
+
+		m_positions.push_back(Vector3f(m_vertexBuffer[i], m_vertexBuffer[i + 1], m_vertexBuffer[i + 2]));
+		m_texels.push_back(Vector2f(m_vertexBuffer[i + 3], m_vertexBuffer[i + 4]));
+		m_normals.push_back(Vector3f(m_vertexBuffer[i + 5], m_vertexBuffer[i + 6], m_vertexBuffer[i + 7]));
+	}
+
 }

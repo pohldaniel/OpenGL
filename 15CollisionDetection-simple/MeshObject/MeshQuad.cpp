@@ -1,12 +1,13 @@
 #include "MeshQuad.h"
 
-MeshQuad::MeshQuad(float width, float height, bool generateTexels, const std::string &texture) {
+MeshQuad::MeshQuad(float width, float height, bool generateTexels, bool generateNormals, const std::string &texture) {
 
 	m_numBuffers = 4;
 
 	m_width = width;
 	m_height = height;
 	m_generateTexels = generateTexels;
+	m_generateNormals = generateNormals;
 
 	m_hasTexels = false;
 
@@ -19,7 +20,7 @@ MeshQuad::MeshQuad(float width, float height, bool generateTexels, const std::st
 	m_modelMatrix = ModelMatrix();
 }
 
-MeshQuad::MeshQuad(float width, float height, const std::string &texture) : MeshQuad(width, height, true, texture) {
+MeshQuad::MeshQuad(float width, float height, const std::string &texture) : MeshQuad(width, height, true, true, texture) {
 
 }
 
@@ -33,9 +34,6 @@ void MeshQuad::setPrecision(int uResolution, int vResolution) {
 
 void MeshQuad::buildMesh(){
 	
-	std::vector<Vector2f> texels;
-	std::vector<Vector3f> normals;
-
 	float vStep = (1.0f / m_vResolution) * m_height;
 	float uStep = (1.0f /m_uResolution) * m_width;
 
@@ -49,6 +47,10 @@ void MeshQuad::buildMesh(){
 
 			Vector3f position = Vector3f(x, y, z);
 			m_positions.push_back(position);
+
+			if (m_generateNormals) {
+				m_normals.push_back(Vector3f(0.0f, 1.0f, 0.0f));
+			}
 		}
 	}
 
@@ -62,7 +64,7 @@ void MeshQuad::buildMesh(){
 				float v = (float)i / m_vResolution;
 
 				Vector2f textureCoordinate = Vector2f(u, v);
-				texels.push_back(textureCoordinate);
+				m_texels.push_back(textureCoordinate);
 			}
 		}
 		m_hasTexels = true;
@@ -101,14 +103,14 @@ void MeshQuad::buildMesh(){
 
 	//Texture Coordinates
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, texels.size() * sizeof(texels[0]), &texels[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_texels.size() * sizeof(m_texels[0]), &m_texels[0], GL_STATIC_DRAW);
  
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	//Normals
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[2]);
-	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(normals[0]), &normals[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_normals.size() * sizeof(m_normals[0]), &m_normals[0], GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -119,14 +121,14 @@ void MeshQuad::buildMesh(){
 
 	glBindVertexArray(0);
 
-	/*positions.clear();
-	positions.shrink_to_fit();*/
-	texels.clear();
-	texels.shrink_to_fit();
-	normals.clear();
-	normals.shrink_to_fit();
-	/*indexBuffer.clear();
-	indexBuffer.shrink_to_fit();*/
+	/*m_positions.clear();
+	m_positions.shrink_to_fit();
+	m_texels.clear();
+	m_texels.shrink_to_fit();
+	m_normals.clear();
+	m_normals.shrink_to_fit();
+	m_indexBuffer.clear();
+	m_indexBuffer.shrink_to_fit();*/
 
 	m_isInitialized = true;
 }

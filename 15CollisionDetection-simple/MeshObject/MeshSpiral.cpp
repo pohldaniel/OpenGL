@@ -26,7 +26,7 @@ MeshSpiral::MeshSpiral(const Vector3f &position, float radius, float tubeRadius,
 	m_numBuffers = 2 + generateTexels + generateNormals + 2 * generateTangents + 2 * generateNormalDerivatives;
 
 	m_texture = std::make_shared<Texture>(texture);
-	m_shader = std::make_shared<Shader>("shader/texture.vert", "shader/texture.frag");
+	m_shader = std::make_shared<Shader>("shader/textureN.vert", "shader/textureN.frag");
 
 	m_modelMatrix = ModelMatrix();
 }
@@ -47,8 +47,7 @@ void MeshSpiral::buildMesh() {
 
 	if (m_isInitialized) return;
 
-	std::vector<Vector2f> texels;
-	std::vector<Vector3f> normals;
+	
 	std::vector<Vector3f> tangents;
 	std::vector<Vector3f> bitangents;
 	
@@ -126,7 +125,7 @@ void MeshSpiral::buildMesh() {
 				float n3 = tmp * sinMainSegment * cosTubeSegment - m_tubeRadius * pitch * invTWO_PI * cosMainSegment * sinTubeSegment;
 
 				Vector3f normal = Vector3f(n1, n2, n3).normalize();
-				normals.push_back(normal);
+				m_normals.push_back(normal);
 
 				// Update current tube angle
 				currentTubeSegmentAngle += tubeSegmentAngleStep;
@@ -159,8 +158,7 @@ void MeshSpiral::buildMesh() {
 			for (unsigned int j = 0; j <= m_tubeSegments; j++) {
 
 				Vector2f textureCoordinate = Vector2f((1.0 - currentMainSegmentTexCoordU), currentTubeSegmentTexCoordV);
-
-				texels.push_back(textureCoordinate);
+				m_texels.push_back(textureCoordinate);
 
 				currentTubeSegmentTexCoordV += tubeSegmentTextureStep;
 			}
@@ -270,14 +268,14 @@ void MeshSpiral::buildMesh() {
 
 	//Texture Coordinates
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, texels.size() * sizeof(texels[0]), &texels[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_texels.size() * sizeof(m_texels[0]), &m_texels[0], GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	//Normals
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[2]);
-	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(normals[0]), &normals[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_normals.size() * sizeof(m_normals[0]), &m_normals[0], GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -289,19 +287,20 @@ void MeshSpiral::buildMesh() {
 
 	glBindVertexArray(0);
 
-	/*positions.clear();
-	positions.shrink_to_fit();*/
-	texels.clear();
-	texels.shrink_to_fit();
-	normals.clear();
-	normals.shrink_to_fit();
+	/*m_positions.clear();
+	m_positions.shrink_to_fit();
+	m_texels.clear();
+	m_texels.shrink_to_fit();
+	m_normals.clear();
+	m_normals.shrink_to_fit();
+	m_indexBuffer.clear();
+	m_indexBuffer.shrink_to_fit();*/
+
 	tangents.clear();
 	tangents.shrink_to_fit();
 	bitangents.clear();
 	bitangents.shrink_to_fit();
-	/*indexBuffer.clear();
-	indexBuffer.shrink_to_fit();*/
-
+	
 	m_isInitialized = true;
 }
 

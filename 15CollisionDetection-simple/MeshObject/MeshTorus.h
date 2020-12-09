@@ -25,6 +25,8 @@ public:
 
 	std::vector<unsigned int> m_indexBuffer;
 	std::vector<Vector3f> m_positions;
+	std::vector<Vector2f> m_texels;
+	std::vector<Vector3f> m_normals;
 
 private:
 
@@ -54,5 +56,6 @@ private:
 
 	std::shared_ptr<Shader> m_shader;
 	std::shared_ptr<Texture> m_texture;
+
 };
 #endif

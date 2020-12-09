@@ -19,6 +19,7 @@
 #include "Entity3D.h"
 #include "Skybox.h"
 #include "Collision.h"
+#include "Object.h"
 
 int height = 960;
 int width = 1280;
@@ -37,6 +38,7 @@ enum DIRECTION {
 	DIR_RIGHT = 8,
 	DIR_UP = 16,
 	DIR_DOWN = 32,
+	RESET = 64,
 
 	DIR_FORCE_32BIT = 0x7FFFFFFF
 };
@@ -53,7 +55,13 @@ MeshTorus *torus;
 MeshSpiral *spiral;
 Collision collision;
 
-const float HEADING_SPEED = 120.0f;
+const float moveSpeed = 10000.0f;
+double physDeltaTime = 1.0 / 60.0;
+const double slowest_frame = 1.0 / 15.0;
+double delta_Time, accumulator = 0.0;
+const float friction = 0.9;
+
+const float HEADING_SPEED = 150.0f;
 const float ROLLING_SPEED = 280.0f;
 bool UPDATEFRAME = true;
 
@@ -150,7 +158,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::chrono::steady_clock::time_point start = std::chrono::high_resolution_clock::now();
 	std::chrono::steady_clock::time_point end;
 	std::chrono::duration<double> deltaTime;
-	long count = 0;
 
 	// main message loop
 	while (true) {
@@ -169,66 +176,92 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			end = start;
 			start = std::chrono::high_resolution_clock::now();
 			deltaTime = start - end;
-
+			delta_Time = deltaTime.count();
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glClearColor(1.0, 1.0, 1.0, 0.0);
 
-			cowboy.update(deltaTime.count());
+			cowboy.update(delta_Time);
 			cowboy.draw(camera, cowboyEntity);
 
-			mushroom.update(deltaTime.count());
+			mushroom.update(delta_Time);
 			mushroom.draw(camera);
 
-			dragon.update(deltaTime.count());
+			dragon.update(delta_Time);
 			dragon.draw(camera);
+
+			// prevent spiral of death
+			if (delta_Time > slowest_frame)
+				delta_Time = slowest_frame;
+
+			// update at a constant rate to keep physics in check
+			accumulator += delta_Time;
+			while (accumulator >= physDeltaTime) {
+				processInput(hwnd);
+				updateFrame(hwnd, physDeltaTime);
+				
+				Vector3f velocityCol = ballEntity.getVelocityCol();
+
+				Vector3f velocity = ballEntity.getVelocity();
+				Vector3f collExtentsMin, collExtentsMax, newPos, newVelocity;
+				Vector3f radius = (sphere->m_max - sphere->m_min) * 0.5;
+
+				
+				velocityCol[1] -= (200.0f * physDeltaTime);
+				// test for collision against the scene
+				if (collision.collideEllipsoid(ballEntity.getPosition(), radius, velocityCol * physDeltaTime, newPos, newVelocity, collExtentsMin, collExtentsMax)) {
+
+					// scale new frame based velocity into per-second
+					newVelocity = newVelocity / physDeltaTime;
+
+					if (collExtentsMin[1] < -(radius[1] - (radius[1] / 4.25f))) {
+						// smooth down the velocity
+						velocityCol[0] = newVelocity[0] * (1 - friction);
+						velocityCol[2] = newVelocity[2] * (1 - friction);
+						velocityCol[1] = std::max(0.0f, velocityCol[1]);
+
+						ballEntity.setVelocityCol(velocityCol);
+						ballEntity.setGrounded(true);
+					}
+										
+					// store our new vertical velocity. it's important to ignore
+					// the x / z velocity changes to allow us to 'bump' over objects
+					velocityCol[1] = newVelocity[1];
+
+					// truncate the impact extents so the interpolation below begins
+					// and ends at the above the player's "feet"
+					radius[1] -= (radius[1] / 4.25f);
+					collExtentsMax[1] = std::max(-radius[1], collExtentsMax[1]);
+					collExtentsMax[1] = std::min(radius[1], collExtentsMax[1]);
+
+					// linearly interpolate (based on the height of the maximum intersection
+					// point) the diminishing x/z velocity values returned from the collision function
+					float fScale = 1 - (fabsf(collExtentsMax[1]) / radius[1]);
+					velocityCol[0] = velocityCol[0] + (((newVelocity[0]) - velocityCol[0]) * fScale);
+					velocityCol[2] = velocityCol[2] + (((newVelocity[2]) - velocityCol[2]) * fScale);
+
+					// update our position and velocity to the new one
+					ballEntity.setPosition(newPos[0], newPos[1], newPos[2]);
+					ballEntity.setVelocityCol(velocityCol);
+
+					
+				}else {
+					// smooth down the velocity
+					velocityCol[0] = velocityCol[0] * (1 - friction);
+					velocityCol[2] = velocityCol[2] * (1 - friction);
+					ballEntity.setVelocityCol(velocityCol);					
+				}
+				accumulator -= physDeltaTime;
+			}
 
 			sphere->draw(camera, ballEntity);
 			cube->draw(camera);
-
 			quad->draw(camera);
 			torus->draw(camera);
 			spiral->draw(camera);
 
+
 			skyBox->render(camera);
-
-			updateFrame(hwnd, deltaTime.count());
-			processInput(hwnd);
-			
-			Vector3f velocityCol = ballEntity.getVelocityCol();
-			Vector3f velocity = ballEntity.getVelocity();
-			Vector3f collExtentsMin, collExtentsMax, newPos, newVelocity;
-			Vector3f radius = (sphere->m_max - sphere->m_min) * 0.5;
-
-			ballEntity.setVelocity(velocity[0], velocityCol[1], velocity[2]);
-			ballEntity.update(deltaTime.count());
-
-			// test for collision against the scene
-			if (collision.collideEllipsoid(ballEntity.getPosition(), radius, velocityCol * deltaTime.count(), newPos, newVelocity, collExtentsMin, collExtentsMax)) {
-				
-				// scale new frame based velocity into per-second
-				newVelocity = newVelocity / deltaTime.count();
-
-				// store our new vertical velocity. it's important to ignore
-				// the x / z velocity changes to allow us to 'bump' over objects
-				velocityCol[1] = newVelocity[1];
-
-				// truncate the impact extents so the interpolation below begins
-				// and ends at the above the player's "feet"
-				radius[1] -= (radius[1] / 4.25f);
-				collExtentsMax[1] = std::max(-radius[1], collExtentsMax[1]);
-				collExtentsMax[1] = std::min(radius[1], collExtentsMax[1]);
-
-				// linearly interpolate (based on the height of the maximum intersection
-				// point) the diminishing x/z velocity values returned from the collision function
-				float fScale = 1 - (fabsf(collExtentsMax[1]) / radius[1]);
-				velocityCol[0] = velocityCol[0] + (((newVelocity[0]) - velocityCol[0]) * fScale);
-				velocityCol[2] = velocityCol[2] + (((newVelocity[2]) - velocityCol[2]) * fScale);
-			
-				// update our position and velocity to the new one
-				ballEntity.setPosition(newPos[0], newPos[1], newPos[2]);	
-				ballEntity.setVelocityCol(velocityCol);
-	
-			}			
+					
 			hdc = GetDC(hwnd);
 			SwapBuffers(hdc);
 			ReleaseDC(hwnd, hdc);
@@ -308,7 +341,6 @@ LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			enableWireframe(!g_enableWireframe);
 		}break;
 		case 'm': case 'M': {
-			std::cout << "###############" << std::endl;
 			camera.resetCamera(ballEntity);
 
 		}break;
@@ -383,16 +415,16 @@ void initApp(HWND hWnd) {
 
 												// Setup the camera.
 	camera.perspective(45.0f, static_cast<float>(g_windowWidth) / static_cast<float>(g_windowHeight), 1.0f, 5000.0f);
-	camera.lookAt(Vector3f(0.0f, 120.0f, 220.f), Vector3f(0.0f, 20.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f));
+	camera.lookAt(Vector3f(0.0f, 20.0f, 220.f), Vector3f(0.0f, 20.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f));
 
 	// Initialize the skybox
 	// sometimes the iamges from the box have to be flipped vertical, horizontal
 	skyBox = new SkyBox("../skyboxes/sor_sea", 1000, true, false, Vector3f(0.0f, 0.5f, 0.0f));
 	skyBox->setProjectionMatrix(camera.getProjectionMatrix());
 
-	// Initialize the ball.
+	// initialize the ball and cowboy
 	ballEntity.constrainToWorldYAxis(true);
-	ballEntity.setPosition(0.0f, 31.0f, 0.0f);
+	ballEntity.setPosition(0.0f, 45.0f, 0.0f);
 	ballEntity.setCamOffset(0.0f, 40.0f, 60.0f);
 	ballEntity.update(0.0f);
 
@@ -400,23 +432,23 @@ void initApp(HWND hWnd) {
 	cowboyEntity.setPosition(0.0f, 0.0f, 0.0f);
 
 	// Setup some meshes
-	sphere = new MeshSphere(Vector3f(0.0f, 0.0f, 0.0), 20.0f, ".\\res\\earth2048.png");
-	sphere->setPrecision(20, 20);
-	sphere->buildMesh();
-	
+	cube = new MeshCube(Vector3f(0.0f, 50.01f, -200.0f), 100, 100, 100, ".\\res\\marble.png");
+	cube->setPrecision(1, 1);
+	cube->buildMesh4Q();
+
 	quad = new MeshQuad(1024, 1024, ".\\res\\floor_color_map.png");
 	quad->setPrecision(1, 1);
 	quad->buildMesh();
 
-	cube = new MeshCube(Vector3f(0.0f, 50.01f, -200.0f), 100, 100, 100, ".\\res\\floor_color_map.png");
-	cube->setPrecision(1, 1);
-	cube->buildMesh4Q();
+	sphere = new MeshSphere(Vector3f(0.0f, 0.0f, 0.0), 20.0f, ".\\res\\earth2048.png");
+	sphere->setPrecision(20, 20);
+	sphere->buildMesh();
 
-	torus = new MeshTorus(Vector3f(-150.0f, 25.01f, -200.0f), 50.0f, 30.0f, ".\\res\\darkchecker.png");
-	torus->setPrecision(20, 20);
+	torus = new MeshTorus(Vector3f(-150.0f, 0.01f, -200.0f), 50.0f, 30.0f, ".\\res\\darkchecker.png");
+	torus->setPrecision(30, 30);
 	torus->buildMesh();
 
-	spiral = new MeshSpiral(Vector3f(150.0f, 25.01f, -200.0f), 50.0f, 30.0f, 2, 450.0f, ".\\res\\checker.png");
+	spiral = new MeshSpiral(Vector3f(150.0f, 25.0f, -200.0f), 50.0f, 30.0f, 2, 150.0f, ".\\res\\checker.png");
 	spiral->setPrecision(20, 20);
 	spiral->buildMesh();
 
@@ -535,6 +567,7 @@ void updateFrame(HWND hWnd, float elapsedTimeSec) {
 	if (pKeyBuffer[VK_DOWN] & 0xF0) Direction |= DIR_BACKWARD;
 	if (pKeyBuffer[VK_LEFT] & 0xF0) Direction |= DIR_LEFT;
 	if (pKeyBuffer[VK_RIGHT] & 0xF0) Direction |= DIR_RIGHT;
+	if (pKeyBuffer[WM_KEYUP] & 0xF0) Direction |= RESET;
 
 	float pitch = 0.0f;
 	float heading = 0.0f;
@@ -543,6 +576,11 @@ void updateFrame(HWND hWnd, float elapsedTimeSec) {
 		// Hide the mouse pointer
 		SetCursor(NULL);
 
+		if ((pKeyBuffer[VK_LCONTROL] & 0xF0) || (pKeyBuffer[VK_RCONTROL] & 0xF0) && ballEntity.isGrounded()) {
+			ballEntity.setVelocityColY((pKeyBuffer[VK_RCONTROL] & 0xF0) ? 130.0f : 200.0f);
+			ballEntity.setGrounded((!pKeyBuffer[VK_RCONTROL] & 0xF0));
+		}
+
 		if (Direction) UPDATEFRAME = true;
 
 		if (UPDATEFRAME) {
@@ -550,28 +588,31 @@ void updateFrame(HWND hWnd, float elapsedTimeSec) {
 			if (Direction & DIR_FORWARD) {
 				pitch = -ROLLING_SPEED;
 			
-				float fForce = 2000.0f;
-				ballEntity.applyForce(Direction, fForce);				
-				ballEntity.setVelocity(0.0f, 0.0f, ballEntity.getVelocityCol().length());
+				Vector3f dir = ballEntity.getForwardVector();
+				dir = dir * moveSpeed * elapsedTimeSec;
+				ballEntity.setVelocityColXZ(dir[0], dir[2]);
 			}
 
 			if (Direction & DIR_BACKWARD) {
 				pitch = ROLLING_SPEED;
-
-				float fForce = 2000.0f;
-				ballEntity.applyForce(Direction, fForce);
-				ballEntity.setVelocity(0.0f, 0.0f, -ballEntity.getVelocityCol().length());
+				
+				Vector3f dir = ballEntity.getForwardVector();
+				dir = -dir * moveSpeed * elapsedTimeSec;
+				ballEntity.setVelocityColXZ(dir[0], dir[2]);
 			}
 
-			if (Direction & DIR_RIGHT)
-				heading = -HEADING_SPEED;
+			if (Direction & DIR_LEFT){				
+				heading = HEADING_SPEED;				
+			}
 
-			if (Direction & DIR_LEFT)
-				heading = HEADING_SPEED;
+			if (Direction & DIR_RIGHT) {				
+				heading = -HEADING_SPEED;
+			}	
 
 			// first move the ball.			
 			ballEntity.orient(heading, 0.0f, 0.0f);
 			ballEntity.rotate(0.0f, pitch, 0.0f);
+			ballEntity.update(physDeltaTime);
 			
 			// then move the camera based on where the ball has moved to.
 			// when the ball is moving backwards rotations are inverted to match
@@ -579,7 +620,7 @@ void updateFrame(HWND hWnd, float elapsedTimeSec) {
 			// inverted as well.		
 			camera.rotate(Direction & DIR_FORWARD ? heading : -heading, 0.0f);
 			camera.lookAt(ballEntity.getPosition() + Vector3f(0.0f, 30.0f, 0.0f));
-			camera.update(elapsedTimeSec, ballEntity);
+			camera.update(physDeltaTime, ballEntity);
 		}
 	}
 }

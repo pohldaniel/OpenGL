@@ -43,8 +43,35 @@ void MeshTorus::buildMesh() {
 
 	if (m_isInitialized) return;
 
-	std::vector<Vector2f> texels;
-	std::vector<Vector3f> normals;
+
+	//calculate the indices
+	unsigned int currentVertexOffset = 0;
+	for (unsigned int i = 0; i < m_mainSegments; i++) {
+
+		for (unsigned int j = 0; j <= m_tubeSegments; j++) {
+
+			unsigned int vertexIndexA, vertexIndexB, vertexIndexC, vertexIndexD, vertexIndexE, vertexIndexF;
+
+			if ((j > 0) && ((j + 1) % (m_tubeSegments + 1)) == 0) {
+				currentVertexOffset = ((i + 1) * (m_tubeSegments + 1));
+			}
+			else {
+
+				vertexIndexA = currentVertexOffset;
+				vertexIndexB = currentVertexOffset + m_tubeSegments + 1;
+				vertexIndexC = currentVertexOffset + 1;
+
+				vertexIndexD = currentVertexOffset + m_tubeSegments + 1;
+				vertexIndexF = currentVertexOffset + m_tubeSegments + 2;
+				vertexIndexE = currentVertexOffset + 1;
+
+				m_indexBuffer.push_back(vertexIndexA); m_indexBuffer.push_back(vertexIndexC); m_indexBuffer.push_back(vertexIndexB);
+				m_indexBuffer.push_back(vertexIndexD); m_indexBuffer.push_back(vertexIndexE); m_indexBuffer.push_back(vertexIndexF);
+				currentVertexOffset++;
+			}
+		}
+	}
+	
 	std::vector<Vector3f> tangents;
 	std::vector<Vector3f> bitangents;
 	std::vector<Vector3f> normalsDu;
@@ -98,7 +125,7 @@ void MeshTorus::buildMesh() {
 			for (unsigned int j = 0; j <= m_tubeSegments; j++) {
 
 				Vector2f textureCoordinate = Vector2f(1.0 - currentMainSegmentTexCoordV, currentTubeSegmentTexCoordU);
-				texels.push_back(textureCoordinate);
+				m_texels.push_back(textureCoordinate);
 				currentTubeSegmentTexCoordU += tubeSegmentTextureStep;
 			}
 
@@ -128,8 +155,9 @@ void MeshTorus::buildMesh() {
 
 				float tmp = m_radius + m_tubeRadius *cosTubeSegment;
 
-				Vector3f normal = Vector3f(cosMainSegment*cosTubeSegment, sinTubeSegment, sinMainSegment*cosTubeSegment) * tmp;
-				normals.push_back(normal);
+				Vector3f normal = Vector3f(cosMainSegment*cosTubeSegment, sinTubeSegment, sinMainSegment*cosTubeSegment);
+
+				m_normals.push_back( normal);
 
 				// Update current tube angle
 				currentTubeSegmentAngle += tubeSegmentAngleStep;
@@ -233,32 +261,7 @@ void MeshTorus::buildMesh() {
 		m_hasNormalDerivatives = true;
 	}
 
-	//calculate the indices
-	unsigned int currentVertexOffset = 0;
-	for (unsigned int i = 0; i < m_mainSegments; i++) {
-
-		for (unsigned int j = 0; j <= m_tubeSegments; j++) {
-
-			unsigned int vertexIndexA, vertexIndexB, vertexIndexC, vertexIndexD, vertexIndexE, vertexIndexF;
-
-			if ((j > 0) && ((j + 1) % (m_tubeSegments + 1)) == 0) {
-				currentVertexOffset = ((i + 1) * (m_tubeSegments + 1));
-			}else {
-
-				vertexIndexA = currentVertexOffset;
-				vertexIndexB = currentVertexOffset + m_tubeSegments + 1;
-				vertexIndexC = currentVertexOffset + 1;
-
-				vertexIndexD = currentVertexOffset + m_tubeSegments + 1;
-				vertexIndexF = currentVertexOffset + m_tubeSegments + 2;
-				vertexIndexE = currentVertexOffset + 1;
-
-				m_indexBuffer.push_back(vertexIndexA); m_indexBuffer.push_back(vertexIndexC); m_indexBuffer.push_back(vertexIndexB);
-				m_indexBuffer.push_back(vertexIndexD); m_indexBuffer.push_back(vertexIndexE); m_indexBuffer.push_back(vertexIndexF);
-				currentVertexOffset++;
-			}
-		}
-	}
+	
 
 	m_drawCount = m_indexBuffer.size();
 
@@ -276,14 +279,14 @@ void MeshTorus::buildMesh() {
 
 	//Texture Coordinates
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, texels.size() * sizeof(texels[0]), &texels[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_texels.size() * sizeof(m_texels[0]), &m_texels[0], GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	//Normals
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[2]);
-	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(normals[0]), &normals[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_normals.size() * sizeof(m_normals[0]), &m_normals[0], GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -295,12 +298,12 @@ void MeshTorus::buildMesh() {
 
 	glBindVertexArray(0);
 
-	/*positions.clear();
-	positions.shrink_to_fit();*/
-	texels.clear();
-	texels.shrink_to_fit();
-	normals.clear();
-	normals.shrink_to_fit();
+	/*m_positions.clear();
+	m_positions.shrink_to_fit();
+	m_texels.clear();
+	m_texels.shrink_to_fit();
+	m_normals.clear();
+	m_normals.shrink_to_fit();*/
 	tangents.clear();
 	tangents.shrink_to_fit();
 	bitangents.clear();
@@ -309,8 +312,8 @@ void MeshTorus::buildMesh() {
 	normalsDu.shrink_to_fit();
 	normalsDv.clear();
 	normalsDv.shrink_to_fit();
-	/*indexBuffer.clear();
-	indexBuffer.shrink_to_fit();*/
+	/*m_indexBuffer.clear();
+	m_indexBuffer.shrink_to_fit();*/
 
 	m_isInitialized = true;
 }
