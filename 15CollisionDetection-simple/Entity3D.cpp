@@ -16,14 +16,6 @@ Entity3D::Entity3D() {
 	m_eulerOrient.set(0.0f, 0.0f, 0.0f);
 	m_eulerRotate.set(0.0f, 0.0f, 0.0f);
 
-	// the following force related values are used in conjunction with 'update' only
-	m_gravity = Vector3f(0.0f, -20.0f, 0.0f);
-	m_appliedForce = Vector3f(0.0f, 0.0f, 0.0f);
-	m_traction = 1.0f;
-	m_airResistance = 0.001f;
-	m_surfaceFriction = 15.0f;
-	m_mass = 3.0f;
-
 	m_constrainedToWorldYAxis = false;
 }
 
@@ -120,14 +112,6 @@ const Matrix4f &Entity3D::getWorldMatrix() const {
 	return m_worldMatrix;
 }
 
-void Entity3D::setPosition(float x, float y, float z) {
-	m_position.set(x, y, z);
-}
-
-void Entity3D::setVelocity(float x, float y, float z) {
-	m_velocity.set(x, y, z);
-}
-
 void Entity3D::setWorldMatrix(const Matrix4f &worldMatrix) {
 	m_worldMatrix = worldMatrix;
 	m_orientation.fromMatrix(worldMatrix);
@@ -141,7 +125,7 @@ void Entity3D::update(float elapsedTimeSec) {
 	Vector3f oldPos, heading;
 	Quaternion temp;
 
-	velocityElapsed = m_velocityCol * elapsedTimeSec;
+	velocityElapsed = m_velocity * elapsedTimeSec;
 	eulerOrientElapsed = m_eulerOrient * elapsedTimeSec;
 	eulerRotateElapsed = m_eulerRotate * elapsedTimeSec;
 
@@ -150,11 +134,7 @@ void Entity3D::update(float elapsedTimeSec) {
 
 	oldPos = m_position;
 
-
-
-	/*m_position += m_right * velocityElapsed[0];
-	m_position += m_up * velocityElapsed[1];
-	m_position += m_forward * velocityElapsed[2];*/
+	m_position += m_velocity * elapsedTimeSec;
 
 	heading = m_position - oldPos;
 	heading.normalize();
@@ -181,51 +161,13 @@ void Entity3D::update(float elapsedTimeSec) {
 	temp = m_rotation * m_orientation;
 	temp.normalize();
 
-
-
-	// clear the entity's cached euler rotations and velocity for this frame.
-	m_velocity.set(0.0f, 0.0f, 0.0f);
-	m_eulerOrient.set(0.0f, 0.0f, 0.0f);
-	m_eulerRotate.set(0.0f, 0.0f, 0.0f);
-
-	/*Vector3f      vecTractive, vecDrag, vecFriction, vecForce, vecAccel;
-	float         speed;
-
-	// scale our traction force by the amount we have available.
-	m_appliedForce = m_appliedForce * m_traction;
-
-	// first calculate the tractive force of the body
-	vecTractive = m_appliedForce + (m_gravity * m_mass);
-
-	// now calculate the speed the body is currently moving
-	speed = m_velocityCol.length();
-
-	// calculate drag / air resistance (relative to the speed squared).
-	vecDrag = -m_airResistance * (m_velocityCol * speed);
-
-	// calculate the friction force
-	vecFriction = -(m_traction * m_surfaceFriction) * m_velocityCol;
-
-	// calculate our final force vector
-	vecForce = vecTractive + vecDrag + vecFriction;
-
-	// now calculate acceleration
-	vecAccel = vecForce / m_mass;
-
-	// finally apply the acceleration for this frame
-	m_velocityCol += vecAccel * elapsedTimeSec;
-
-	// reset our 'motor' force.
-	m_appliedForce = Vector3f(0.0f, 0.0f, 0.0f);*/
-
-	//m_velocityCol = m_velocityCol;
-
-	m_position += m_velocityCol* elapsedTimeSec;
-
 	m_worldMatrix = temp.toMatrix4f();
 	m_worldMatrix[0][3] = m_position[0];
 	m_worldMatrix[1][3] = m_position[1];
 	m_worldMatrix[2][3] = m_position[2];
+
+	m_eulerOrient.set(0.0f, 0.0f, 0.0f);
+	m_eulerRotate.set(0.0f, 0.0f, 0.0f);
 }
 
 Quaternion Entity3D::eulerToQuaternion(const Matrix4f &m, float headingDegrees, float pitchDegrees, float rollDegrees) const {
@@ -272,21 +214,5 @@ void Entity3D::extractAxes() {
 
 	m_forward.set(-m[0][2], -m[1][2], -m[2][2]);
 	m_forward.normalize();
-}
-
-void Entity3D::applyForce(unsigned long Direction, float Force) {
-	Vector3f vecShift = Vector3f(0, 0, 0);
-
-	//which direction are we moving ?
-	if (Direction & DIR_FORWARD) vecShift += m_forward;
-	if (Direction & DIR_BACKWARD) vecShift -= m_forward;
-	if (Direction & DIR_RIGHT) vecShift += m_right;
-	if (Direction & DIR_LEFT) vecShift -= m_right;
-	if (Direction & DIR_UP) vecShift += m_up;
-	if (Direction & DIR_DOWN) vecShift -= m_up;
-
-	//normalize the direction vector
-	Vector3f::Normalize(vecShift);
-	m_appliedForce += vecShift * Force;
 }
 

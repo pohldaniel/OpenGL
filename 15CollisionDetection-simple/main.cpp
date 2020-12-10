@@ -171,7 +171,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 
-		}else {
+		}
+		else {
 
 			end = start;
 			start = std::chrono::high_resolution_clock::now();
@@ -198,34 +199,32 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			while (accumulator >= physDeltaTime) {
 				processInput(hwnd);
 				updateFrame(hwnd, physDeltaTime);
-				
-				Vector3f velocityCol = ballEntity.getVelocityCol();
 
 				Vector3f velocity = ballEntity.getVelocity();
 				Vector3f collExtentsMin, collExtentsMax, newPos, newVelocity;
 				Vector3f radius = (sphere->m_max - sphere->m_min) * 0.5;
 
-				
-				velocityCol[1] -= (200.0f * physDeltaTime);
+
+				velocity[1] -= (200.0f * physDeltaTime);
 				// test for collision against the scene
-				if (collision.collideEllipsoid(ballEntity.getPosition(), radius, velocityCol * physDeltaTime, newPos, newVelocity, collExtentsMin, collExtentsMax)) {
+				if (collision.collideEllipsoid(ballEntity.getPosition(), radius, velocity * physDeltaTime, newPos, newVelocity, collExtentsMin, collExtentsMax)) {
 
 					// scale new frame based velocity into per-second
 					newVelocity = newVelocity / physDeltaTime;
 
 					if (collExtentsMin[1] < -(radius[1] - (radius[1] / 4.25f))) {
 						// smooth down the velocity
-						velocityCol[0] = newVelocity[0] * (1 - friction);
-						velocityCol[2] = newVelocity[2] * (1 - friction);
-						velocityCol[1] = std::max(0.0f, velocityCol[1]);
+						velocity[0] = newVelocity[0] * (1 - friction);
+						velocity[2] = newVelocity[2] * (1 - friction);
+						velocity[1] = std::max(0.0f, velocity[1]);
 
-						ballEntity.setVelocityCol(velocityCol);
+						ballEntity.setVelocity(velocity);
 						ballEntity.setGrounded(true);
 					}
-										
+
 					// store our new vertical velocity. it's important to ignore
 					// the x / z velocity changes to allow us to 'bump' over objects
-					velocityCol[1] = newVelocity[1];
+					velocity[1] = newVelocity[1];
 
 					// truncate the impact extents so the interpolation below begins
 					// and ends at the above the player's "feet"
@@ -236,19 +235,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					// linearly interpolate (based on the height of the maximum intersection
 					// point) the diminishing x/z velocity values returned from the collision function
 					float fScale = 1 - (fabsf(collExtentsMax[1]) / radius[1]);
-					velocityCol[0] = velocityCol[0] + (((newVelocity[0]) - velocityCol[0]) * fScale);
-					velocityCol[2] = velocityCol[2] + (((newVelocity[2]) - velocityCol[2]) * fScale);
+					velocity[0] = velocity[0] + (((newVelocity[0]) - velocity[0]) * fScale);
+					velocity[2] = velocity[2] + (((newVelocity[2]) - velocity[2]) * fScale);
 
 					// update our position and velocity to the new one
 					ballEntity.setPosition(newPos[0], newPos[1], newPos[2]);
-					ballEntity.setVelocityCol(velocityCol);
+					ballEntity.setVelocity(velocity);
 
-					
 				}else {
 					// smooth down the velocity
-					velocityCol[0] = velocityCol[0] * (1 - friction);
-					velocityCol[2] = velocityCol[2] * (1 - friction);
-					ballEntity.setVelocityCol(velocityCol);					
+					velocity[0] = velocity[0] * (1 - friction);
+					velocity[2] = velocity[2] * (1 - friction);
+					ballEntity.setVelocity(velocity);
 				}
 				accumulator -= physDeltaTime;
 			}
@@ -261,7 +259,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 
 			skyBox->render(camera);
-					
+
 			hdc = GetDC(hwnd);
 			SwapBuffers(hdc);
 			ReleaseDC(hwnd, hdc);
@@ -577,7 +575,7 @@ void updateFrame(HWND hWnd, float elapsedTimeSec) {
 		SetCursor(NULL);
 
 		if ((pKeyBuffer[VK_LCONTROL] & 0xF0) || (pKeyBuffer[VK_RCONTROL] & 0xF0) && ballEntity.isGrounded()) {
-			ballEntity.setVelocityColY((pKeyBuffer[VK_RCONTROL] & 0xF0) ? 130.0f : 200.0f);
+			ballEntity.setVelocityY((pKeyBuffer[VK_RCONTROL] & 0xF0) ? 130.0f : 200.0f);
 			ballEntity.setGrounded((!pKeyBuffer[VK_RCONTROL] & 0xF0));
 		}
 
@@ -587,33 +585,33 @@ void updateFrame(HWND hWnd, float elapsedTimeSec) {
 
 			if (Direction & DIR_FORWARD) {
 				pitch = -ROLLING_SPEED;
-			
+
 				Vector3f dir = ballEntity.getForwardVector();
 				dir = dir * moveSpeed * elapsedTimeSec;
-				ballEntity.setVelocityColXZ(dir[0], dir[2]);
+				ballEntity.setVelocityXZ(dir[0], dir[2]);
 			}
 
 			if (Direction & DIR_BACKWARD) {
 				pitch = ROLLING_SPEED;
-				
+
 				Vector3f dir = ballEntity.getForwardVector();
 				dir = -dir * moveSpeed * elapsedTimeSec;
-				ballEntity.setVelocityColXZ(dir[0], dir[2]);
+				ballEntity.setVelocityXZ(dir[0], dir[2]);
 			}
 
-			if (Direction & DIR_LEFT){				
-				heading = HEADING_SPEED;				
+			if (Direction & DIR_LEFT) {
+				heading = HEADING_SPEED;
 			}
 
-			if (Direction & DIR_RIGHT) {				
+			if (Direction & DIR_RIGHT) {
 				heading = -HEADING_SPEED;
-			}	
+			}
 
 			// first move the ball.			
 			ballEntity.orient(heading, 0.0f, 0.0f);
 			ballEntity.rotate(0.0f, pitch, 0.0f);
 			ballEntity.update(physDeltaTime);
-			
+
 			// then move the camera based on where the ball has moved to.
 			// when the ball is moving backwards rotations are inverted to match
 			// the direction of travel. Consequently the camera's rotation needs to be
