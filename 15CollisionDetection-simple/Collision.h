@@ -49,7 +49,7 @@ public:
 	void         setMaxIntersections(unsigned short maxIntersections);
 	void         setMaxIterations(unsigned short maxIterations);
 
-	bool         collideEllipsoid(const Vector3f& center, const Vector3f& radius, const Vector3f& velocity, Vector3f& newCenter, Vector3f& newIntegrationVelocity, Vector3f& collExtentsMin, Vector3f& collExtentsMax);
+	bool         collideEllipsoid(const Vector3f& center, const Vector3f& radius, const Vector3f& velocity, Vector3f& newCenter, Vector3f& newIntegrationVelocity, Vector3f &slideNormal, Vector3f& collExtentsMin, Vector3f& collExtentsMax);
 	bool         ellipsoidIntersectScene(const Vector3f& center, const Vector3f& radius, const Vector3f& velocity, CollIntersect intersections[], unsigned long& intersectionCount, bool inputEllipsoidSpace = false, bool returnEllipsoidSpace = false);
 
 private:

@@ -483,7 +483,7 @@ void Collision::setWorldTransform(const Matrix4f& mtxWorld){
 // Note : for ease of understanding, all variables used in this function which
 //        begin with a lower case 'e' (i.e. eNormal) denote that the values
 //        contained within it are described in ellipsoid space.
-bool Collision::collideEllipsoid(const Vector3f& center, const Vector3f& radius, const Vector3f& velocity, Vector3f& newCenter, Vector3f& newIntegrationVelocity, Vector3f& collExtentsMin, Vector3f& collExtentsMax) {
+bool Collision::collideEllipsoid(const Vector3f& center, const Vector3f& radius, const Vector3f& velocity, Vector3f& newCenter, Vector3f& newIntegrationVelocity, Vector3f &slideNormal, Vector3f& collExtentsMin, Vector3f& collExtentsMax) {
 	
 	Vector3f	  vecOutputPos, vecOutputVelocity, invRadius, vecNormal, vecExtents;
 	Vector3f	  eVelocity, eInputVelocity, eFrom, eTo, vecNewCenter, vecIntersectPoint;
@@ -551,6 +551,8 @@ bool Collision::collideEllipsoid(const Vector3f& center, const Vector3f& radius,
 			vecNewCenter = Vec3VecScale(FirstIntersect.newCenter, radius);
 			vecIntersectPoint = vecNewCenter - Vec3VecScale(vecNormal, radius);
 
+			slideNormal = center - vecIntersectPoint;
+			Vector3f::Normalize(slideNormal);
 			// calculate the min / max collision extents around the ellipsoid center
 			vecExtents = vecIntersectPoint - vecNewCenter;
 			if (vecExtents[0] > collExtentsMax[0]) collExtentsMax[0] = vecExtents[0];

@@ -55,7 +55,7 @@ MeshTorus *torus;
 MeshSpiral *spiral;
 Collision collision;
 
-const float moveSpeed = 10000.0f;
+float moveSpeed = 10000.0f, gravity = 30.0f;
 double physDeltaTime = 1.0 / 60.0;
 const double slowest_frame = 1.0 / 15.0;
 double delta_Time, accumulator = 0.0;
@@ -74,7 +74,6 @@ void enableVerticalSync(bool enableVerticalSync);
 void initApp(HWND hWnd);
 void processInput(HWND hWnd);
 void updateFrame(HWND hWnd, float elapsedTimeSec);
-
 // the main windows entry point
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
 
@@ -171,13 +170,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 
-		}
-		else {
+		}else {
 
 			end = start;
 			start = std::chrono::high_resolution_clock::now();
 			deltaTime = start - end;
 			delta_Time = deltaTime.count();
+
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glClearColor(1.0, 1.0, 1.0, 0.0);
 
@@ -198,28 +197,34 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			accumulator += delta_Time;
 			while (accumulator >= physDeltaTime) {
 				processInput(hwnd);
+
 				updateFrame(hwnd, physDeltaTime);
 
 				Vector3f velocity = ballEntity.getVelocity();
-				Vector3f collExtentsMin, collExtentsMax, newPos, newVelocity;
+				Vector3f collExtentsMin, collExtentsMax, newPos, newVelocity, slideNormal;
 				Vector3f radius = (sphere->m_max - sphere->m_min) * 0.5;
 
-
-				velocity[1] -= (200.0f * physDeltaTime);
+				bool tmp;
+				velocity[1] -= (gravity);
 				// test for collision against the scene
-				if (collision.collideEllipsoid(ballEntity.getPosition(), radius, velocity * physDeltaTime, newPos, newVelocity, collExtentsMin, collExtentsMax)) {
-
+				if (collision.collideEllipsoid(ballEntity.getPosition(), radius, velocity * physDeltaTime, newPos, newVelocity, slideNormal, collExtentsMin, collExtentsMax)) {
 					// scale new frame based velocity into per-second
-					newVelocity = newVelocity / physDeltaTime;
+					newVelocity = (newVelocity) / physDeltaTime;
 
 					if (collExtentsMin[1] < -(radius[1] - (radius[1] / 4.25f))) {
-						// smooth down the velocity
+
+						float slope = Vector3f::Dot(slideNormal, Vector3f(0.0f, 1.0f, 0.0f));
+
+						moveSpeed = std::max(2000.0f, slope > 0.98 ? 10000.0f : moveSpeed * 0.7f);
+						gravity = slope > 0.98 ? 30.0f : 90.0f;
+
 						velocity[0] = newVelocity[0] * (1 - friction);
 						velocity[2] = newVelocity[2] * (1 - friction);
 						velocity[1] = std::max(0.0f, velocity[1]);
 
 						ballEntity.setVelocity(velocity);
 						ballEntity.setGrounded(true);
+
 					}
 
 					// store our new vertical velocity. it's important to ignore
@@ -242,15 +247,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					ballEntity.setPosition(newPos[0], newPos[1], newPos[2]);
 					ballEntity.setVelocity(velocity);
 
-				}else {
+				}
+				else {
 					// smooth down the velocity
 					velocity[0] = velocity[0] * (1 - friction);
 					velocity[2] = velocity[2] * (1 - friction);
+					velocity[1] = velocity[1];
 					ballEntity.setVelocity(velocity);
+
+					moveSpeed = 10000.0f;
+					gravity = 30.0f;
 				}
 				accumulator -= physDeltaTime;
 			}
 
+
+			//ballEntity.setPosition(e->position[0], e->position[1], e->position[2]);
 			sphere->draw(camera, ballEntity);
 			cube->draw(camera);
 			quad->draw(camera);
@@ -442,11 +454,11 @@ void initApp(HWND hWnd) {
 	sphere->setPrecision(20, 20);
 	sphere->buildMesh();
 
-	torus = new MeshTorus(Vector3f(-150.0f, 0.01f, -200.0f), 50.0f, 30.0f, ".\\res\\darkchecker.png");
+	torus = new MeshTorus(Vector3f(-150.0f, 0.0f, -200.0f), 50.0f, 30.0f, ".\\res\\darkchecker.png");
 	torus->setPrecision(30, 30);
 	torus->buildMesh();
 
-	spiral = new MeshSpiral(Vector3f(150.0f, 25.0f, -200.0f), 50.0f, 30.0f, 2, 150.0f, ".\\res\\checker.png");
+	spiral = new MeshSpiral(Vector3f(150.0f, 25.0f, -200.0f), 50.0f, 30.0f, 2, 450.0f, ".\\res\\checker.png");
 	spiral->setPrecision(20, 20);
 	spiral->buildMesh();
 
@@ -575,7 +587,7 @@ void updateFrame(HWND hWnd, float elapsedTimeSec) {
 		SetCursor(NULL);
 
 		if ((pKeyBuffer[VK_LCONTROL] & 0xF0) || (pKeyBuffer[VK_RCONTROL] & 0xF0) && ballEntity.isGrounded()) {
-			ballEntity.setVelocityY((pKeyBuffer[VK_RCONTROL] & 0xF0) ? 130.0f : 200.0f);
+			ballEntity.setVelocityY((pKeyBuffer[VK_RCONTROL] & 0xF0) ? 400.0f : 800.0f);
 			ballEntity.setGrounded((!pKeyBuffer[VK_RCONTROL] & 0xF0));
 		}
 
