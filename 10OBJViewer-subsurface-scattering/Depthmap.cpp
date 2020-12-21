@@ -4,13 +4,18 @@ Depthmap::Depthmap(Camera* camera) {
 
 	m_camera = camera;
 	
+	m_renderShader = new TextureShader("shader/texture.vert", "shader/texture.frag");
+
+	glUseProgram(m_renderShader->m_program);
+	m_renderShader->loadMatrix("u_projection", camera->getProjectionMatrix());
+	glUseProgram(0);
+
 	m_irradianceShader = new Shader("shader/irradiance.vert", "shader/irradiance.frag");
 	m_normalShader = new Shader("shader/normalMap.vert", "shader/normalMap.frag");
 	m_depthMapShader = new Shader("shader/depthMap.vert", "shader/depthMap.frag");
 	m_depthMapShader2 = new Shader("shader/depthMap2.vert", "shader/depthMap2.frag");
 
 	createDepthmapFBO();
-	createBuffer();
 
 	m_biasMatrix = Matrix4f( 0.5, 0.0, 0.0, 0.5,
 							 0.0, 0.5, 0.0, 0.5,
@@ -258,11 +263,8 @@ void Depthmap::createDepthmapFBO(){
 	/**********************************************************************************************/
 }
 
-
-
 void Depthmap::setViewMatrix(const Vector3f &lightPos, const Vector3f &target, const Vector3f &up){
 
-	
 	Matrix4f view;
 	view.lookAt(lightPos, target, up);
 	m_viewMatrix = view;
@@ -272,7 +274,6 @@ void Depthmap::setViewMatrix(const Vector3f &lightPos, const Vector3f &target, c
 }
 
 void Depthmap::setProjectionMatrix(float fovx, float aspect, float znear, float zfar){
-
 
 	Matrix4f projection;
 	projection.perspectiveD3D(fovx, (GLfloat)depthmapWidth / (GLfloat)depthmapHeight, znear, zfar);
@@ -302,44 +303,38 @@ void Depthmap::setProjectionMatrix(float fovx, float aspect, float znear, float 
 	glUseProgram(m_depthMapShader2->m_program);
 	m_depthMapShader2->loadMatrix("u_projection", m_linearProjMatrixD3D);
 	glUseProgram(0);
-
-	
-
 }
-
-
 
 void Depthmap::setOrthMatrix(float left, float right, float bottom, float top, float znear, float zfar){
 
 	Matrix4f projection;
 	projection.orthographic(left, right, bottom, top, znear, zfar);
 	m_orthMatrix = projection;
+
+	glUseProgram(m_depthMapShader->m_program);
+	m_depthMapShader->loadMatrix("u_projection", m_orthMatrix);
+	glUseProgram(0);
 }
 
 const Matrix4f &Depthmap::getOrthographicMatrix() const{
-
 	return m_orthMatrix;
 }
 
 const Matrix4f &Depthmap::getDepthPassMatrix() const{
-
 	return    m_projMatrix * m_biasMatrix;
 }
 
 
 
 const Matrix4f &Depthmap::getProjectionMatrix() const{
-
 	return  m_projMatrix;
 }
 
 const Matrix4f &Depthmap::getProjectionMatrixD3D() const{
-
 	return  m_projMatrixD3D;
 }
 
 const Matrix4f &Depthmap::getLinearProjectionMatrixD3D() const{
-
 	return  m_linearProjMatrixD3D;
 }
 
@@ -350,18 +345,13 @@ const Matrix4f &Depthmap::getViewMatrix() const{
 
 
 const Vector3f &Depthmap::getPosition() const{
-
 	return m_eye;
 }
 
 void Depthmap::setViewport(int width, int height) {
-
 	m_viewportWidth = width;
 	m_viewportHeight = height;
 }
-
-
-
 
 void Depthmap::renderToDepthTexture(Object const* object){
 
@@ -390,8 +380,6 @@ void Depthmap::renderToDepthTexture(Object const* object){
 
 	}
 	glUseProgram(0);
-
-	
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -558,31 +546,4 @@ void Depthmap::renderIrradianceMap(Object const* object){
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }
-
-
-//debug purpose
-void Depthmap::createBuffer(){
-
-	m_vertex.push_back(1.0 * m_size); m_vertex.push_back(1.0 * m_size); m_vertex.push_back(-3.0 * m_size); m_vertex.push_back(1.0); m_vertex.push_back(1.0);
-	m_vertex.push_back(-1.0 * m_size); m_vertex.push_back(1.0 * m_size); m_vertex.push_back(-3.0 * m_size); m_vertex.push_back(0.0); m_vertex.push_back(1.0);
-	m_vertex.push_back(-1.0 * m_size); m_vertex.push_back(-1.0 * m_size); m_vertex.push_back(-3.0 * m_size); m_vertex.push_back(0.0); m_vertex.push_back(0.0);	
-	m_vertex.push_back(1.0 * m_size); m_vertex.push_back(-1.0 * m_size); m_vertex.push_back(-3.0 * m_size); m_vertex.push_back(1.0); m_vertex.push_back(0.0);
-	
-
-	glGenBuffers(1, &m_quadVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_quadVBO);
-	glBufferData(GL_ARRAY_BUFFER, m_vertex.size() * sizeof(float), &m_vertex[0], GL_STATIC_DRAW);
-
-	static const GLushort index[] = {
-		
-		0, 1, 2,
-		0, 2, 3
-	};
-
-	glGenBuffers(1, &m_indexQuad);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexQuad);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);
-}
-
-
 

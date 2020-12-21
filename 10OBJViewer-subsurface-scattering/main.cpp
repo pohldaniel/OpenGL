@@ -12,6 +12,7 @@
 #include "ModelMatrix.h"
 #include "Skybox.h"
 #include "Depthmap.h"
+#include "Quad.h"
 
 int height = 480;
 int width = 640;
@@ -33,7 +34,7 @@ enum DIRECTION {
 
 
 
-
+Quad *quad;
 Depthmap * depthmap = NULL;
 Camera* camera;
 Object *model;
@@ -46,7 +47,7 @@ float thicknessScale = 0.5;
 float sssScale = 0.2;
 
 Matrix4f rot;
-Vector3f lightPos = Vector3f(0.0, 0.0, -8.0);
+Vector3f lightPos = Vector3f(0.0, 0.0, -4.0);
 
 
 //prototype funktions
@@ -340,7 +341,7 @@ void initApp(HWND hWnd){
 
 	depthmap = new Depthmap(camera);
 	depthmap->setViewport(width, height);
-	depthmap->setProjectionMatrix(45.0f, 1.0, 1.0f, 100.0f);
+	//depthmap->setProjectionMatrix(45.0f, 1.0, 1.0f, 100.0f);
 	depthmap->setOrthMatrix(-5.0f, 5.0f, -5.0f, 5.0f, 1.0f, 7.5f);
 
 	rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
@@ -349,6 +350,8 @@ void initApp(HWND hWnd){
 	depthmap->renderToSingleChannel(model);
 	
 	sss = new Shader("shader/sss.vert", "shader/sss.frag");
+
+	quad = new Quad();
 }
 
 void setCursortoMiddle(HWND hwnd){
@@ -488,9 +491,7 @@ void render(){
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		}
-	//glDisable(GL_CULL_FACE);
 	
-	//skyBox->render();
 	glUseProgram(0);
-		
+	//quad->render(depthmap->depthmapTexture);
 }

@@ -45,7 +45,7 @@ public:
 
 private :
 
-	
+	TextureShader *m_renderShader;
 	unsigned int normalFBO;
 	unsigned int normalFBOMSAA;
 
@@ -92,9 +92,7 @@ private :
 	
 	Camera* m_camera;
 
-	void createDepthmapFBO();
-	void createBuffer();
-	
+	void createDepthmapFBO();	
 };
 
 #endif // __depthmapH__

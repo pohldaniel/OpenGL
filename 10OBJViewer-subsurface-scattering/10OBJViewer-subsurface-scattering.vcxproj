@@ -155,6 +155,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelMatrix.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="Quad.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="Vector.h" />
@@ -168,6 +169,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelMatrix.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Quad.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Vector.cpp" />
