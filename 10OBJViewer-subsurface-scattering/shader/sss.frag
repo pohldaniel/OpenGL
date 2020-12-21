@@ -29,7 +29,8 @@ varying vec3 frag_eye_normal;
 varying vec3 frag_eye_light_normal;
 varying vec3 frag_eye_light_pos;
 
-varying vec4 sc;
+varying vec4 scOrth;
+varying vec4 scPers;
 
 float saturate(float val) {
     return clamp(val, 0.0, 1.0);
@@ -109,18 +110,22 @@ float getDepthPassSpaceZD3D(float zWC, float near, float far){
 
 void main(){
 
-   //vec4 scPostW = (sc/sc.w);
-   //float zIn =  texture2D(u_texture, sc.xy).r;
-   float zIn =  textureProj(u_texture, sc).r;
-   float zOut = sc.z /sc.w;
+   //vec4 scPostW = (sc/scPers.w);
+   //float zIn =  texture2D(u_texture, scPers.xy).r;
+   float zInPers =  textureProj(u_texture, scPers).r;
+   float zOutPers = scPers.z /scPers.w;
 
-   zIn = getDepthPassSpaceZ(zIn, 1.0, 100.0);
-   zOut = getDepthPassSpaceZ(zOut, 1.0, 100.0);
+   zInPers = getDepthPassSpaceZ(zInPers, 1.0, 100.0);
+   zOutPers = getDepthPassSpaceZ(zOutPers, 1.0, 100.0);
 
    //zIn = getDepthPassSpaceZD3D(zIn, 1.0, 100.0);
    //zOut = getDepthPassSpaceZD3D(zOut, 1.0, 100.0);
 	
-   float thickness = (zOut - zIn ) * u_thicknessScale;
+   float zInOrth =  texture2D(u_texture, scOrth.xy).r;
+   float zOutOrth = scOrth.z;
+	
+   float thickness = (zOutOrth - zInOrth) * u_thicknessScale;
+   //float thickness = (zOutPers - zInPers) * u_thicknessScale;
    
    thickness = (1.0 - thickness) * u_sssScale;
         

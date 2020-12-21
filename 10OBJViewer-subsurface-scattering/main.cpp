@@ -316,7 +316,6 @@ void initApp(HWND hWnd){
 	enableVerticalSync(true);
 	
 	camera->perspective(45.0f, (GLfloat)width / (GLfloat)height, 1.0f, 2000.0f);
-	
 
 	glEnable(GL_DEPTH_TEST);				
 	//glEnable(GL_CULL_FACE);				
@@ -331,7 +330,6 @@ void initApp(HWND hWnd){
 								  Vector3f(0.0, 0.0, 1.0), 0.0,
 								  0.0, 0.0, 0.0);
 	model->m_model->scale(8.0 * 0.3, 8.0 * 0.3, 8.0* 0.3);
-
 	////////////////////// Dragon ///////////////////////////////
 	/*model->initModel("objs/dragon.obj");
 
@@ -343,7 +341,8 @@ void initApp(HWND hWnd){
 	depthmap = new Depthmap(camera);
 	depthmap->setViewport(width, height);
 	depthmap->setProjectionMatrix(45.0f, 1.0, 1.0f, 100.0f);
-	
+	depthmap->setOrthMatrix(-5.0f, 5.0f, -5.0f, 5.0f, 1.0f, 7.5f);
+
 	rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
 	depthmap->setViewMatrix(rot * lightPos, model->m_model->getTransformationMatrix() * model->m_model->getCenter(), Vector3f(0.0, 1.0, 0.0));
 	depthmap->renderToDepthTexture(model);
@@ -465,7 +464,8 @@ void render(){
 	sss->loadMatrix("u_normalMatrix", Matrix4f::getNormalMatrix(model->m_model->getTransformationMatrix() * camera->getViewMatrix()));
 	sss->loadMatrix("u_viewShadow", depthmap->getViewMatrix());
 	sss->loadMatrix("u_projectionShadowBias", depthmap->getDepthPassMatrix());
-	sss->loadMatrix("u_projectionShadow", depthmap->getProjectionMatrix());
+	sss->loadMatrix("u_projectionPers", depthmap->getProjectionMatrix()); 
+	sss->loadMatrix("u_projectionOrth", depthmap->getOrthographicMatrix());
 	sss->loadMatrix("u_projectionShadowD3D", depthmap->getProjectionMatrixD3D());
 	sss->loadVector("u_lightPos", depthmap->getPosition());
 	sss->loadFloat("u_thicknessScale", thicknessScale);

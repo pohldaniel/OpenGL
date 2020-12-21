@@ -384,9 +384,11 @@ void initApp(HWND hWnd){
 	glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
 
 	glEnable(GL_DEPTH_TEST);					// hidden surface removal
-												//glEnable(GL_CULL_FACE);						// do not calculate inside of poly's
+	glEnable(GL_CULL_FACE);						// do not calculate inside of poly's
 
-
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
 
 	LightSource light;
 

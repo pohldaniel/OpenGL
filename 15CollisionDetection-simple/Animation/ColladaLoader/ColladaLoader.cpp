@@ -346,19 +346,20 @@ void ColladaLoader::createIndexBuffer(std::vector<Vector3f> &positions, std::vec
 	jointWeights.clear();
 	indices.clear();
 
-	for (int i = 0; i < m_indexBuffer.size(); i++) {
+	for (int i = 0; i < m_vertexBuffer.size(); i = i + 14) {
 
-		Vector3f position = Vector3f(m_vertexBuffer[m_indexBuffer[i] * 14], m_vertexBuffer[m_indexBuffer[i] * 14 + 1], m_vertexBuffer[m_indexBuffer[i] * 14 + 2]);
-		Vector3f normal = Vector3f(m_vertexBuffer[m_indexBuffer[i] * 14 + 3], m_vertexBuffer[m_indexBuffer[i] * 14 + 4], m_vertexBuffer[m_indexBuffer[i] * 14 + 5]);
-		Vector2f texCoord = Vector2f(m_vertexBuffer[m_indexBuffer[i] * 14 + 6], 1.0 - m_vertexBuffer[m_indexBuffer[i] * 14 + 7]);
-		std::array<unsigned int, 4> jointId = { m_vertexBuffer[m_indexBuffer[i] * 14 + 8], m_vertexBuffer[m_indexBuffer[i] * 14 + 9], m_vertexBuffer[m_indexBuffer[i] * 14 + 10], 0 };
-		Vector4f jointWeight = Vector4f(m_vertexBuffer[m_indexBuffer[i] * 14 + 11], m_vertexBuffer[m_indexBuffer[i] * 14 + 12], m_vertexBuffer[m_indexBuffer[i] * 14 + 13], 0.0);
+		Vector3f position = Vector3f(m_vertexBuffer[i], m_vertexBuffer[i + 1], m_vertexBuffer[i + 2]);
+		Vector3f normal = Vector3f(m_vertexBuffer[i + 3], m_vertexBuffer[i + 4], m_vertexBuffer[i + 5]);
+		Vector2f texCoord = Vector2f(m_vertexBuffer[i + 6], 1.0 - m_vertexBuffer[i + 7]);
+		std::array<unsigned int, 4> jointId = { m_vertexBuffer[i + 8], m_vertexBuffer[i + 9], m_vertexBuffer[i + 10], 0 };
+		Vector4f jointWeight = Vector4f(m_vertexBuffer[i + 11], m_vertexBuffer[i + 12], m_vertexBuffer[i + 13], 0.0);
 
 		positions.push_back(position);
 		texCoords.push_back(texCoord);
 		normals.push_back(normal);
 		jointIds.push_back(jointId);
 		jointWeights.push_back(jointWeight);
+
 	}
 	indices = m_indexBuffer;
 }
