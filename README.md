@@ -24,5 +24,5 @@ I expand the sss shader form https://github.com/jhaberstro/subsurface-scattering
 
 ![Subsurface](https://user-images.githubusercontent.com/30089026/54387008-9332d200-469a-11e9-81ea-933f0d85d670.jpg)
 
-
+The project 11OBJViewer-translucency is a refactoring of https://github.com/tatsy/FastTranslucentShader
 
