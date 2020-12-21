@@ -337,7 +337,6 @@ void initApp(HWND hWnd){
 	model->m_model->translate(0.0, 0.0, 4.0);
 	//model->m_model->rotate(Vector3f(1.0, 0.0, 0.0), 90.0);
 	model->m_model->scale(8.0 , 8.0, 8.0);*/
-	
 
 	depthmap = new Depthmap(camera);
 	depthmap->setViewport(width, height);
