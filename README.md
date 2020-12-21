@@ -2,9 +2,9 @@
 
 Move the camera with 'w' 'a' 's' 'd' 'q' 'e' and mouse, release the capture with space. Activate lightspot with '1' and '2'.
 
-I used tinyxml https://github.com/vmayoral/tinyxml, parts of stb https://github.com/nothings/stb in particular stb_image.c, glm https://glm.g-truc.net/0.9.9/index.html and parts of https://github.com/emargollo/OpenGL-Animator for the project 12ColladaViewer-animation and do not own the copyright. The cowboy model is from "ThinMatrix" https://github.com/TheThinMatrix/OpenGL-Animation and the dragon model from "Imphenzia" https://www.youtube.com/watch?v=otiEQZr2idM I also do not own the copyright.
+I used tinyxml https://github.com/vmayoral/tinyxml, parts of stb https://github.com/nothings/stb in particular stb_image.c, glm https://glm.g-truc.net/0.9.9/index.html and parts of https://github.com/emargollo/OpenGL-Animator for the project 13ColladaViewer-animation and do not own the copyright. The cowboy model is from "ThinMatrix" https://github.com/TheThinMatrix/OpenGL-Animation and the dragon model from "Imphenzia" https://www.youtube.com/watch?v=otiEQZr2idM I also do not own the copyright.
 
-Output from 12ColladaViewer-animation
+Output from 13ColladaViewer-animation
 
 ![Collada](https://user-images.githubusercontent.com/30089026/95699071-d45ae180-0c43-11eb-91e4-ad597412f37f.jpg)
 
