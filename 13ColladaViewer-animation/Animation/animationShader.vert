@@ -35,6 +35,7 @@ void main()
     }
 
 	gl_Position = u_projection * u_view * u_model * totalLocalPos;
+	//gl_Position = u_projection * u_view * u_model * vec4(i_position, 1.0);
 	v_texCoord = i_texCoord;
     v_normal = totalNormal.xyz;
 	//v_normal = (totalLocalPos * vec4(i_normal, 0.0)).xyz;

@@ -14,6 +14,7 @@ public:
 
 	void startAnimation(const std::string& animationName);
 	void addAnimation(ColladaLoader loader);
+	void addAnimation(const Animation &animation);
 	void update(double elapsedTime);
 
 private:

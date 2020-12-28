@@ -382,7 +382,7 @@ int ColladaLoader::addVertex(int hash, const float *pVertex, int numberOfBytes) 
 
 		for (std::vector<int>::const_iterator i = vertices.begin(); i != vertices.end(); ++i) {
 			index = *i;
-			pCachedVertex = &m_vertexBuffer[index * 3];
+			pCachedVertex = &m_vertexBuffer[index * numberOfBytes];
 
 			if (memcmp(pCachedVertex, pVertex, sizeof(float)* numberOfBytes) == 0) {
 				found = true;

@@ -5,10 +5,18 @@
 #include <queue>
 #include <iostream>
 #include <map>
+#include <memory>
+#include <string>
 
 #include "..\..\Extension.h"
 #include "..\..\Vector.h"
 #include "..\ColladaLoader\ColladaLoader.h"
+//#include "..\Animator\Animation.h"
+
+class ColladaMesh {
+public:
+	virtual void draw() = 0;
+};
 
 struct Joint {
 	int index;
@@ -21,17 +29,27 @@ struct Joint {
 	Matrix4f animatedTransform;
 };
 
-class AnimatedMesh {
+class SkeletonAnimatedMesh : public ColladaMesh {
 
 public:
-	AnimatedMesh(ColladaLoader loader);
-	virtual ~AnimatedMesh();
+	SkeletonAnimatedMesh(ColladaLoader loader);
+	SkeletonAnimatedMesh(std::vector<Vector3f> positions,
+				 std::vector<Vector3f> normals, 
+				 std::vector<Vector2f> texCoords, 
+				 std::vector<unsigned int> indices, 
+				 std::vector<std::array<unsigned int, 4>> jointIds,
+				 std::vector<Vector4f> jointWeights, 
+				 Joint rootJoint,
+				 std::vector<std::string> jointsList,
+				 ColladaLoader loader);
+
+	virtual ~SkeletonAnimatedMesh();
 
 	void draw();
 	std::vector<Matrix4f> getBoneArray();
 	void applyPoseToJoints(std::unordered_map<std::string, Matrix4f> currentPose);
 
-private:
+
 	
 	enum MeshBufferPositions {
 		POSITION,
@@ -54,6 +72,6 @@ private:
 	std::vector<std::string> m_jointsList;
 
 	Joint rootJoint;
-	ColladaLoader loader;
+	std::string animation;
 };
 #endif

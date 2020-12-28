@@ -8,6 +8,31 @@
 #include "..\..\Third\tinyxml\tinyxml.h"
 #include"..\..\Vector.h"
 
+struct VertexSkinData;
+struct IndexBufferCreator {
+	short inputNodes, offsetPositions, offsetNormals, offsetTexcoords;
+	unsigned int numberOfTriangles;
+
+	std::vector<VertexSkinData> skinningDataIn;
+	std::vector<unsigned int> indexBufferIn;
+
+	std::vector<Vector3f> positionsInOut;
+	std::vector<Vector3f> normalsInOut;
+	std::vector<Vector2f> texCoordsInOut;
+	
+	std::vector<std::array<unsigned int, 4>> jointIdsOut;
+	std::vector<Vector4f> jointWeightsOut;
+
+	std::vector<unsigned int> indexBufferOut;
+
+	void createIndexBuffer();
+
+private:
+	std::map<int, std::vector<int>> m_vertexCache;
+	std::vector <float> vertexBuffer;
+	int addVertex(int hash, const float *pVertex, int stride);
+};
+
 struct WeightData {
 	int jointId;
 	float weight;
@@ -92,37 +117,43 @@ public:
 	ColladaLoader(const std::string & _path);
 	~ColladaLoader();
 
-	void loadData(std::vector<Vector3f> &positions, 
+	void loadData(std::vector<Vector3f> &positions,
 				  std::vector<Vector2f> &texCoords,
 				  std::vector<Vector3f> &normals,
+				  std::vector<unsigned int> &indices,
 				  std::vector<std::array<unsigned int, 4>> &jointIds,
 				  std::vector<Vector4f> &jointWeights,
-				  std::vector<unsigned int> &indices,
 				  std::vector<std::string> &jointsList);
 
 	void loadVisualScene(std::vector<std::string> &jointsList);
 	void createJoints(Joint &joint);
 
-	void loadAnimation(std::vector<KeyFrameData> &m_keyFrames, float &duration, std::string &name);
+	void createJoints(SkeletonData skeletonData, Joint &joint);
 
+	void loadAnimation(std::vector<KeyFrameData> &m_keyFrames, float &duration, std::string &name);
+	//void loadAnimation(Animation &animation);
 	TiXmlDocument doc;
+
+	
+	void loadGeometryAndController(std::map<std::string, std::tuple<std::vector<Vector3f>, std::vector<Vector3f>, std::vector<Vector2f>, std::vector<unsigned int>, short>> &geometry);
+	bool loadController(std::string& name, std::vector<std::array<unsigned int, 4>> &jointIds, std::vector<Vector4f> &jointWeights, std::vector<std::string> &jointsList, std::vector<VertexSkinData> &skinningData);
+	void createIndexBuffer(short vertexLayout, std::vector<Vector3f> &positions, std::vector<Vector3f> &normals, std::vector<Vector2f> &texCoords, std::vector<unsigned int> &indices, std::vector<std::array<unsigned int, 4>> &jointIds, std::vector<Vector4f> &jointWeights, std::vector<VertexSkinData> &skinningData);
+	void loadVisualScene(std::string name, std::vector<std::string> jointsList, SkeletonData &skeletonData, Matrix4f &modelMatrix);
 
 private:
 	const std::string& m_path;
 	
 
-	std::vector<float> m_vertexBuffer;
-	std::vector<unsigned int> m_indexBuffer;
-
-	std::map<int, std::vector<int>> m_vertexCache;
-	int addVertex(int hash, const float *pVertex, int numberOfBytes);
-
-	void loadGeometry(std::vector<Vector3f> &positions, std::vector<Vector2f> &texCoords, std::vector<Vector3f> &normals, std::vector<unsigned int> &indices);
-	void loadController(std::vector<std::array<unsigned int, 4>> &jointIds, std::vector<Vector4f> &jointWeights, std::vector<std::string> &jointsList, std::vector<VertexSkinData> &skinningData);
-	void createIndexBuffer(std::vector<Vector3f> &positions, std::vector<Vector2f> &texCoords, std::vector<Vector3f> &normals, std::vector<std::array<unsigned int, 4>> &jointIds, std::vector<Vector4f> &jointWeights, std::vector<unsigned int> &indices, std::vector<VertexSkinData> &skinningData);
 	
+
+	void loadGeometry(std::vector<Vector3f> &positions, std::vector<Vector2f> &texCoords, std::vector<Vector3f> &normals, std::vector<unsigned int> &indices, std::string &geometryName);
+	bool loadController(std::vector<std::array<unsigned int, 4>> &jointIds, std::vector<Vector4f> &jointWeights, std::vector<std::string> &jointsList, std::vector<VertexSkinData> &skinningData);
+	
+	void createIndexBuffer(std::vector<Vector3f> &positions, std::vector<Vector2f> &texCoords, std::vector<Vector3f> &normals, std::vector<unsigned int> &indices, std::vector<std::array<unsigned int, 4>> &jointIds, std::vector<Vector4f> &jointWeights, std::vector<VertexSkinData> &skinningData);
+	TiXmlNode* findRoot(TiXmlElement* rootNode, std::string node, std::string attribute, std::string value);
+	bool search(TiXmlNode* _node, std::string _search, std::string attribute, std::string value);
 	JointData search(TiXmlNode* node, std::vector<std::string> &jointsList);
-	Joint createJoints(JointData data, Matrix4f parentBindTransform2);
+	Joint createJoints(JointData data, Matrix4f parentBindTransform);
 
 	SkeletonData skeletonData;
 

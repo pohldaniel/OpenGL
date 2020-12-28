@@ -50,6 +50,10 @@ void Animator::addAnimation(ColladaLoader loader){
 	m_animations.push_back(std::make_shared<Animation>(loader));
 }
 
+void Animator::addAnimation(const Animation &animation) {
+	m_animations.push_back(std::make_shared<Animation>(animation));
+}
+
 
 void Animator::update(double elapsedTime){
 
@@ -61,6 +65,8 @@ void Animator::update(double elapsedTime){
 
 	std::unordered_map<std::string, Matrix4f> currentPose = calculateCurrentAnimationPose();
 	m_model->m_meshes[0]->applyPoseToJoints(currentPose);
+	//dynamic_cast<SkeletonAnimatedMesh*>(m_model->m_meshes[0].get())->applyPoseToJoints(currentPose);
+
 }
 
 std::unordered_map<std::string, Matrix4f> Animator::calculateCurrentAnimationPose() {

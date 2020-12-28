@@ -11,8 +11,6 @@
 #include "..\Animator\Animator.h"
 #include "..\Render\AnimationShader.h"
 
-
-
 class AnimatedModel : public std::enable_shared_from_this<AnimatedModel>{
 
 public:
@@ -40,11 +38,11 @@ public:
 
 	std::shared_ptr<Animator> getAnimator() { return m_animator; }
 
-	AnimationShader						m_shader;
+	AnimationShader								m_shader;
 
-	std::vector<std::shared_ptr<AnimatedMesh>>	m_meshes;
-	std::shared_ptr<Texture>			m_texture;	
-	std::shared_ptr<Animator>			m_animator;
+	std::vector<std::shared_ptr<SkeletonAnimatedMesh>>	m_meshes;
+	std::shared_ptr<Texture>					m_texture;	
+	std::shared_ptr<Animator>					m_animator;
 
 private:
 	ModelMatrix m_modelMatrix;

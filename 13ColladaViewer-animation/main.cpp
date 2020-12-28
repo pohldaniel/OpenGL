@@ -134,6 +134,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	AnimatedModel mushroom;
 	mushroom.loadModel(".\\res\\mushroom.dae", ".\\res\\mushroom.png");
 	
+	//AnimatedModel ani1;
+	//ani1.loadModel(".\\res\\ani1.dae", ".\\res\\mushroom.png");
+
 	AnimatedModel cowboy;
 	cowboy.loadModel(".\\res\\cowboy.dae", ".\\res\\cowboy.png");
 	cowboy.translate(-5.0, 0.0, 0.0);
@@ -146,9 +149,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::chrono::steady_clock::time_point end;
 	std::chrono::duration<double> deltaTime;
 	
-	mushroom.getAnimator()->startAnimation("");
-	cowboy.getAnimator()->startAnimation("");
-	dragon.getAnimator()->startAnimation("");
+	mushroom.getAnimator()->startAnimation("Armature");
+	cowboy.getAnimator()->startAnimation("Armature");
+	dragon.getAnimator()->startAnimation("Armature");
 	// main message loop
 	while (true){
 

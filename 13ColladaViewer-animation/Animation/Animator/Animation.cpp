@@ -5,3 +5,7 @@ Animation::Animation(ColladaLoader loader){
 	
 	loader.loadAnimation(m_keyFrames, m_duration, m_name);
 }
+
+Animation::Animation() {
+
+}

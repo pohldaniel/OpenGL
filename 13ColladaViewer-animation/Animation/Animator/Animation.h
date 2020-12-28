@@ -40,6 +40,7 @@ class Animation{
 	friend class Animator;
 
 public:	
+	Animation();
 	Animation(ColladaLoader loader);
 	virtual ~Animation() {}
 
@@ -47,6 +48,7 @@ public:
 	inline float getDuration() { return m_duration; }
 	
 private:
+	
 	
 	std::string m_name;
 	std::vector<KeyFrameData> m_keyFrames;
