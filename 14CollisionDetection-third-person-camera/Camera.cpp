@@ -12,7 +12,8 @@ Camera::Camera(){
 	m_znear = 0.1f;
 	m_zfar = 1000.0f;
     m_aspectRatio = 0.0f;
-    
+	m_accumPitchDegrees = 0.0f;
+
     m_eye.set(0.0f, 0.0f, 0.0f);
     m_xAxis.set(1.0f, 0.0f, 0.0f);
     m_yAxis.set(0.0f, 1.0f, 0.0f);
@@ -129,6 +130,9 @@ void Camera::updateViewMatrix(const Vector3f &eye, const Vector3f &target, const
 	m_viewMatrix[2][3] = -Vector3f::Dot(m_zAxis, eye);
 	m_viewMatrix[3][3] = 1.0f;
 
+	// Extract the pitch angle from the view matrix.
+	m_accumPitchDegrees = asinf(m_viewMatrix[2][1])*180.f / PI;
+
 	Matrix4f invView;
 	invView.invLookAt(eye, target, up);
 	m_invViewMatrix = invView;
@@ -137,7 +141,6 @@ void Camera::updateViewMatrix(const Vector3f &eye, const Vector3f &target, const
 void Camera::perspective(float fovx, float aspect, float znear, float zfar){
 	// Construct a projection matrix based on the horizontal field of view
 	// 'fovx' rather than the more traditional vertical field of view 'fovy'.
-
 	float e = 1.0f /tanf(PI*fovx / 360.0f);
 	float xScale = e / aspect;
 	float yScale = e;
@@ -236,7 +239,6 @@ void Camera::lookAt(const Vector3f &eye, const Vector3f &target, const Vector3f 
 }
 
 void Camera::move(float dx, float dy, float dz){
-
 	Vector3f eye = m_eye;
 	eye += m_xAxis * dx;
 	eye += WORLD_YAXIS * dy;
@@ -254,13 +256,11 @@ void Camera::rotateFirstPerson(float pitch, float yaw){
 	m_accumPitchDegrees += pitch;
 
 	if (m_accumPitchDegrees > 90.0f){
-
 		pitch = 90.0f - (m_accumPitchDegrees - pitch);
 		m_accumPitchDegrees = 90.0f;
 	}
 
 	if (m_accumPitchDegrees < -90.0f){
-
 		pitch = -90.0f - (m_accumPitchDegrees - pitch);
 		m_accumPitchDegrees = -90.0f;
 	}
@@ -269,7 +269,6 @@ void Camera::rotateFirstPerson(float pitch, float yaw){
 
 	// Rotate camera's existing x and z axes about the world y axis.
 	if (yaw != 0.0f){
-
 		rotMtx.rotate(WORLD_YAXIS, yaw);
 		m_xAxis = rotMtx * m_xAxis;
 		m_zAxis = rotMtx * m_zAxis;
@@ -277,7 +276,6 @@ void Camera::rotateFirstPerson(float pitch, float yaw){
 
 	// Rotate camera's existing y and z axes about its existing x axis.
 	if (pitch != 0.0f){
-
 		rotMtx.rotate(m_xAxis, pitch);
 		m_yAxis = rotMtx * m_yAxis;
 		m_zAxis = rotMtx * m_zAxis;
@@ -333,7 +331,6 @@ const Matrix4f &Camera::getViewMatrix() const{
 const Matrix4f &Camera::getInvViewMatrix() const{
 	return m_invViewMatrix;
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////
 const float ThirdPersonCamera::DEFAULT_SPRING_CONSTANT = 16.0f;
 const float ThirdPersonCamera::DEFAULT_DAMPING_CONSTANT = 8.0f;
@@ -350,6 +347,7 @@ ThirdPersonCamera::ThirdPersonCamera(){
 	m_fovx = 80.0f;
 	m_znear = 1000.0f;
 	m_zfar = 1.0f;
+	m_accumPitchDegrees = 0.0f;
 
 	m_eye.set(0.0f, 0.0f, 0.0f);
 	m_target.set(0.0f, 0.0f, 0.0f);

@@ -545,7 +545,7 @@ void Mesh::createBuffer() {
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
 		glBufferData(GL_ARRAY_BUFFER, m_texels.size() * sizeof(m_texels[0]), &m_texels[0], GL_STATIC_DRAW);
 	}
-	//texture coordinates
+	//normals
 	if (m_model->m_hasNormals) {
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo[2]);
 		glBufferData(GL_ARRAY_BUFFER, m_normals.size() * sizeof(m_normals[0]), &m_normals[0], GL_STATIC_DRAW);
@@ -568,7 +568,7 @@ void Mesh::createBuffer() {
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	}
-	//texture coordinates
+	//normals
 	if (m_model->m_hasNormals) {
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo[2]);
 		glEnableVertexAttribArray(2);

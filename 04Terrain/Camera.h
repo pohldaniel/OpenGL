@@ -4,7 +4,6 @@
 #include "Vector.h"
 
 class Camera{
-
 public:
 	enum CameraBehavior{CAMERA_BEHAVIOR_FIRST_PERSON, CAMERA_BEHAVIOR_FLIGHT, CAMERA_BEHAVIOR_SPACECRAFT};
 
@@ -24,7 +23,6 @@ public:
 	void setPosition(const Vector3f &position);
 
 private:
-
 	void rotateFlight(float pitch, float yaw, float roll);
     void rotateFirstPerson(float pitch, float yaw);
 	void updateViewMatrix(bool orthogonalizeAxes);

@@ -3,13 +3,8 @@
 
 #include "Vector.h"
 
-
-
-
-class Camera
-{
+class Camera{
 public:
-
 	Camera();
 	Camera(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
 	~Camera();
@@ -33,20 +28,14 @@ public:
 	void setPosition(float x, float y, float z);
 	void setPosition(const Vector3f &position);
 
-	
-
-private:
-
-	
+private:	
     void rotateFirstPerson(float pitch, float yaw);
 	void updateViewMatrix(bool orthogonalizeAxes);
 	void updateViewMatrix(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
 
-
     static const Vector3f WORLD_XAXIS;
     static const Vector3f WORLD_YAXIS;
     static const Vector3f WORLD_ZAXIS;
-
 	
     float			m_fovx;
     float			m_znear;
@@ -63,6 +52,5 @@ private:
 	Matrix4f		m_viewMatrix;
 	Matrix4f		m_projMatrix;
 	Matrix4f		m_orthMatrix;
-
 };
 #endif // __cameraH__

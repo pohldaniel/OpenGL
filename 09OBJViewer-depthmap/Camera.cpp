@@ -12,7 +12,8 @@ Camera::Camera(){
 	m_znear = 0.1f;
 	m_zfar = 1000.0f;
     m_aspectRatio = 0.0f;
-    
+	m_accumPitchDegrees = 0.0f;
+
     m_eye.set(0.0f, 0.0f, 0.0f);
     m_xAxis.set(1.0f, 0.0f, 0.0f);
     m_yAxis.set(0.0f, 1.0f, 0.0f);
@@ -26,6 +27,7 @@ Camera::Camera(){
 }
 
 Camera::Camera(const Vector3f &eye, const Vector3f &target, const Vector3f &up) {
+	m_accumPitchDegrees = 0.0f;
 	m_eye = eye;
 	m_projMatrix.identity();
 	m_orthMatrix.identity();
@@ -71,8 +73,7 @@ void Camera::updateViewMatrix(bool orthogonalizeAxes){
     m_viewMatrix[3][3] = 1.0f;
 }
 
-void Camera::updateViewMatrix(const Vector3f &eye, const Vector3f &target, const Vector3f &up){
-	
+void Camera::updateViewMatrix(const Vector3f &eye, const Vector3f &target, const Vector3f &up){	
 	m_zAxis = eye - target;
 	Vector3f::normalize(m_zAxis);
 
@@ -106,13 +107,11 @@ void Camera::updateViewMatrix(const Vector3f &eye, const Vector3f &target, const
 	m_viewMatrix[1][3] = 0.0f;
 	m_viewMatrix[2][3] = 0.0f;
 	m_viewMatrix[3][3] = 1.0f;
-
 }
 
 void Camera::perspective(float fovx, float aspect, float znear, float zfar){
     // Construct a projection matrix based on the horizontal field of view
     // 'fovx' rather than the more traditional vertical field of view 'fovy'.
-
 	float e = tanf(PI*fovx/360 );
 	float xScale = (1/e)/aspect;
     float yScale = 1/e;
@@ -169,8 +168,7 @@ void Camera::orthographic(float left, float right, float bottom, float top, floa
 	m_zfar = zfar;
 }
 
-void Camera::lookAt(const Vector3f &eye, const Vector3f &target, const Vector3f &up){
-	
+void Camera::lookAt(const Vector3f &eye, const Vector3f &target, const Vector3f &up){	
 	m_zAxis = eye - target;
 	Vector3f::normalize(m_zAxis);
 
@@ -206,22 +204,18 @@ void Camera::lookAt(const Vector3f &eye, const Vector3f &target, const Vector3f 
 	m_viewMatrix[3][3] = 1.0f;
 
     // Extract the pitch angle from the view matrix.
-    m_accumPitchDegrees = -asinf(m_viewMatrix[1][2])*180.f/PI;
+    m_accumPitchDegrees = asinf(m_viewMatrix[2][1])*180.f/PI;
 }
 
-void Camera::move(float dx, float dy, float dz){
-   
-    Vector3f eye = m_eye;
-    
+void Camera::move(float dx, float dy, float dz){   
+    Vector3f eye = m_eye;   
     eye += m_xAxis * dx;
 	eye += WORLD_YAXIS * dy;
-	eye += m_viewDir * dz;
-    
+	eye += m_viewDir * dz;    
     setPosition(eye);
 }
 
-void Camera::rotate(float yaw, float pitch, float roll){
-   
+void Camera::rotate(float yaw, float pitch, float roll){  
 	rotateFirstPerson(pitch, yaw);   
     updateViewMatrix(true);
 }
@@ -283,17 +277,14 @@ const Vector3f &Camera::getViewDirection() const{
 }
 
 const Matrix4f &Camera::getProjectionMatrix() const{
-
 	return m_projMatrix;
 }
 
 const Matrix4f &Camera::getOrthographicMatrix() const{
-
 	return m_orthMatrix;
 }
 
 const Matrix4f &Camera::getViewMatrix() const{
-
 	return m_viewMatrix;
 }
 

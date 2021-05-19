@@ -9,14 +9,14 @@ const Vector3f Camera::WORLD_YAXIS(0.0f, 1.0f, 0.0f);
 const Vector3f Camera::WORLD_ZAXIS(0.0f, 0.0f, 1.0f);
 
 Camera::Camera(){
-
     m_behavior = CAMERA_BEHAVIOR_SPACECRAFT;
     
     m_fovx = DEFAULT_FOVX;
     m_znear = DEFAULT_ZNEAR;
     m_zfar = DEFAULT_ZFAR;
     m_aspectRatio = 0.0f;
-    
+	m_accumPitchDegrees = 0.0f;
+
     m_eye.set(0.0f, 0.0f, 0.0f);
     m_xAxis.set(1.0f, 0.0f, 0.0f);
     m_yAxis.set(0.0f, 1.0f, 0.0f);
@@ -29,20 +29,19 @@ Camera::Camera(){
 
 Camera::~Camera(){}
 
-void Camera::updateViewMatrix(bool orthogonalizeAxes){
-    
-        // Regenerate the camera's local axes to orthogonalize them.
-        if (orthogonalizeAxes){
-			m_zAxis.normalize();
+void Camera::updateViewMatrix(bool orthogonalizeAxes){   
+	// Regenerate the camera's local axes to orthogonalize them.
+	 if (orthogonalizeAxes){
+		m_zAxis.normalize();
         
-			m_yAxis = Vector3f::cross(m_zAxis, m_xAxis);
-			m_yAxis.normalize();
+		m_yAxis = Vector3f::cross(m_zAxis, m_xAxis);
+		m_yAxis.normalize();
         
-			m_xAxis = Vector3f::cross(m_yAxis, m_zAxis);
-			m_xAxis.normalize();
+		m_xAxis = Vector3f::cross(m_yAxis, m_zAxis);
+		m_xAxis.normalize();
 
-			m_viewDir = -m_zAxis;
-		}
+		m_viewDir = -m_zAxis;
+	}
 
     // Reconstruct the view matrix.
 
@@ -70,12 +69,9 @@ void Camera::updateViewMatrix(bool orthogonalizeAxes){
 void Camera::perspective(float fovx, float aspect, float znear, float zfar){
     // Construct a projection matrix based on the horizontal field of view
     // 'fovx' rather than the more traditional vertical field of view 'fovy'.
-
 	float e = tanf(PI*fovx/360 );
 	float xScale = (1/e)/aspect;
-    float yScale = 1/e;
-
-	
+    float yScale = 1/e;	
 
     m_projMatrix[0][0] = xScale;
     m_projMatrix[0][1] = 0.0f;
@@ -104,7 +100,6 @@ void Camera::perspective(float fovx, float aspect, float znear, float zfar){
 }
 
 void Camera::lookAt(const Vector3f &eye, const Vector3f &target, const Vector3f &up){
-
     m_eye = eye;
 
     m_zAxis = eye - target;
@@ -135,26 +130,19 @@ void Camera::lookAt(const Vector3f &eye, const Vector3f &target, const Vector3f 
     m_viewMatrix[3][2] = -Vector3f::dot(m_zAxis, eye);
 
     // Extract the pitch angle from the view matrix.
-    m_accumPitchDegrees = -asinf(m_viewMatrix[1][2])*180.f/PI;
-		
-
+    m_accumPitchDegrees = asinf(m_viewMatrix[1][2])*180.f/PI;
 }
 
-void Camera::move(float dx, float dy, float dz)
-{
+void Camera::move(float dx, float dy, float dz){
     // Moves the camera by dx world units to the left or right; dy
     // world units upwards or downwards; and dz world units forwards
     // or backwards.
-
     Vector3f eye = m_eye;
     Vector3f forwards;
-
-    if (m_behavior == CAMERA_BEHAVIOR_FIRST_PERSON)
-    {
+    if (m_behavior == CAMERA_BEHAVIOR_FIRST_PERSON){
         // Calculate the forwards direction. Can't just use the camera's local
         // z axis as doing so will cause the camera to move more slowly as the
         // camera's view approaches 90 degrees straight up and down.
-
         forwards = Vector3f::cross(WORLD_YAXIS, m_xAxis);
         forwards.normalize();
 
@@ -164,20 +152,17 @@ void Camera::move(float dx, float dy, float dz)
 
     eye += m_xAxis * dx;
     eye += WORLD_YAXIS * dy;
-    eye += forwards * dz;
-    
+    eye += forwards * dz;   
     setPosition(eye);
 }
 
 
 
 void Camera::rotate(float yaw, float pitch, float roll){
-
     // Rotates the camera based on its current behavior.
     // Note that not all behaviors support rolling.
 
-    switch (m_behavior)
-    {
+    switch (m_behavior){
     case CAMERA_BEHAVIOR_FIRST_PERSON:
         rotateFirstPerson(pitch, yaw);
         break;
@@ -193,8 +178,7 @@ void Camera::rotate(float yaw, float pitch, float roll){
     updateViewMatrix(true);
 }
 
-void Camera::rotateFirstPerson(float pitch, float yaw)
-{
+void Camera::rotateFirstPerson(float pitch, float yaw){
     m_accumPitchDegrees += pitch;
 
     if (m_accumPitchDegrees > 90.0f) {
@@ -225,12 +209,10 @@ void Camera::rotateFirstPerson(float pitch, float yaw)
 }
 
 void Camera::rotateFlight(float pitch, float yaw, float roll){
-
     Matrix4f rotMtx;
 
     // Rotate camera's existing x and z axes about its existing y axis.
     if (yaw != 0.0f){
-
         rotMtx.rotate(m_yAxis, yaw);
         m_xAxis = m_xAxis * rotMtx;
         m_zAxis = m_zAxis * rotMtx;
@@ -238,7 +220,6 @@ void Camera::rotateFlight(float pitch, float yaw, float roll){
 
     // Rotate camera's existing y and z axes about its existing x axis.
     if (pitch != 0.0f){
-
         rotMtx.rotate(m_xAxis, pitch);
         m_yAxis = m_yAxis * rotMtx;
         m_zAxis = m_zAxis * rotMtx;
@@ -246,7 +227,6 @@ void Camera::rotateFlight(float pitch, float yaw, float roll){
 
     // Rotate camera's existing x and y axes about its existing z axis.
     if (roll != 0.0f){
-
         rotMtx.rotate(m_zAxis, roll);
         m_xAxis = m_xAxis * rotMtx;
         m_yAxis = m_yAxis * rotMtx;

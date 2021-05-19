@@ -7,9 +7,7 @@
 class Entity3D;
 
 class Camera{
-
 public:
-
 	Camera();
 	Camera(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
 	~Camera();
@@ -35,7 +33,6 @@ public:
 	void setPosition(const Vector3f &position);
 
 protected:
-
     void rotateFirstPerson(float pitch, float yaw);
 	void updateViewMatrix(bool orthogonalizeAxes);
 	void updateViewMatrix(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
@@ -64,7 +61,6 @@ protected:
 };
 
 class ThirdPersonCamera : public Camera{
-
 public:
 	ThirdPersonCamera();
 	~ThirdPersonCamera();

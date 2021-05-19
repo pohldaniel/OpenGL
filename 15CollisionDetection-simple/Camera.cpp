@@ -12,7 +12,8 @@ Camera::Camera(){
 	m_znear = 0.1f;
 	m_zfar = 1000.0f;
     m_aspectRatio = 0.0f;
-    
+	m_accumPitchDegrees = 0.0f;
+
     m_eye.set(0.0f, 0.0f, 0.0f);
     m_xAxis.set(1.0f, 0.0f, 0.0f);
     m_yAxis.set(0.0f, 1.0f, 0.0f);
@@ -26,6 +27,7 @@ Camera::Camera(){
 }
 
 Camera::Camera(const Vector3f &eye, const Vector3f &target, const Vector3f &up) {
+	m_accumPitchDegrees = 0.0f;
 	m_eye = eye;
 	m_projMatrix.identity();
 	m_orthMatrix.identity();

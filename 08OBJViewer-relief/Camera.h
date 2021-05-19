@@ -4,9 +4,7 @@
 #include "Vector.h"
 
 class Camera{
-
 public:
-
 	Camera();
 	Camera(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
 	~Camera();
@@ -31,7 +29,6 @@ public:
 	void setPosition(const Vector3f &position);
 
 private:
-
     void rotateFirstPerson(float pitch, float yaw);
 	void updateViewMatrix(bool orthogonalizeAxes);
 	void updateViewMatrix(const Vector3f &eye, const Vector3f &target, const Vector3f &up);
@@ -57,6 +54,5 @@ private:
 	Matrix4f		m_projMatrix;
 	Matrix4f		m_invProjMatrix;
 	Matrix4f		m_orthMatrix;
-
 };
 #endif // __cameraH__
