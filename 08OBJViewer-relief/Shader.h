@@ -22,9 +22,6 @@ struct LightSource{
 
 
 class Shader{
-
-	
-
 public:
 	
 	Shader(std::string vertex, std::string fragment);
@@ -35,7 +32,7 @@ public:
 	GLuint positionID, texCoordID, normalID, tangentID, bitangentID;
 	GLuint m_program;
 
-	void Shader::loadSampler(const char* location, int sampler);
+	void loadSampler(const char* location, int sampler);
 	void loadMatrix(const char* location, const Matrix4f matrix);
 	void loadVector(const char* location, Vector3f vector);
 	void loadFloat2(const char* location, float value[2]);

@@ -32,7 +32,7 @@ enum DIRECTION {
 
 Quad *quad;
 Depthmap * depthmap = NULL;
-Camera* camera;
+Camera camera;
 Model *model;
 Shader *sss;
 
@@ -55,11 +55,6 @@ void enableVerticalSync(bool enableVerticalSync);
 
 // the main windows entry point
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd){
-
-	Vector3f camPos(0.0, 0.0, 10.0);
-	Vector3f target(0.0, 0.2, -5.0);
-	Vector3f up(0.0, 1.0, 0.0);
-	camera = new Camera(camPos, target, up);
 
 	AllocConsole();
 	AttachConsole(GetCurrentProcessId());
@@ -244,19 +239,18 @@ LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 
 		case WM_SIZE:{
 
-			int height2 = HIWORD(lParam);		// retrieve width and height
-			int width2 = LOWORD(lParam);
+			int _height = HIWORD(lParam);		// retrieve width and height
+			int _width = LOWORD(lParam);
 
-			if (height2 == 0){					// avoid divide by zero
-				
-					 height2 = 1;
+			if (_height == 0) {					// avoid divide by zero
+				_height = 1;
 			}
 						 
-			glViewport(0, 0, width2, height2);
-			camera->perspective(45.0f, (GLfloat)width2 / (GLfloat)height2, 1.0f, 2000.0f);
+			glViewport(0, 0, _width, _height);
+			camera.perspective(45.0f, static_cast<float>(_width) / static_cast<float>(_height), 1.0f, 2000.0f);
 
 			if (depthmap) {
-				depthmap->setViewport(width2, height2);
+				depthmap->setViewport(_width, _height);
 			}
 			return 0;
 		}break;
@@ -303,11 +297,13 @@ void initApp(HWND hWnd){
 	hRC = wglCreateContext(hDC);
 	wglMakeCurrent(hDC, hRC);
 	enableVerticalSync(true);
-	
-	camera->perspective(45.0f, (GLfloat)width / (GLfloat)height, 1.0f, 2000.0f);
 
 	glEnable(GL_DEPTH_TEST);				
-	//glEnable(GL_CULL_FACE);				
+	//glEnable(GL_CULL_FACE);	
+
+	//setup the camera.
+	camera = Camera(Vector3f(0.0f, 0.0f, 10.0f), Vector3f(0.0f, 0.2f, -5.f), Vector3f(0.0f, 1.0f, 0.0f));
+	camera.perspective(45.0f, static_cast<float>(width) / static_cast<float>(height), 1.0f, 2000.0f);
 
 	////////////////////// Buddha ///////////////////////////////
 	model = new Model();
@@ -397,7 +393,7 @@ void processInput(HWND hWnd ){
 
 			// Rotate camera
 			if ( X || Y ) {
-				camera->rotate( X, Y, 0.0f );
+				camera.rotate(X, Y, 0.0f);
 			} // End if any rotation
 
 
@@ -411,7 +407,7 @@ void processInput(HWND hWnd ){
 				if (Direction & DIR_UP) dy = speed;
 				if (Direction & DIR_DOWN) dy = -speed;
 
-				camera->move(dx,dy,dz);
+				camera.move(dx,dy,dz);
 			} 
 		}// End if any movement
 	} // End if Captured
@@ -431,11 +427,11 @@ void render() {
 
 	glUseProgram(sss->m_program);
 
-	sss->loadMatrix("u_projection", camera->getProjectionMatrix());
+	sss->loadMatrix("u_projection", camera.getProjectionMatrix());
 	sss->loadMatrix("u_model", model->getTransformationMatrix());
-	sss->loadMatrix("u_view", camera->getViewMatrix());
-	sss->loadMatrix("u_modelView", model->getTransformationMatrix() * camera->getViewMatrix());
-	sss->loadMatrix("u_normalMatrix", Matrix4f::getNormalMatrix(model->getTransformationMatrix() * camera->getViewMatrix()));
+	sss->loadMatrix("u_view", camera.getViewMatrix());
+	sss->loadMatrix("u_modelView", model->getTransformationMatrix() * camera.getViewMatrix());
+	sss->loadMatrix("u_normalMatrix", Matrix4f::getNormalMatrix(model->getTransformationMatrix() * camera.getViewMatrix()));
 	sss->loadMatrix("u_viewShadow", depthmap->getViewMatrix());
 	sss->loadMatrix("u_projectionShadowBias", depthmap->getDepthPassMatrix());
 	sss->loadMatrix("u_projectionPers", depthmap->getProjectionMatrix());

@@ -8,7 +8,6 @@
 class Depthmap{
 
 public:
-
 	Depthmap();
 	~Depthmap();
 
@@ -44,8 +43,6 @@ public:
 	const Vector3f &getPosition() const;
 
 private :
-
-	TextureShader *m_renderShader;
 	unsigned int normalFBO;
 	unsigned int normalFBOMSAA;
 

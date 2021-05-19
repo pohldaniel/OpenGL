@@ -101,6 +101,7 @@ typedef char GLchar;
 	extern void glUniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
 
 	extern void glUniform1fv(GLint location, GLsizei count, const GLfloat *value);
+	extern void glUniform2fv(GLint location, GLsizei count, const GLfloat *value);
 	extern void glUniform3fv(GLint location, GLsizei count, const GLfloat *value);
 	extern void glUniform4fv(GLint location, GLsizei count, const GLfloat *value);
 	extern void glBindAttribLocation(GLuint program, GLuint index, const GLchar *name);

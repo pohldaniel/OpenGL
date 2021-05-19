@@ -534,39 +534,48 @@ void Mesh::createBuffer() {
 
 	m_drawCount = m_indexBuffer.size();
 
-	glGenVertexArrays(1, &m_vao);
-	glBindVertexArray(m_vao);
-
+	//////////////////////////////////////////////setup vertex buffer objects//////////////////////////////////////////////////
 	glGenBuffers(m_numBuffers, m_vbo);
 
-	//Position
+	//positions
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[0]);
 	glBufferData(GL_ARRAY_BUFFER, m_positions.size() * sizeof(m_positions[0]), &m_positions[0], GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-	//Texture Coordinates
+	//texture coordinates
 	if (m_model->m_hasTextureCoords) {
-
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
 		glBufferData(GL_ARRAY_BUFFER, m_texels.size() * sizeof(m_texels[0]), &m_texels[0], GL_STATIC_DRAW);
-
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	}
-
-	//Normals
+	//texture coordinates
 	if (m_model->m_hasNormals) {
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo[2]);
 		glBufferData(GL_ARRAY_BUFFER, m_normals.size() * sizeof(m_normals[0]), &m_normals[0], GL_STATIC_DRAW);
+	}
+	//indices
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vbo[3]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer.size() * sizeof(m_indexBuffer[0]), &m_indexBuffer[0], GL_STATIC_DRAW);
 
+	//////////////////////////////////////////////setup vertex array objects//////////////////////////////////////////////////
+	glGenVertexArrays(1, &m_vao);
+	glBindVertexArray(m_vao);
+	
+	//positions
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[0]);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	//texture coordinates
+	if (m_model->m_hasTextureCoords) {
+		glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	}
+	//texture coordinates
+	if (m_model->m_hasNormals) {
+		glBindBuffer(GL_ARRAY_BUFFER, m_vbo[2]);
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	}
-	//Indices
+	//indices
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vbo[3]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer.size() * sizeof(m_indexBuffer[0]), &m_indexBuffer[0], GL_STATIC_DRAW);
 	glBindVertexArray(0);
 }
 

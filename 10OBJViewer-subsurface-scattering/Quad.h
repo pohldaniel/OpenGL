@@ -18,11 +18,12 @@ public:
 private:
 	void createBuffer();
 
+	unsigned int m_vao;
 	unsigned int m_quadVBO, m_indexQuad;
 	int m_size = 1;
 	std::vector<float> m_vertex;
 
-	TextureShader *m_quadShader;
+	Shader *m_quadShader;
 };
 
 

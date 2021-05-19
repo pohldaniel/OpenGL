@@ -3,39 +3,40 @@
 
 #include <iostream>
 #include <vector>
+#include <memory>
 
 #include "Extension.h"
 #include "Bitmap.h"
 #include "Camera.h"
 #include "Shader.h"
 
-class SkyBox{
+class SkyBox {
 
-	public:
+public:
 
-		SkyBox(const char* filename, int size, Camera* camera, bool flipVertical, bool flipHorizontal);
-		~SkyBox();
+	SkyBox(const char* filename, int size, bool flipVertical, bool flipHorizontal, const Vector3f &position = Vector3f(0.0f, 0.0f, 0.0f));
+	~SkyBox();
 
-		unsigned int m_cubemap;
-		unsigned int m_skyboxVBO;
-
-		void render();
+	void setProjectionMatrix(const Matrix4f &projection);
+	void draw(const Camera camera);
 
 private:
 
-		
-		void createCubeMap(const char* filename, bool flipVertical, bool flipHorizontal);
-		void loadSide(unsigned int side_target, const char* file_name, bool flipVertical, bool flipHorizontal);
-		void createBuffer();
+	static void FlipVertical(unsigned int width, unsigned int height, unsigned short channels, unsigned char(*&image));
+	static void FlipHorizontal(unsigned int width, unsigned int height, unsigned short channels, unsigned char(*&image));
 
-		
-		int m_size = 50;
-		std::vector<float> m_postions;
+	void createCubeMap(const char* filename, bool flipVertical, bool flipHorizontal);
+	void loadSide(unsigned int side_target, const char* file_name, bool flipVertical, bool flipHorizontal);
+	void createBuffer(const Vector3f &position);
 
-		Camera* m_camera;
-		SkyboxShader* m_shader;
+	int m_size = 50;
+	std::vector<float> m_postions;
+	std::shared_ptr<Shader> m_shader;
+
+	unsigned int m_cubemap;
+	unsigned int m_skyboxVBO;
+	unsigned int m_vao;
 };
-
 
 
 
