@@ -123,7 +123,8 @@ void main(){
 	
    float zInOrth =  texture2D(u_texture, scOrth.xy).r;
    float zOutOrth = scOrth.z;
-	
+   
+   //Notice: change the matrix at depthmap->setProjectionMatrix as well
    float thickness = (zOutOrth - zInOrth) * u_thicknessScale;
    //float thickness = (zOutPers - zInPers) * u_thicknessScale;
    

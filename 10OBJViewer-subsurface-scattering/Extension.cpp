@@ -480,3 +480,19 @@ void glFramebufferTextureLayer(GLenum target, GLenum attachment, GLuint texture,
 	LOAD_ENTRYPOINT("glFramebufferTextureLayer", glFramebufferTextureLayer, PFNGLFRAMEBUFFERTEXTURELAYERPROC);
 	glFramebufferTextureLayer(target, attachment, texture, level, layer);
 }
+
+void glActiveTextureARB(GLenum texture)
+{
+	typedef void (APIENTRY * PFNGLACTIVETEXTUREARBPROC)(GLenum texture);
+	static PFNGLACTIVETEXTUREARBPROC pfnActiveTextureARB = 0;
+	LOAD_ENTRYPOINT("glActiveTextureARB", pfnActiveTextureARB, PFNGLACTIVETEXTUREARBPROC);
+	pfnActiveTextureARB(texture);
+}
+
+void glMultiTexCoord2fARB(GLenum target, GLfloat s, GLfloat t)
+{
+	typedef void (APIENTRY * PFNGLMULTITEXCOORD2FARBPROC)(GLenum target, GLfloat s, GLfloat t);
+	static PFNGLMULTITEXCOORD2FARBPROC pfnMultiTexCoord2fARB = 0;
+	LOAD_ENTRYPOINT("glMultiTexCoord2fARB", pfnMultiTexCoord2fARB, PFNGLMULTITEXCOORD2FARBPROC);
+	pfnMultiTexCoord2fARB(target, s, t);
+}

@@ -18,7 +18,7 @@ attribute vec4 position;
 attribute vec3 normal;
 
 layout(location = 0) in vec3 i_position;
-layout(location = 3) in vec3 i_normal;
+layout(location = 2) in vec3 i_normal;
 
 varying vec3 frag_eye_pos;
 varying vec3 frag_eye_dir;

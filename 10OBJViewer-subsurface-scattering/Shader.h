@@ -7,11 +7,6 @@
 
 #include "Extension.h"
 #include "Vector.h"
-#include "Model.h"
-
-
-
-
 
 struct LightSource{
 	Vector3f ambient;
@@ -36,20 +31,18 @@ public:
 	GLuint m_program;
 
 	void Shader::loadSampler(const char* location, int sampler);
-	void loadMatrix(const char* location, const Matrix4f matrix);
+	void loadMatrix(const char* location, const Matrix4f matrix, bool trans = true);
 	void loadVector(const char* location, Vector3f vector);
 	void loadFloat2(const char* location, float value[2]);
 	void loadFloat(const char* location, float value);
 	void loadBool(const char* location, bool value);
 	
-	virtual void bindAttributes(Mesh *a_mesh, GLuint texture);
-	virtual void unbindAttributes(Mesh *a_mesh);
 	
 	
 
-	void loadMaterial(const Mesh::Material material);
+	//void loadMaterial(const Mesh::Material material);
 	void loadLightSource(LightSource &lightsource, int index);
-	void loadLightSources(std::vector<LightSource> lights);
+	//void loadLightSources(std::vector<LightSource> lights);
 	
 	unsigned int normal;
 	unsigned int depth;
@@ -95,11 +88,6 @@ public:
 	EnvironmentMap(EnvironmentMap* shader);
 	~EnvironmentMap();
 
-	
-
-	void bindAttributes(Mesh *a_mesh, GLuint texture);
-	void unbindAttributes(Mesh *a_mesh);
-
 private:
 
 	GLuint m_cubemap;
@@ -111,9 +99,6 @@ public:
 
 	DepthShader(std::string vertex, std::string fragment);
 	~DepthShader();
-
-	void bindAttributes(Mesh *a_mesh, GLuint texture);
-	void unbindAttributes(Mesh *a_mesh);
 
 };
 
@@ -127,9 +112,6 @@ public:
 
 	void bindAttributes(GLuint texture);
 	void unbindAttributes();
-
-	
-
 };
 
 class Subsurfacehader : public Shader{
@@ -141,11 +123,5 @@ public:
 
 	//void bindAttributes(Mesh *a_mesh, GLuint texture);
 	//void unbindAttributes(Mesh *a_mesh);
-	
-
-
 };
-
-
-
 #endif // __shaderH__

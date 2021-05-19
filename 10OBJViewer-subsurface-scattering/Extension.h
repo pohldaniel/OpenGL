@@ -141,6 +141,13 @@ typedef char GLchar;
 	extern void glDrawBuffers(GLsizei n, const GLenum *bufs);
 	extern GLenum glCheckFramebufferStatus(GLenum target);
 	extern void glFramebufferTextureLayer(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);
-	
+
+#define GL_TEXTURE0_ARB 0x84C0
+#define GL_TEXTURE1_ARB 0x84C1
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
+
+	extern void glActiveTextureARB(GLenum texture);
+	extern void glMultiTexCoord2fARB(GLenum target, GLfloat s, GLfloat t);
 } // extern "C"
 #endif

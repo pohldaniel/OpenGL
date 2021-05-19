@@ -1,14 +1,6 @@
 #include "Depthmap.h"
 
-Depthmap::Depthmap(Camera* camera) {
-
-	m_camera = camera;
-	
-	m_renderShader = new TextureShader("shader/texture.vert", "shader/texture.frag");
-
-	glUseProgram(m_renderShader->m_program);
-	m_renderShader->loadMatrix("u_projection", camera->getProjectionMatrix());
-	glUseProgram(0);
+Depthmap::Depthmap() {
 
 	m_irradianceShader = new Shader("shader/irradiance.vert", "shader/irradiance.frag");
 	m_normalShader = new Shader("shader/normalMap.vert", "shader/normalMap.frag");
@@ -285,9 +277,6 @@ void Depthmap::setProjectionMatrix(float fovx, float aspect, float znear, float 
 	projection.linearPerspectiveD3D(fovx, (GLfloat)depthmapWidth / (GLfloat)depthmapHeight, znear, zfar);
 	m_linearProjMatrixD3D = projection;
 
-	projection.orthographic(0, (GLfloat)depthmapWidth, (GLfloat)depthmapHeight, 0, 0, 1000);
-	m_orthMatrix = projection;
-
 	glUseProgram(m_irradianceShader->m_program);
 	m_irradianceShader->loadMatrix("u_projection", m_projMatrix);
 	glUseProgram(0);
@@ -324,8 +313,6 @@ const Matrix4f &Depthmap::getDepthPassMatrix() const{
 	return    m_projMatrix * m_biasMatrix;
 }
 
-
-
 const Matrix4f &Depthmap::getProjectionMatrix() const{
 	return  m_projMatrix;
 }
@@ -339,7 +326,6 @@ const Matrix4f &Depthmap::getLinearProjectionMatrixD3D() const{
 }
 
 const Matrix4f &Depthmap::getViewMatrix() const{
-
 	return m_viewMatrix;
 }
 
@@ -353,96 +339,52 @@ void Depthmap::setViewport(int width, int height) {
 	m_viewportHeight = height;
 }
 
-void Depthmap::renderToDepthTexture(Object const* object){
-
-	glViewport(0, 0, depthViewportWidth, depthViewportHeight);
-	glBindFramebuffer(GL_FRAMEBUFFER, fboDepthmap);
-
-	glClear(GL_DEPTH_BUFFER_BIT);
+void Depthmap::renderToDepthTexture(Model const* model) {
 	
+	glBindFramebuffer(GL_FRAMEBUFFER, fboDepthmap);
+	glViewport(0, 0, depthViewportWidth, depthViewportHeight);
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	glUseProgram(m_depthMapShader->m_program);
-	m_depthMapShader->loadMatrix("u_modelView", object->m_model->getTransformationMatrix() * m_viewMatrix);
-
-
-	for (int i = 0; i < object->m_model->numberOfMeshes(); i++) {
-
-		glBindBuffer(GL_ARRAY_BUFFER, object->m_model->getMesches()[i]->getVertexName());
-		m_depthMapShader->bindAttributes(object->m_model->getMesches()[i], NULL);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->m_model->getMesches()[i]->getIndexName());
-		glDrawElements(GL_TRIANGLES, object->m_model->getMesches()[i]->getNumberOfTriangles() * 3, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		m_depthMapShader->unbindAttributes(object->m_model->getMesches()[i]);
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	}
+	m_depthMapShader->loadMatrix("u_modelView", model->getTransformationMatrix() * m_viewMatrix);
+	model->draw();
 	glUseProgram(0);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	glViewport(0, 0, m_viewportWidth, m_viewportHeight);
-
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);	
 }
 
-void Depthmap::renderToSingleChannel(Object const* object){
-
-	glUseProgram(m_depthMapShader2->m_program);
-
-
+void Depthmap::renderToSingleChannel(Model const* model) {
+	
 	glBindFramebuffer(GL_FRAMEBUFFER, fboSingleChannelMSAA);
 	glViewport(0, 0, depthViewportWidth, depthViewportHeight);
 	glClearColor(1.0, 1.0, 1.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	glFrontFace(GL_CW);
 	glEnable(GL_CULL_FACE);
 
-	for (int i = 0; i < object->m_model->numberOfMeshes(); i++){
-
-		m_depthMapShader2->loadMatrix("u_modelView", object->m_model->getTransformationMatrix() * m_viewMatrix);
-
-		glBindBuffer(GL_ARRAY_BUFFER, object->m_model->getMesches()[i]->getVertexName());
-		m_normalShader->bindAttributes(object->m_model->getMesches()[i], NULL);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->m_model->getMesches()[i]->getIndexName());
-		glDrawElements(GL_TRIANGLES, object->m_model->getMesches()[i]->getNumberOfTriangles() * 3, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		m_depthMapShader2->unbindAttributes(object->m_model->getMesches()[i]);
-
-	}
-	glDisable(GL_CULL_FACE);
-	glViewport(0, 0, m_viewportWidth, m_viewportHeight);
-
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glUseProgram(m_depthMapShader2->m_program);
+	m_depthMapShader2->loadMatrix("u_modelView", model->getTransformationMatrix() * m_viewMatrix);
+	model->draw();
 	glUseProgram(0);
 
-
+	glDisable(GL_CULL_FACE);
+	glViewport(0, 0, m_viewportWidth, m_viewportHeight);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	
 	/*glBindFramebuffer(GL_READ_FRAMEBUFFER, fboSingleChannelMSAA);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboCSingleChannel);
-	glBlitFramebuffer(0, 0, depthmapWidth, depthmapHeight, 0, 0, depthmapWidth, depthmapHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);                      
+	glBlitFramebuffer(0, 0, depthmapWidth, depthmapHeight, 0, 0, depthmapWidth, depthmapHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fboCSingleChannel);
 	glReadPixels(0, 0, depthmapWidth, depthmapHeight, GL_RED, GL_UNSIGNED_BYTE, singleChannelData);
 	Bitmap::saveBitmap8("depth2.bmp", singleChannelData, depthmapWidth, depthmapHeight);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
-
 }
 
+void Depthmap::renderNormalMap(Model const* model) {
 
-void Depthmap::renderNormalMap(Object const* object){
-
-	glUseProgram(m_normalShader->m_program);
-
-	
 	glBindFramebuffer(GL_FRAMEBUFFER, fboNormalMSAA);
 	glViewport(0, 0, depthViewportWidth, depthViewportHeight);
 	glClearColor(1.0, 1.0, 1.0, 1.0);
@@ -450,43 +392,23 @@ void Depthmap::renderNormalMap(Object const* object){
 	glFrontFace(GL_CW);
 	glEnable(GL_CULL_FACE);
 	//glEnable(GL_DEPTH_TEST);
-	for (int i = 0; i < object->m_model->numberOfMeshes(); i++){
 
-		m_normalShader->loadMatrix("u_modelView", object->m_model->getTransformationMatrix() * m_viewMatrix);
-		m_normalShader->loadMatrix("u_normalMatrix", Matrix4f::getNormalMatrix(object->m_model->getTransformationMatrix() * m_viewMatrix));
-
-		glBindBuffer(GL_ARRAY_BUFFER, object->m_model->getMesches()[i]->getVertexName());
-		m_normalShader->bindAttributes(object->m_model->getMesches()[i], NULL);
-		
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->m_model->getMesches()[i]->getIndexName());
-		glDrawElements(GL_TRIANGLES, object->m_model->getMesches()[i]->getNumberOfTriangles() * 3, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		m_normalShader->unbindAttributes(object->m_model->getMesches()[i]);
-		
-	}
-	glDisable(GL_CULL_FACE);
-	glViewport(0, 0, m_viewportWidth, m_viewportHeight);
-	
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glUseProgram(m_normalShader->m_program);
+	model->draw();
 	glUseProgram(0);
 
+	glDisable(GL_CULL_FACE);
+	glViewport(0, 0, m_viewportWidth, m_viewportHeight);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, fboNormalMSAA);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboCNormal);
 	glBlitFramebuffer(0, 0, depthmapWidth, depthmapHeight, 0, 0, depthmapWidth, depthmapHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);                           // scale filter
 
-
 	/*glBindFramebuffer(GL_FRAMEBUFFER, fboCNormal);
 	glReadPixels(0, 0, depthmapWidth, depthmapHeight, GL_BGR, GL_UNSIGNED_BYTE, normalData);
 	Bitmap::saveBitmap24("normal.bmp", normalData, depthmapWidth, depthmapHeight);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
-
-	
 
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, fboNormalMSAA);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDNormal);
@@ -495,16 +417,11 @@ void Depthmap::renderNormalMap(Object const* object){
 	/*glBindFramebuffer(GL_FRAMEBUFFER, fboDNormal);
 	glReadPixels(0, 0, depthmapWidth, depthmapHeight, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, normalDataDepth);
 	Bitmap::saveBitmap8("depth.bmp", normalDataDepth, depthmapWidth, depthmapHeight);*/
-	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	
 }
 
-void Depthmap::renderIrradianceMap(Object const* object){
-
-	glUseProgram(m_irradianceShader->m_program);
-
-
+void Depthmap::renderIrradianceMap(Model const* model) {
+	
 	glBindFramebuffer(GL_FRAMEBUFFER, fboIrradianceMSAA);
 	glViewport(0, 0, depthViewportWidth, depthViewportHeight);
 	glClearColor(1.0, 1.0, 1.0, 1.0);
@@ -512,38 +429,21 @@ void Depthmap::renderIrradianceMap(Object const* object){
 	glFrontFace(GL_CW);
 	//glEnable(GL_CULL_FACE);
 	//glEnable(GL_DEPTH_TEST);
-	for (int i = 0; i < object->m_model->numberOfMeshes(); i++){
 
-		m_irradianceShader->loadMatrix("u_modelView", object->m_model->getTransformationMatrix() * m_viewMatrix);
-		m_irradianceShader->loadMatrix("u_normalMatrix", Matrix4f::getNormalMatrix(object->m_model->getTransformationMatrix() * m_viewMatrix));
+	glUseProgram(m_irradianceShader->m_program);
+	model->draw();
+	glUseProgram(0);
 
-		glBindBuffer(GL_ARRAY_BUFFER, object->m_model->getMesches()[i]->getVertexName());
-		m_irradianceShader->bindAttributes(object->m_model->getMesches()[i], texture);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->m_model->getMesches()[i]->getIndexName());
-		glDrawElements(GL_TRIANGLES, object->m_model->getMesches()[i]->getNumberOfTriangles() * 3, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		m_irradianceShader->unbindAttributes(object->m_model->getMesches()[i]);
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	}
 	//glDisable(GL_CULL_FACE);
 	glViewport(0, 0, m_viewportWidth, m_viewportHeight);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glUseProgram(0);
-
 
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, fboIrradianceMSAA);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboCIrradiance);
 	glBlitFramebuffer(0, 0, depthmapWidth, depthmapHeight, 0, 0, depthmapWidth, depthmapHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
-
 	/*glBindFramebuffer(GL_FRAMEBUFFER, fboCIrradiance);
 	glReadPixels(0, 0, depthmapWidth, depthmapHeight, GL_BGR, GL_UNSIGNED_BYTE, irradianceData);
 	Bitmap::saveBitmap24("irradiance.bmp", irradianceData, depthmapWidth, depthmapHeight);*/
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 }
-

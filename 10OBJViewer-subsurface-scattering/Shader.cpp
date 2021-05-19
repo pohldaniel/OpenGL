@@ -5,7 +5,7 @@ Shader::Shader(std::string vertex, std::string fragment){
 	m_program = createProgram(vertex, fragment);
 
 	getAttributeGetAttribLocation();
-	loadSampler();
+	//loadSampler();
 }
 
 Shader::Shader(Shader* shader){
@@ -34,7 +34,7 @@ void Shader::getAttributeGetAttribLocation(){
 }
 
 void Shader::loadSampler(){
-	
+	std::cout << "-------------------------" << std::endl;
 	glUseProgram(m_program);
 	glUniform1i(glGetUniformLocation(m_program, "u_textureColor"), 0);
 	glUniform1i(glGetUniformLocation(m_program, "u_textureNormal"), 1);
@@ -46,262 +46,29 @@ void Shader::loadSampler(){
 	glUseProgram(0);
 }
 
-
-void Shader::bindAttributes(Mesh *a_mesh, GLuint texture){
-	
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, normal);
-
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, depth);
-
-	glActiveTexture(GL_TEXTURE6);
-	glBindTexture(GL_TEXTURE_2D, irradiance);
-
-	if (a_mesh->m_hasTangents){
-
-		glEnableVertexAttribArray(positionID);
-		glVertexAttribPointer(
-			positionID,					// attribute
-			3,						     // size
-			GL_FLOAT,					 // type
-			GL_FALSE,					 // normalized?
-			14 * sizeof(float),			 // stride
-			(void*)0      // array buffer offset
-			);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, a_mesh->getTextureName());
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, a_mesh->getNormalMap());
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, a_mesh->getDisplacementMap());
-
-		glEnableVertexAttribArray(texCoordID);
-		glVertexAttribPointer(
-			texCoordID,                       // attribute
-			2,                                // size
-			GL_FLOAT,                         // type
-			GL_FALSE,                         // normalized?
-			14 * sizeof(float),	              // stride
-			(void*)(3 * sizeof(float))        // array buffer offset
-			);
-
-		glEnableVertexAttribArray(normalID);
-		glVertexAttribPointer(
-			normalID,					// attribute
-			3,						    // size
-			GL_FLOAT,					// type
-			GL_FALSE,					// normalized?
-			14 * sizeof(float),			// stride
-			(void*)(5 * sizeof(float))	// array buffer offset
-			);
-
-
-		glEnableVertexAttribArray(tangentID);
-		glVertexAttribPointer(
-			tangentID,					// attribute
-			3,						    // size
-			GL_FLOAT,					// type
-			GL_FALSE,					// normalized?
-			14 * sizeof(float),			// stride
-			(void*)(8 * sizeof(float))	// array buffer offset
-			);
-
-
-		glEnableVertexAttribArray(bitangentID);
-		glVertexAttribPointer(
-			bitangentID,				// attribute
-			3,						    // size
-			GL_FLOAT,					// type
-			GL_FALSE,					// normalized?
-			14 * sizeof(float),			// stride
-			(void*)(11 * sizeof(float))	// array buffer offset
-			);
-
-	}else if (a_mesh->m_hasTextureCoords && a_mesh->m_hasNormals){
-
-
-		glEnableVertexAttribArray(positionID);
-		glVertexAttribPointer(
-			positionID,					// attribute
-			3,						     // size
-			GL_FLOAT,					 // type
-			GL_FALSE,					 // normalized?
-			8 * sizeof(float),			 // stride
-			(void*)0      // array buffer offset
-			);
-
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, a_mesh->getTextureName());
-
-		
-
-		glEnableVertexAttribArray(texCoordID);
-		glVertexAttribPointer(
-			texCoordID,                       // attribute
-			2,                                // size
-			GL_FLOAT,                         // type
-			GL_FALSE,                         // normalized?
-			8 * sizeof(float),	              // stride
-			(void*)(3 * sizeof(float))        // array buffer offset
-			);
-
-		glEnableVertexAttribArray(normalID);
-		glVertexAttribPointer(
-			normalID,					// attribute
-			3,						    // size
-			GL_FLOAT,					// type
-			GL_FALSE,					// normalized?
-			8 * sizeof(float),			// stride
-			(void*)(5 * sizeof(float))	// array buffer offset
-			);
-
-	}else if (a_mesh->m_hasNormals) { 
-		
-		glEnableVertexAttribArray(positionID);
-		glVertexAttribPointer(
-			positionID,					// attribute
-			3,						    // size
-			GL_FLOAT,					// type
-			GL_FALSE,					// normalized?
-			6 * sizeof(float),			// stride
-			(void*)0					// array buffer offset
-			);
-
-		glEnableVertexAttribArray(normalID);
-		glVertexAttribPointer(
-			normalID,					// attribute
-			3,						    // size
-			GL_FLOAT,					// type
-			GL_FALSE,					// normalized?
-			6 * sizeof(float),			// stride
-			(void*)(3 * sizeof(float))	// array buffer offset
-			);
-
-	}else if (a_mesh->m_hasTextureCoords){
-
-
-		glEnableVertexAttribArray(positionID);
-		glVertexAttribPointer(
-			positionID,					// attribute
-			3,						    // size
-			GL_FLOAT,					// type
-			GL_FALSE,					// normalized?
-			5 * sizeof(float),			// stride
-			(void*)0					// array buffer offset
-			);
-
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, a_mesh->getTextureName());
-
-		glEnableVertexAttribArray(texCoordID);
-		glVertexAttribPointer(
-			texCoordID,                       // attribute
-			2,                                // size
-			GL_FLOAT,                         // type
-			GL_FALSE,                         // normalized?
-			5 * sizeof(float),	              // stride
-			(void*)(3 * sizeof(float))        // array buffer offset
-			);
-	}else{
-
-		glEnableVertexAttribArray(positionID);
-		glVertexAttribPointer(
-			positionID,					// attribute
-			3,						     // size
-			GL_FLOAT,					 // type
-			GL_FALSE,					 // normalized?
-			3 * sizeof(float),			 // stride
-			(void*)0      // array buffer offset
-			);
-	}
-}
-
-void Shader::unbindAttributes(Mesh *a_mesh){
-
-	if (a_mesh->m_hasTangents){
-
-		glDisableVertexAttribArray(normalID);
-		glDisableVertexAttribArray(tangentID);
-		glDisableVertexAttribArray(bitangentID);
-		glDisableVertexAttribArray(texCoordID);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-	}else if (a_mesh->m_hasTextureCoords && a_mesh->m_hasNormals){
-
-		glDisableVertexAttribArray(normalID);
-		glDisableVertexAttribArray(texCoordID);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-	}else if (a_mesh->m_hasTextureCoords){
-
-		glDisableVertexAttribArray(texCoordID);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-	}else if (a_mesh->m_hasNormals){
-
-		glDisableVertexAttribArray(normalID);
-
-	}
-
-	
-	glDisableVertexAttribArray(positionID);
-
-	
-}
-
-
 void Shader::loadSampler(const char* location, int sampler){
-
-	glUseProgram(m_program);
 	glUniform1i(glGetUniformLocation(m_program, location), sampler);
-	glUseProgram(0);
 }
 
 //OpenGL specifies matrices as column-major to get row-major just transpose it
-
-void Shader::loadMatrix(const char* location, const Matrix4f matrix){
-
-	glUniformMatrix4fv(glGetUniformLocation(m_program, location), 1, true, &matrix[0][0]);
-
+void Shader::loadMatrix(const char* location, const Matrix4f matrix, bool trans) {
+	glUniformMatrix4fv(glGetUniformLocation(m_program, location), 1, trans, &matrix[0][0]);
 }
 
 void Shader::loadVector(const char* location,  Vector3f vector){
-
 	glUniform3fv(glGetUniformLocation(m_program, location), 1, &vector[0]);
-
 }
 
 void Shader::loadFloat2(const char* location, float value[2]){
-
 	glUniform1fv(glGetUniformLocation(m_program, location), 2, value);
 }
 
 void Shader::loadFloat(const char* location, float value){
-
 	glUniform1f(glGetUniformLocation(m_program, location), value);
 }
 
 
 void Shader::loadBool(const char* location, bool value){
-
 	glUniform1i(glGetUniformLocation(m_program, location), value);
 }
 
@@ -331,7 +98,7 @@ void Shader::loadLightSource(LightSource &lightsource, int index = -1){
 	
 }
 
-void Shader::loadLightSources(std::vector<LightSource> lights){
+/*void Shader::loadLightSources(std::vector<LightSource> lights){
 	
 	for (int i = 0; i < lights.size(); i++){
 
@@ -339,9 +106,9 @@ void Shader::loadLightSources(std::vector<LightSource> lights){
 
 	}
 	
-}
+}*/
 
-void Shader::loadMaterial(const Mesh::Material material){
+/*void Shader::loadMaterial(const Mesh::Material material){
 	
 	
 
@@ -351,7 +118,7 @@ void Shader::loadMaterial(const Mesh::Material material){
 	glUniform3fv(glGetUniformLocation(m_program, "material.specular"), 1, &material.specular[0]);
 	glUniform1f(glGetUniformLocation(m_program, "material.specularShininesse"), material.shinies);
 	glUseProgram(0);
-}
+}*/
 
 GLuint Shader::createProgram(std::string vertex, std::string fragment) {
 
@@ -416,9 +183,7 @@ GLuint Shader::compileShader(GLenum type, const char *pszSource){
 			infoLog.resize(infoLogSize);
 			glGetShaderInfoLog(shader, infoLogSize, &infoLogSize, &infoLog[0]);
 			std::cout << "Compile status: \n" << &infoLog << std::endl;
-
 		}
-
 	}
 	return shader;
 }
@@ -427,8 +192,7 @@ GLuint Shader::linkShaders(GLuint vertShader, GLuint fragShader){
 
 	GLuint program = glCreateProgram();
 
-	if (program)
-	{
+	if (program){
 		GLint linked = 0;
 
 		if (vertShader)
@@ -441,8 +205,7 @@ GLuint Shader::linkShaders(GLuint vertShader, GLuint fragShader){
 
 		glGetProgramiv(program, GL_LINK_STATUS, &linked);
 
-		if (!linked)
-		{
+		if (!linked){
 			GLsizei infoLogSize = 0;
 			std::string infoLog;
 
@@ -464,33 +227,21 @@ GLuint Shader::linkShaders(GLuint vertShader, GLuint fragShader){
 			glDeleteShader(fragShader);
 
 	}
-
 	return program;
 }
 
 void Shader::cleanup(){
-
-
 	if (m_program){
 		glDeleteProgram(m_program);
 		m_program = 0;
 	}
-
 }
-
-
 //////////////////////////////////////////SkyboxShader/////////////////////////////////////
-
 SkyboxShader::SkyboxShader(std::string vertex, std::string fragment, GLuint cubemap) : Shader(vertex, fragment){
-
 	m_cubemap = cubemap;
-
 }
 
-SkyboxShader::~SkyboxShader(){
-
-}
-
+SkyboxShader::~SkyboxShader(){}
 
 void SkyboxShader::bindAttributes(){
 
@@ -511,257 +262,26 @@ void SkyboxShader::unbindAttributes(){
 
 ////////////////////////////////////////////////////////////////////////////////
 
-EnvironmentMap::EnvironmentMap(std::string vertex, std::string fragment, GLuint cubemap) : Shader(vertex, fragment){
-	
+EnvironmentMap::EnvironmentMap(std::string vertex, std::string fragment, GLuint cubemap) : Shader(vertex, fragment){	
 	m_cubemap = cubemap;
 	loadSampler("u_cubeMap", 2);
 }
 
-EnvironmentMap::EnvironmentMap(EnvironmentMap* shader) : Shader(shader){
-	
+EnvironmentMap::EnvironmentMap(EnvironmentMap* shader) : Shader(shader){	
 	m_cubemap = shader->m_cubemap;
 }
 
-EnvironmentMap::~EnvironmentMap(){
-
-}
-
-
-void EnvironmentMap::bindAttributes(Mesh *a_mesh, GLuint texture){
-	
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	if (a_mesh->m_hasTangents){
-
-		glEnableVertexAttribArray(positionID);
-		glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 14*sizeof(float), (void*)0 );
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, a_mesh->getTextureName());
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, a_mesh->getNormalMap());
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap);
-
-		glEnableVertexAttribArray(texCoordID);
-		glVertexAttribPointer(texCoordID, 2, GL_FLOAT, GL_FALSE, 14*sizeof(float), (void*)(3*sizeof(float)) );
-
-		glEnableVertexAttribArray(normalID);
-		glVertexAttribPointer(normalID,	3, GL_FLOAT, GL_FALSE, 14*sizeof(float), (void*)(5*sizeof(float)));
-
-		glEnableVertexAttribArray(tangentID);
-		glVertexAttribPointer(tangentID, 3,	GL_FLOAT, GL_FALSE, 14*sizeof(float), (void*)(8*sizeof(float)));
-
-		glEnableVertexAttribArray(bitangentID);
-		glVertexAttribPointer(bitangentID, 3, GL_FLOAT,	GL_FALSE, 14 * sizeof(float), (void*)(11 * sizeof(float)));
-
-	}else if (a_mesh->m_hasTextureCoords && a_mesh->m_hasNormals){
-
-		glEnableVertexAttribArray(positionID);
-		glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)0);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, a_mesh->getTextureName());
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap);
-
-		glEnableVertexAttribArray(texCoordID);
-		glVertexAttribPointer(texCoordID, 2, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(3*sizeof(float)));
-
-		glEnableVertexAttribArray(normalID);
-		glVertexAttribPointer(normalID, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float),	(void*)(5*sizeof(float)));
-
-	}else if (a_mesh->m_hasNormals) {
-
-		glEnableVertexAttribArray(positionID);
-		glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)0);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap);
-
-		glEnableVertexAttribArray(normalID);
-		glVertexAttribPointer(normalID, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
-
-	}else if (a_mesh->m_hasTextureCoords){
-
-		glEnableVertexAttribArray(positionID);
-		glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float),	(void*)0);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, a_mesh->getTextureName());
-
-		glEnableVertexAttribArray(texCoordID);
-		glVertexAttribPointer(texCoordID, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),	(void*)(3*sizeof(float)));
-
-	}else{
-
-		glEnableVertexAttribArray(positionID);
-		glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),	(void*)0);
-	}
-}
-
-void EnvironmentMap::unbindAttributes(Mesh *a_mesh){
-
-	if (a_mesh->m_hasTangents){
-
-		glDisableVertexAttribArray(normalID);
-		glDisableVertexAttribArray(tangentID);
-		glDisableVertexAttribArray(bitangentID);
-		glDisableVertexAttribArray(texCoordID);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-	}else if (a_mesh->m_hasTextureCoords && a_mesh->m_hasNormals){
-
-		glDisableVertexAttribArray(normalID);
-		glDisableVertexAttribArray(texCoordID);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-	}else if (a_mesh->m_hasTextureCoords){
-
-		glDisableVertexAttribArray(texCoordID);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-	}else if (a_mesh->m_hasNormals){
-
-		glDisableVertexAttribArray(normalID);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-	}
-
-	glDisableVertexAttribArray(positionID);
-
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, 0);
-}
-
+EnvironmentMap::~EnvironmentMap(){}
 ///////////////////////////////DepthShader////////////////////////////
+DepthShader::DepthShader(std::string vertex, std::string fragment) : Shader(vertex, fragment){}
 
-DepthShader::DepthShader(std::string vertex, std::string fragment) : Shader(vertex, fragment){
-}
-
-DepthShader::~DepthShader(){
-
-}
-
-void DepthShader::bindAttributes(Mesh *a_mesh, GLuint texture){
-	
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	if (a_mesh->m_hasTangents){
-
-		glEnableVertexAttribArray(positionID);
-		glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)0);
-
-		glEnableVertexAttribArray(texCoordID);
-		glVertexAttribPointer(texCoordID, 2, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(3 * sizeof(float)));
-
-		glEnableVertexAttribArray(normalID);
-		glVertexAttribPointer(normalID, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(5 * sizeof(float)));
-
-		glEnableVertexAttribArray(tangentID);
-		glVertexAttribPointer(tangentID, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(8 * sizeof(float)));
-
-		glEnableVertexAttribArray(bitangentID);
-		glVertexAttribPointer(bitangentID, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(11 * sizeof(float)));
-
-	}else if (a_mesh->m_hasTextureCoords && a_mesh->m_hasNormals){
-
-		glEnableVertexAttribArray(positionID);
-		glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-
-		glEnableVertexAttribArray(texCoordID);
-		glVertexAttribPointer(texCoordID, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-
-		glEnableVertexAttribArray(normalID);
-		glVertexAttribPointer(normalID, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
-
-	}else if (a_mesh->m_hasNormals) {
-
-		glEnableVertexAttribArray(positionID);
-		glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-
-		glEnableVertexAttribArray(normalID);
-		glVertexAttribPointer(normalID, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-
-	}else if (a_mesh->m_hasTextureCoords){
-
-		glEnableVertexAttribArray(positionID);
-		glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-
-		glEnableVertexAttribArray(texCoordID);
-		glVertexAttribPointer(texCoordID, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-
-	}else{
-
-		glEnableVertexAttribArray(positionID);
-		glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	}
-}
-
-void DepthShader::unbindAttributes(Mesh *a_mesh){
-
-
-	if (a_mesh->m_hasTangents){
-
-		glDisableVertexAttribArray(normalID);
-		glDisableVertexAttribArray(tangentID);
-		glDisableVertexAttribArray(bitangentID);
-		glDisableVertexAttribArray(texCoordID);
-
-	}else if (a_mesh->m_hasTextureCoords && a_mesh->m_hasNormals){
-
-		glDisableVertexAttribArray(normalID);
-		glDisableVertexAttribArray(texCoordID);
-
-	}else if (a_mesh->m_hasTextureCoords){
-
-		glDisableVertexAttribArray(texCoordID);
-
-	}else if (a_mesh->m_hasNormals){
-
-		glDisableVertexAttribArray(normalID);
-	}
-
-	glDisableVertexAttribArray(positionID);
-
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-}
-
+DepthShader::~DepthShader(){}
 //////////////////////////TextureShader/////////////////////////////////////
-
-
 TextureShader::TextureShader(std::string vertex, std::string fragment) : Shader(vertex, fragment){
-
 	loadSampler("u_texture", 0);
 }
 
-TextureShader::~TextureShader(){
-
-}
-
+TextureShader::~TextureShader(){}
 
 void TextureShader::bindAttributes(GLuint texture){
 	
@@ -784,9 +304,7 @@ void TextureShader::unbindAttributes(){
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 }
-
 ///////////////////////////////Subsurface////////////////////////////
-
 Subsurfacehader::Subsurfacehader(std::string vertex, std::string fragment) : Shader(vertex, fragment){
 
 }

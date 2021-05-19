@@ -30,9 +30,6 @@
     <ClInclude Include="ModelMatrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -42,10 +39,13 @@
     <ClInclude Include="Vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
+    <ClInclude Include="Quad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Quad.h">
+    <ClInclude Include="ObjModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -68,9 +68,6 @@
     <ClCompile Include="ModelMatrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -80,10 +77,13 @@
     <ClCompile Include="Vector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
+    <ClCompile Include="Quad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Quad.cpp">
+    <ClCompile Include="ObjModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

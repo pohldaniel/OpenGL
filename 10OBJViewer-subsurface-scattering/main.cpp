@@ -4,11 +4,10 @@
 #include <sstream>
 
 #include "Bitmap.h"
-#include "Model.h"
+#include "ObjModel.h"
 #include "GL.h"
 #include  "Extension.h"
-#include "Camera.h";
-#include "Object.h"
+#include "Camera.h"
 #include "ModelMatrix.h"
 #include "Skybox.h"
 #include "Depthmap.h"
@@ -19,7 +18,6 @@ int width = 640;
 
 POINT g_OldCursorPos;
 bool g_enableVerticalSync;
-
 
 enum DIRECTION {
 	DIR_FORWARD = 1,
@@ -32,12 +30,10 @@ enum DIRECTION {
 	DIR_FORCE_32BIT = 0x7FFFFFFF
 };
 
-
-
 Quad *quad;
 Depthmap * depthmap = NULL;
 Camera* camera;
-Object *model;
+Model *model;
 Shader *sss;
 
 bool rotate = false;
@@ -48,7 +44,6 @@ float sssScale = 0.2;
 
 Matrix4f rot;
 Vector3f lightPos = Vector3f(0.0, 0.0, -4.0);
-
 
 //prototype funktions
 LRESULT CALLBACK winProc(HWND hWnd, UINT message, WPARAM wParma, LPARAM lParam);
@@ -61,7 +56,7 @@ void enableVerticalSync(bool enableVerticalSync);
 // the main windows entry point
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd){
 
-	Vector3f camPos(0.0, 0.0, 6.0);
+	Vector3f camPos(0.0, 0.0, 10.0);
 	Vector3f target(0.0, 0.2, -5.0);
 	Vector3f up(0.0, 1.0, 0.0);
 	camera = new Camera(camPos, target, up);
@@ -124,9 +119,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	
 	initApp(hwnd);
-	
-	
-
 	// main message loop
 	while (true) {
 
@@ -138,14 +130,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			TranslateMessage( &msg );
 			DispatchMessage ( &msg );
 		} else {
-			
-			
+						
 			processInput(hwnd);
 
-			
 			render();
-		
-
 			hdc=GetDC(hwnd);
 			SwapBuffers(hdc);			
 			ReleaseDC(hwnd,hdc);
@@ -321,63 +309,55 @@ void initApp(HWND hWnd){
 	glEnable(GL_DEPTH_TEST);				
 	//glEnable(GL_CULL_FACE);				
 
-	model = new Object();
-
-
 	////////////////////// Buddha ///////////////////////////////
-	model->initModel("objs/buddha.obj");
-	model->m_model->setRotXYZPos(Vector3f(0.0, 1.0, 0.0), 45.0,
-								  Vector3f(1.0, 0.0, 0.0), 270.0,
-								  Vector3f(0.0, 0.0, 1.0), 0.0,
-								  0.0, 0.0, 0.0);
-	model->m_model->scale(8.0 * 0.3, 8.0 * 0.3, 8.0* 0.3);
+	model = new Model();
+	/*model->loadObject("objs/buddha.obj");
+	model->setRotXYZPos(Vector3f(0.0, 1.0, 0.0), 45.0,
+		Vector3f(1.0, 0.0, 0.0), 270.0,
+		Vector3f(0.0, 0.0, 1.0), 0.0,
+		0.0, 0.0, 0.0);
+	model->scale(8.0 * 0.5, 8.0 * 0.5, 8.0 * 0.5);*/
 	////////////////////// Dragon ///////////////////////////////
-	/*model->initModel("objs/dragon.obj");
+	model->loadObject("objs/dragon.obj");
 
-	model->m_model->translate(0.0, 0.0, 4.0);
-	//model->m_model->rotate(Vector3f(1.0, 0.0, 0.0), 90.0);
-	model->m_model->scale(8.0 , 8.0, 8.0);*/
+	model->translate(0.0, 0.0, -1.0);
+	//model->rotate(Vector3f(1.0, 0.0, 0.0), 90.0);
+	model->scale(30.0 , 30.0, 30.0);
 
-	depthmap = new Depthmap(camera);
+	depthmap = new Depthmap();
 	depthmap->setViewport(width, height);
 	//depthmap->setProjectionMatrix(45.0f, 1.0, 1.0f, 100.0f);
 	depthmap->setOrthMatrix(-5.0f, 5.0f, -5.0f, 5.0f, 1.0f, 7.5f);
 
 	rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
-	depthmap->setViewMatrix(rot * lightPos, model->m_model->getTransformationMatrix() * model->m_model->getCenter(), Vector3f(0.0, 1.0, 0.0));
+	depthmap->setViewMatrix(rot * lightPos, model->getTransformationMatrix() * model->getCenter(), Vector3f(0.0, 1.0, 0.0));
 	depthmap->renderToDepthTexture(model);
 	depthmap->renderToSingleChannel(model);
-	
-	sss = new Shader("shader/sss.vert", "shader/sss.frag");
 
+	sss = new Shader("shader/sss.vert", "shader/sss.frag");
 	quad = new Quad();
 }
 
 void setCursortoMiddle(HWND hwnd){
-
 	RECT rect;
 
 	GetClientRect(hwnd, &rect);
 	SetCursorPos(rect.right / 2, rect.bottom / 2);
-
 }
+
 void enableVerticalSync(bool enableVerticalSync){
-
 	// WGL_EXT_swap_control.
-
 	typedef BOOL(WINAPI * PFNWGLSWAPINTERVALEXTPROC)(GLint);
 
 	static PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT =
 		reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>(
 		wglGetProcAddress("wglSwapIntervalEXT"));
 
-	if (wglSwapIntervalEXT)
-	{
+	if (wglSwapIntervalEXT){
 		wglSwapIntervalEXT(enableVerticalSync ? 1 : 0);
 		g_enableVerticalSync = enableVerticalSync;
 	}
 }
-
 
 void processInput(HWND hWnd ){
 
@@ -417,15 +397,11 @@ void processInput(HWND hWnd ){
 
 			// Rotate camera
 			if ( X || Y ) {
-
 				camera->rotate( X, Y, 0.0f );
-            
-        
 			} // End if any rotation
 
 
-			if ( Direction ) {
-				
+			if ( Direction ) {				
 				float dx=0,dy=0,dz=0, speed = 0.1;
 
 				if (Direction & DIR_FORWARD) dz = speed;
@@ -436,61 +412,44 @@ void processInput(HWND hWnd ){
 				if (Direction & DIR_DOWN) dy = -speed;
 
 				camera->move(dx,dy,dz);
-
 			} 
-	
 		}// End if any movement
 	} // End if Captured
 }
 
-
-void render(){
-	
-	if (rotate){
+void render() {
+	if (rotate) {
 		degree = degree + offset;
 		rot.rotate(Vector3f(0.0, 1.0, 0.0), degree);
-		depthmap->setViewMatrix(rot * lightPos, model->m_model->getTransformationMatrix() * model->m_model->getCenter(), Vector3f(0.0, 1.0, 0.0));
+		depthmap->setViewMatrix(rot * lightPos, model->getTransformationMatrix() * model->getCenter(), Vector3f(0.0, 1.0, 0.0));
 		depthmap->renderToDepthTexture(model);
 		//depthmap->renderToSingleChannel(model);
 	}
-	
+
 	glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	glUseProgram(sss->m_program);
 
 	sss->loadMatrix("u_projection", camera->getProjectionMatrix());
-	sss->loadMatrix("u_model", model->m_model->getTransformationMatrix());
+	sss->loadMatrix("u_model", model->getTransformationMatrix());
 	sss->loadMatrix("u_view", camera->getViewMatrix());
-	sss->loadMatrix("u_modelView", model->m_model->getTransformationMatrix() * camera->getViewMatrix());
-	sss->loadMatrix("u_normalMatrix", Matrix4f::getNormalMatrix(model->m_model->getTransformationMatrix() * camera->getViewMatrix()));
+	sss->loadMatrix("u_modelView", model->getTransformationMatrix() * camera->getViewMatrix());
+	sss->loadMatrix("u_normalMatrix", Matrix4f::getNormalMatrix(model->getTransformationMatrix() * camera->getViewMatrix()));
 	sss->loadMatrix("u_viewShadow", depthmap->getViewMatrix());
 	sss->loadMatrix("u_projectionShadowBias", depthmap->getDepthPassMatrix());
-	sss->loadMatrix("u_projectionPers", depthmap->getProjectionMatrix()); 
+	sss->loadMatrix("u_projectionPers", depthmap->getProjectionMatrix());
 	sss->loadMatrix("u_projectionOrth", depthmap->getOrthographicMatrix());
 	sss->loadMatrix("u_projectionShadowD3D", depthmap->getProjectionMatrixD3D());
 	sss->loadVector("u_lightPos", depthmap->getPosition());
 	sss->loadFloat("u_thicknessScale", thicknessScale);
 	sss->loadFloat("u_sssScale", sssScale);
 
-		for (int i = 0; i < model->m_model->numberOfMeshes(); i++){
+	sss->loadSampler("u_texture", 4);
+	Texture::bind(4, depthmap->depthmapTexture);
 
-			glBindBuffer(GL_ARRAY_BUFFER, model->m_model->getMesches()[i]->getVertexName());
-
-			//sss->bindAttributes(buddha->m_model->getMesches()[i], depthmap->singleChannelTexture);
-			sss->bindAttributes(model->m_model->getMesches()[i], depthmap->depthmapTexture);
-			
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model->m_model->getMesches()[i]->getIndexName());
-			glDrawElements(GL_TRIANGLES, model->m_model->getMesches()[i]->getNumberOfTriangles() * 3, GL_UNSIGNED_INT, 0);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-			sss->unbindAttributes(model->m_model->getMesches()[i]);
-
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		}
-	
+	model->draw();
 	glUseProgram(0);
+
 	//quad->render(depthmap->depthmapTexture);
 }

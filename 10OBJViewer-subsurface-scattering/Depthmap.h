@@ -3,13 +3,13 @@
 
 #include "Camera.h"
 #include "Shader.h"
-#include "Object.h"
+#include "ObjModel.h"
 
 class Depthmap{
 
 public:
 
-	Depthmap(Camera* camera);
+	Depthmap();
 	~Depthmap();
 
 	unsigned char *irradianceData;
@@ -29,10 +29,10 @@ public:
 	void setProjectionMatrix(float fovx, float aspect, float znear, float zfar);	
 	void setOrthMatrix(float left, float right, float bottom, float top, float znear, float zfar);
 	
-	void renderIrradianceMap(Object const* object);
-	void renderNormalMap(Object const* object);
-	void renderToDepthTexture(Object const* object);
-	void renderToSingleChannel(Object const* object);
+	void renderIrradianceMap(Model const* model);
+	void renderNormalMap(Model const* model);
+	void renderToDepthTexture(Model const* model);
+	void renderToSingleChannel(Model const* model);
 	void setViewport(int width, int height);
 
 	const Matrix4f &getDepthPassMatrix() const;
@@ -89,8 +89,6 @@ private :
 	Shader *m_normalShader;
 	Shader* m_depthMapShader;
 	Shader* m_depthMapShader2;
-	
-	Camera* m_camera;
 
 	void createDepthmapFBO();	
 };
