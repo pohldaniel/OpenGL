@@ -1082,9 +1082,7 @@ bool is_near(float v1, float v2){
 // Searches through all already-exported vertices
 // for a similar one.
 // Similar = same position + same UVs + same normal
-bool getSimilarVertexIndex(float p1, float p2, float p3, float n1, float n2, float n3, std::vector<float>& out_vertices, int &index)
-
-{
+bool getSimilarVertexIndex(float p1, float p2, float p3, float n1, float n2, float n3, std::vector<float>& out_vertices, int &index){
 	// Lame linear search
 	for (unsigned int i = 0; i<out_vertices.size(); i = i + 6){
 		if (
@@ -1104,9 +1102,7 @@ bool getSimilarVertexIndex(float p1, float p2, float p3, float n1, float n2, flo
 	return false;
 }
 
-bool getSimilarVertexIndex(float p1, float p2, float p3, float t1, float t2, float n1, float n2, float n3, std::vector<float>& out_vertices, int &index)
-
-{
+bool getSimilarVertexIndex(float p1, float p2, float p3, float t1, float t2, float n1, float n2, float n3, std::vector<float>& out_vertices, int &index){
 	// Lame linear search
 	for (unsigned int i = 0; i<out_vertices.size(); i = i + 8){
 		if (
@@ -1128,9 +1124,7 @@ bool getSimilarVertexIndex(float p1, float p2, float p3, float t1, float t2, flo
 	return false;
 }
 
-bool getSimilarVertexIndex(float p1, float p2, float p3, float t1, float t2, std::vector<float>& out_vertices, int &index)
-
-{
+bool getSimilarVertexIndex(float p1, float p2, float p3, float t1, float t2, std::vector<float>& out_vertices, int &index){
 	// Lame linear search
 	for (unsigned int i = 0; i<out_vertices.size(); i = i + 5){
 		if (

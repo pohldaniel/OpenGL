@@ -879,9 +879,6 @@ void ColladaLoader::loadAnimation(std::vector<KeyFrameData> &m_keyFrames, float 
 
 	std::vector<float> times;
 
-
-	bool firtsBoneAtAnimation = true;
-
 	while (animation != NULL) {
 
 		

@@ -56,14 +56,9 @@ private:
 
 	std::string m_mltPath;
 	std::string m_modelDirectory;
-	
-	
 
 	std::vector<Mesh*> mesh;
-
-	ModelMatrix *modelMatrix;
-
-	
+	ModelMatrix *modelMatrix;	
 };
 
 class Mesh{

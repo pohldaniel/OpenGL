@@ -18,7 +18,6 @@ int width = 640;
 POINT g_OldCursorPos;
 bool g_enableVerticalSync;
 
-
 enum DIRECTION {
 	DIR_FORWARD = 1,
 	DIR_BACKWARD = 2,
@@ -29,7 +28,6 @@ enum DIRECTION {
 
 	DIR_FORCE_32BIT = 0x7FFFFFFF
 };
-
 
 std::vector<Object*> objects;
 
@@ -385,9 +383,12 @@ void initApp(HWND hWnd)
 	lights.push_back(light);
 
 	// sometimes the iamges from the box have to be flipped vertical, horizontal
-	skyBox = new SkyBox("../skyboxes/sor_sea", 500, camera, true, false);
-	//skyBox = new SkyBox("../skyboxes/sea", 500, camera, true, true);
-	//skyBox = new SkyBox("../skyboxes/hw_morning", 500, camera, true, false);
+	skyBox = new SkyBox("../skyboxes/sor_sea", 500, true, false);
+	skyBox->setProjectionMatrix(camera->getProjectionMatrix());
+	//skyBox = new SkyBox("../skyboxes/sea", 500, true, true);
+	//skyBox->setProjectionMatrix(camera->getProjectionMatrix());
+	//skyBox = new SkyBox("../skyboxes/hw_morning", 500, true, false);
+	//skyBox->setProjectionMatrix(camera->getProjectionMatrix());
 
 	Object *object;
 
@@ -545,14 +546,11 @@ void render() {
 
 
 		for (int i = 0; i < objects[j]->m_model->numberOfMeshes(); i++) {
-
-
-
 			glUseProgram(objects[j]->m_shader[i]->m_program);
 
 			objects[j]->m_shader[i]->loadFloat("u_heighScale", heighscale);
 			objects[j]->m_shader[i]->loadFloat("u_tile", tile);
-			objects[j]->m_shader[i]->loadFloat2("active", active);
+			objects[j]->m_shader[i]->loadFloat("active", active);
 			objects[j]->m_shader[i]->loadBool("u_shadow", shadow);
 
 			objects[j]->m_shader[i]->loadMatrix("u_modelView", modelView);
@@ -564,8 +562,6 @@ void render() {
 
 
 			glBindBuffer(GL_ARRAY_BUFFER, objects[j]->m_model->getMesches()[i]->getVertexName());
-
-
 
 			objects[j]->m_shader[i]->bindAttributes(objects[j]->m_model->getMesches()[i], NULL);
 
@@ -579,12 +575,8 @@ void render() {
 
 			glUseProgram(0);
 		}
-
 	}
-
-	skyBox->render();
-
-
+	skyBox->draw(*camera);
 }
 
 

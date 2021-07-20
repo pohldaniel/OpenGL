@@ -22,7 +22,7 @@ void ModelMatrix::setRotPos(const Vector3f &axis, float degrees, float dx, float
 	Matrix4f rotMtx;
 	Matrix4f invRotMtx;
 
-	if (degrees != 0 || (!axis[0] == 0.0 && !axis[1] == 0.0 && !axis[2] == 0.0)){
+	if (degrees != 0 && !(axis[0] == 0.0 && axis[1] == 0.0 && axis[2] == 0.0)){
 
 		rotMtx.rotate(axis, degrees);
 
@@ -72,7 +72,7 @@ void ModelMatrix::setRotXYZPos(const Vector3f &axisX, float degreesX,
 	Matrix4f rotMtx;
 	Matrix4f invRotMtx;
 
-	if (degreesX != 0 || (!axisX[0] == 0.0 && !axisX[1] == 0.0 && !axisX[2] == 0.0)){
+	if (degreesX != 0 && !(axisX[0] == 0.0 && axisX[1] == 0.0 && axisX[2] == 0.0)){
 	
 		rotMtx.rotate(axisX, degreesX);
 		invRotMtx = Matrix4f(rotMtx[0][0], rotMtx[1][0], rotMtx[2][0], rotMtx[3][0],
@@ -85,7 +85,7 @@ void ModelMatrix::setRotXYZPos(const Vector3f &axisX, float degreesX,
 
 	}
 
-	if (degreesY != 0 || (!axisY[0] == 0.0 && !axisY[1] == 0.0 && !axisY[2] == 0.0)){
+	if (degreesY != 0 && !(axisY[0] == 0.0 && axisY[1] == 0.0 && axisY[2] == 0.0)){
 	
 		rotMtx.rotate(axisY, degreesY);
 		invRotMtx = Matrix4f(rotMtx[0][0], rotMtx[1][0], rotMtx[2][0], rotMtx[3][0],
@@ -99,7 +99,7 @@ void ModelMatrix::setRotXYZPos(const Vector3f &axisX, float degreesX,
 
 	}
 
-	if (degreesZ != 0 || (!axisZ[0] == 0.0 && !axisZ[1] == 0.0 && !axisZ[2] == 0.0)){
+	if (degreesZ != 0 && !(axisZ[0] == 0.0 && axisZ[1] == 0.0 && axisZ[2] == 0.0)){
 		
 		rotMtx.rotate(axisZ, degreesZ);
 		invRotMtx = Matrix4f(rotMtx[0][0], rotMtx[1][0], rotMtx[2][0], rotMtx[3][0],

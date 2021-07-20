@@ -27,15 +27,16 @@ public:
 	Shader(std::string vertex, std::string fragment);
 	Shader(Shader* shader);
 	virtual ~Shader();
-
 	
 	GLuint positionID, texCoordID, normalID, tangentID, bitangentID;
 	GLuint m_program;
 
 	void loadSampler(const char* location, int sampler);
-	void loadMatrix(const char* location, const Matrix4f matrix);
+	void loadMatrix(const char* location, const Matrix4f matrix, bool trans = true);
+	void loadMatrixArray(const char* location, const std::vector<Matrix4f> matrixArray, const short count);
 	void loadVector(const char* location, Vector3f vector);
-	void loadFloat2(const char* location, float value[2]);
+	void loadVector(const char* location, Vector2f vector);
+	void loadFloat(const char* location, float value[2]);
 	void loadFloat(const char* location, float value);
 	void loadBool(const char* location, bool value);
 	

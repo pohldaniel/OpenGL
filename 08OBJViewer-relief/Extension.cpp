@@ -255,9 +255,28 @@ void glUniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3)
 	pfnUniform4f(location, v0, v1, v2, v3);
 }
 
+void glEnableVertexAttribArray(GLuint index){
+	typedef void (APIENTRY * PFNGLENABLEVERTEXATTRIBARRAYPROC) (GLuint index);
+	static PFNGLENABLEVERTEXATTRIBARRAYPROC pfnEnableVertexAttribArray = 0;
+	LOAD_ENTRYPOINT("glEnableVertexAttribArray", pfnEnableVertexAttribArray, PFNGLENABLEVERTEXATTRIBARRAYPROC);
+	pfnEnableVertexAttribArray(index);
+}
 
-void glUniform1fv(GLint location, GLsizei count, const GLfloat *value)
-{
+void glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *pointer){
+	typedef void (APIENTRY * PFNGLVERTEXATTRIBPOINTERPROC) (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *pointer);
+	static PFNGLVERTEXATTRIBPOINTERPROC pfnVertexAttribPointer = 0;
+	LOAD_ENTRYPOINT("glVertexAttribPointer", pfnVertexAttribPointer, PFNGLVERTEXATTRIBPOINTERPROC);
+	pfnVertexAttribPointer(index, size, type, normalized, stride, pointer);
+}
+
+void glDisableVertexAttribArray(GLuint index){
+	typedef void (APIENTRY * PFNGLDISABLEVERTEXATTRIBARRAYPROC) (GLuint index);
+	static PFNGLDISABLEVERTEXATTRIBARRAYPROC pfnDisableVertexAttribArray = 0;
+	LOAD_ENTRYPOINT("glDisableVertexAttribArray", pfnDisableVertexAttribArray, PFNGLDISABLEVERTEXATTRIBARRAYPROC);
+	pfnDisableVertexAttribArray(index);
+}
+
+void glUniform1fv(GLint location, GLsizei count, const GLfloat *value){
 	typedef void (APIENTRY * PFNGLUNIFORM1FVPROC) (GLint location, GLsizei count, const GLfloat *value);
 	static PFNGLUNIFORM1FVPROC pfnUniform1fv = 0;
 	LOAD_ENTRYPOINT("glUniform1fv", pfnUniform1fv, PFNGLUNIFORM1FVPROC);
@@ -265,48 +284,28 @@ void glUniform1fv(GLint location, GLsizei count, const GLfloat *value)
 
 }
 
-void glEnableVertexAttribArray(GLuint index)
-{
-	typedef void (APIENTRY * PFNGLENABLEVERTEXATTRIBARRAYPROC) (GLuint index);
-	static PFNGLENABLEVERTEXATTRIBARRAYPROC pfnEnableVertexAttribArray = 0;
-	LOAD_ENTRYPOINT("glEnableVertexAttribArray", pfnEnableVertexAttribArray, PFNGLENABLEVERTEXATTRIBARRAYPROC);
-	pfnEnableVertexAttribArray(index);
+void glUniform2fv(GLint location, GLsizei count, const GLfloat *value) {
+	typedef void (APIENTRY * PFNGLUNIFORM2FVPROC) (GLint location, GLsizei count, const GLfloat *value);
+	static PFNGLUNIFORM2FVPROC pfnUniform2fv = 0;
+	LOAD_ENTRYPOINT("glUniform2fv", pfnUniform2fv, PFNGLUNIFORM2FVPROC);
+	pfnUniform2fv(location, count, value);
 }
 
-void glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *pointer)
-{
-	typedef void (APIENTRY * PFNGLVERTEXATTRIBPOINTERPROC) (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *pointer);
-	static PFNGLVERTEXATTRIBPOINTERPROC pfnVertexAttribPointer = 0;
-	LOAD_ENTRYPOINT("glVertexAttribPointer", pfnVertexAttribPointer, PFNGLVERTEXATTRIBPOINTERPROC);
-	pfnVertexAttribPointer(index, size, type, normalized, stride, pointer);
-}
-
-void glDisableVertexAttribArray(GLuint index)
-{
-	typedef void (APIENTRY * PFNGLDISABLEVERTEXATTRIBARRAYPROC) (GLuint index);
-	static PFNGLDISABLEVERTEXATTRIBARRAYPROC pfnDisableVertexAttribArray = 0;
-	LOAD_ENTRYPOINT("glDisableVertexAttribArray", pfnDisableVertexAttribArray, PFNGLDISABLEVERTEXATTRIBARRAYPROC);
-	pfnDisableVertexAttribArray(index);
-}
-
-void glUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
-{
-	typedef void (APIENTRY * PFNGLUNIFORMMATRIX4FVPROC) (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
-	static PFNGLUNIFORMMATRIX4FVPROC pfnUniformMatrix4fv = 0;
-	LOAD_ENTRYPOINT("glUniformMatrix4fv", pfnUniformMatrix4fv, PFNGLUNIFORMMATRIX4FVPROC);
-	pfnUniformMatrix4fv(location, count, transpose, value);
-}
-
-void glUniform3fv(GLint location, GLsizei count, const GLfloat *value)
-{
+void glUniform3fv(GLint location, GLsizei count, const GLfloat *value){
 	typedef void (APIENTRY * PFNGLUNIFORM3FVPROC) (GLint location, GLsizei count, const GLfloat *value);
 	static PFNGLUNIFORM3FVPROC pfnUniform3fv = 0;
 	LOAD_ENTRYPOINT("glUniform3fv", pfnUniform3fv, PFNGLUNIFORM3FVPROC);
 	pfnUniform3fv(location, count, value);
 }
 
-void glUniform4fv(GLint location, GLsizei count, const GLfloat *value)
-{
+void glUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value){
+	typedef void (APIENTRY * PFNGLUNIFORMMATRIX4FVPROC) (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+	static PFNGLUNIFORMMATRIX4FVPROC pfnUniformMatrix4fv = 0;
+	LOAD_ENTRYPOINT("glUniformMatrix4fv", pfnUniformMatrix4fv, PFNGLUNIFORMMATRIX4FVPROC);
+	pfnUniformMatrix4fv(location, count, transpose, value);
+}
+
+void glUniform4fv(GLint location, GLsizei count, const GLfloat *value){
 	typedef void (APIENTRY * PFNGLUNIFORM4FVPROC) (GLint location, GLsizei count, const GLfloat *value);
 	static PFNGLUNIFORM4FVPROC pfnUniform4fv = 0;
 	LOAD_ENTRYPOINT("glUniform4fv", pfnUniform4fv, PFNGLUNIFORM4FVPROC);
@@ -314,7 +313,6 @@ void glUniform4fv(GLint location, GLsizei count, const GLfloat *value)
 }
 
 void glBindAttribLocation(GLuint program, GLuint index, const GLchar *name){
-
 	typedef void (APIENTRY * PFNGLBINDATTRIBLOCATIONPROC) (GLuint program, GLuint index, const GLchar *name);
 	static PFNGLBINDATTRIBLOCATIONPROC pfnBindAttribLocation = 0;
 	LOAD_ENTRYPOINT("glBindAttribLocation", pfnBindAttribLocation, PFNGLBINDATTRIBLOCATIONPROC);
@@ -441,7 +439,6 @@ void glGenerateMipmap(GLenum target){
 }
 
 void glCompressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const GLvoid * data){
-
 	typedef void(APIENTRY * PFNGLCOMPRESSEDTEXIMAGE2DPPROC) (GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const GLvoid * data);
 	static PFNGLCOMPRESSEDTEXIMAGE2DPPROC glCompressedTexImage2D = 0;
 	LOAD_ENTRYPOINT("glCompressedTexImage2D", glCompressedTexImage2D, PFNGLCOMPRESSEDTEXIMAGE2DPPROC);
@@ -449,7 +446,6 @@ void glCompressedTexImage2D(GLenum target, GLint level, GLenum internalformat, G
 }
 
 void glTexImage3D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid * data){
-
 	typedef void (APIENTRY * PFNGLTEXIMAGE3DPROC) (GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid * data);
 	static PFNGLTEXIMAGE3DPROC glTexImage3D = 0;
 	LOAD_ENTRYPOINT("glTexImage3D", glTexImage3D, PFNGLTEXIMAGE3DPROC);
@@ -457,7 +453,6 @@ void glTexImage3D(GLenum target, GLint level, GLint internalFormat, GLsizei widt
 }
 
 void glFramebufferTexture3D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint layer){
-
 	typedef void (APIENTRY * PFNGLGLFRAMEBUFFER3DPROC) (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint layer);
 	static PFNGLGLFRAMEBUFFER3DPROC glFramebufferTexture3D = 0;
 	LOAD_ENTRYPOINT("glFramebufferTexture3D", glFramebufferTexture3D, PFNGLGLFRAMEBUFFER3DPROC);
@@ -465,7 +460,6 @@ void glFramebufferTexture3D(GLenum target, GLenum attachment, GLenum textarget, 
 }
 
 void glDrawBuffers(GLsizei n, const GLenum *bufs){
-
 	typedef void (APIENTRY * PFNGLGLDRAWBUFFERSPROC) (GLsizei n, const GLenum *bufs);
 	static PFNGLGLDRAWBUFFERSPROC glDrawBuffers = 0;
 	LOAD_ENTRYPOINT("glDrawBuffers", glDrawBuffers, PFNGLGLDRAWBUFFERSPROC);
@@ -474,9 +468,22 @@ void glDrawBuffers(GLsizei n, const GLenum *bufs){
 
 
 void glFramebufferTextureLayer(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer){
-
 	typedef void(APIENTRY * PFNGLFRAMEBUFFERTEXTURELAYERPROC) (GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);
 	static PFNGLFRAMEBUFFERTEXTURELAYERPROC glFramebufferTextureLayer = 0;
 	LOAD_ENTRYPOINT("glFramebufferTextureLayer", glFramebufferTextureLayer, PFNGLFRAMEBUFFERTEXTURELAYERPROC);
 	glFramebufferTextureLayer(target, attachment, texture, level, layer);
+}
+
+void glActiveTextureARB(GLenum texture) {
+	typedef void (APIENTRY * PFNGLACTIVETEXTUREARBPROC)(GLenum texture);
+	static PFNGLACTIVETEXTUREARBPROC pfnActiveTextureARB = 0;
+	LOAD_ENTRYPOINT("glActiveTextureARB", pfnActiveTextureARB, PFNGLACTIVETEXTUREARBPROC);
+	pfnActiveTextureARB(texture);
+}
+
+void glMultiTexCoord2fARB(GLenum target, GLfloat s, GLfloat t) {
+	typedef void (APIENTRY * PFNGLMULTITEXCOORD2FARBPROC)(GLenum target, GLfloat s, GLfloat t);
+	static PFNGLMULTITEXCOORD2FARBPROC pfnMultiTexCoord2fARB = 0;
+	LOAD_ENTRYPOINT("glMultiTexCoord2fARB", pfnMultiTexCoord2fARB, PFNGLMULTITEXCOORD2FARBPROC);
+	pfnMultiTexCoord2fARB(target, s, t);
 }

@@ -287,7 +287,6 @@ void glUniform1fv(GLint location, GLsizei count, const GLfloat *value) {
 	static PFNGLUNIFORM1FVPROC pfnUniform1fv = 0;
 	LOAD_ENTRYPOINT("glUniform1fv", pfnUniform1fv, PFNGLUNIFORM1FVPROC);
 	pfnUniform1fv(location, count, value);
-
 }
 
 void glUniform2fv(GLint location, GLsizei count, const GLfloat *value) {
@@ -463,7 +462,6 @@ void glFramebufferTexture3D(GLenum target, GLenum attachment, GLenum textarget, 
 }
 
 void glDrawBuffers(GLsizei n, const GLenum *bufs){
-
 	typedef void (APIENTRY * PFNGLGLDRAWBUFFERSPROC) (GLsizei n, const GLenum *bufs);
 	static PFNGLGLDRAWBUFFERSPROC glDrawBuffers = 0;
 	LOAD_ENTRYPOINT("glDrawBuffers", glDrawBuffers, PFNGLGLDRAWBUFFERSPROC);
@@ -472,23 +470,20 @@ void glDrawBuffers(GLsizei n, const GLenum *bufs){
 
 
 void glFramebufferTextureLayer(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer){
-
 	typedef void(APIENTRY * PFNGLFRAMEBUFFERTEXTURELAYERPROC) (GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);
 	static PFNGLFRAMEBUFFERTEXTURELAYERPROC glFramebufferTextureLayer = 0;
 	LOAD_ENTRYPOINT("glFramebufferTextureLayer", glFramebufferTextureLayer, PFNGLFRAMEBUFFERTEXTURELAYERPROC);
 	glFramebufferTextureLayer(target, attachment, texture, level, layer);
 }
 
-void glActiveTextureARB(GLenum texture)
-{
+void glActiveTextureARB(GLenum texture){
 	typedef void (APIENTRY * PFNGLACTIVETEXTUREARBPROC)(GLenum texture);
 	static PFNGLACTIVETEXTUREARBPROC pfnActiveTextureARB = 0;
 	LOAD_ENTRYPOINT("glActiveTextureARB", pfnActiveTextureARB, PFNGLACTIVETEXTUREARBPROC);
 	pfnActiveTextureARB(texture);
 }
 
-void glMultiTexCoord2fARB(GLenum target, GLfloat s, GLfloat t)
-{
+void glMultiTexCoord2fARB(GLenum target, GLfloat s, GLfloat t){
 	typedef void (APIENTRY * PFNGLMULTITEXCOORD2FARBPROC)(GLenum target, GLfloat s, GLfloat t);
 	static PFNGLMULTITEXCOORD2FARBPROC pfnMultiTexCoord2fARB = 0;
 	LOAD_ENTRYPOINT("glMultiTexCoord2fARB", pfnMultiTexCoord2fARB, PFNGLMULTITEXCOORD2FARBPROC);

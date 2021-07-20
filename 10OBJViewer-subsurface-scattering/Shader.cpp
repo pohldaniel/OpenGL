@@ -12,7 +12,6 @@ Shader::~Shader() {
 	cleanup();
 }
 
-
 void Shader::loadSampler(const char* location, int sampler){
 	glUniform1i(glGetUniformLocation(m_program, location), sampler);
 }

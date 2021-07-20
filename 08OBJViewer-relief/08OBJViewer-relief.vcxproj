@@ -17,8 +17,10 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelMatrix.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="ObjModel.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Skybox.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
@@ -29,8 +31,10 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelMatrix.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="ObjModel.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Skybox.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

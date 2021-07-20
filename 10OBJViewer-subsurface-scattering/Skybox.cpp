@@ -4,7 +4,6 @@ SkyBox::SkyBox(const char* filename, int size, bool flipVertical, bool flipHoriz
 	m_size = size;
 	createCubeMap(filename, flipVertical, flipHorizontal);
 	createBuffer(position);
-
 	m_shader = std::make_shared<Shader>("shader/skybox.vert", "shader/skybox.frag");
 }
 

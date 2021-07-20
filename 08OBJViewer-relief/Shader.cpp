@@ -1,7 +1,6 @@
 #include "Shader.h"
 
-Shader::Shader(std::string vertex, std::string fragment){
-	
+Shader::Shader(std::string vertex, std::string fragment){	
 	m_program = createProgram(vertex, fragment);
 
 	getAttributeGetAttribLocation();
@@ -25,7 +24,6 @@ Shader::~Shader(){
 }
 
 void Shader::getAttributeGetAttribLocation(){
-
 	positionID = glGetAttribLocation(m_program, "i_position");
 	texCoordID = glGetAttribLocation(m_program, "i_texCoord");
 	normalID = glGetAttribLocation(m_program, "i_normal");
@@ -33,8 +31,7 @@ void Shader::getAttributeGetAttribLocation(){
 	bitangentID = glGetAttribLocation(m_program, "i_bitangent");
 }
 
-void Shader::loadSampler(){
-	
+void Shader::loadSampler(){	
 	glUseProgram(m_program);
 	glUniform1i(glGetUniformLocation(m_program, "u_textureColor"), 0);
 	glUniform1i(glGetUniformLocation(m_program, "u_textureNormal"), 1);
@@ -260,48 +257,35 @@ void Shader::unbindAttributes(Mesh *a_mesh){
 		glDisableVertexAttribArray(normalID);
 
 	}
-
-	
-	glDisableVertexAttribArray(positionID);
-
-	
+	glDisableVertexAttribArray(positionID);	
 }
 
-
-void Shader::loadSampler(const char* location, int sampler){
-
-	glUseProgram(m_program);
+void Shader::loadSampler(const char* location, int sampler) {
 	glUniform1i(glGetUniformLocation(m_program, location), sampler);
-	glUseProgram(0);
 }
 
 //OpenGL specifies matrices as column-major to get row-major just transpose it
-
-void Shader::loadMatrix(const char* location, const Matrix4f matrix){
-
-	glUniformMatrix4fv(glGetUniformLocation(m_program, location), 1, true, &matrix[0][0]);
-
+void Shader::loadMatrix(const char* location, const Matrix4f matrix, bool trans) {
+	glUniformMatrix4fv(glGetUniformLocation(m_program, location), 1, trans, &matrix[0][0]);
 }
 
-void Shader::loadVector(const char* location,  Vector3f vector){
-
+void Shader::loadVector(const char* location, Vector3f vector) {
 	glUniform3fv(glGetUniformLocation(m_program, location), 1, &vector[0]);
-
 }
 
-void Shader::loadFloat2(const char* location, float value[2]){
-
-	glUniform1fv(glGetUniformLocation(m_program, location), 2, value);
+void Shader::loadVector(const char* location, Vector2f vector) {
+	glUniform2fv(glGetUniformLocation(m_program, location), 1, &vector[0]);
 }
 
-void Shader::loadFloat(const char* location, float value){
-
+void Shader::loadFloat(const char* location, float value) {
 	glUniform1f(glGetUniformLocation(m_program, location), value);
 }
 
+void Shader::loadFloat(const char* location, float value[2]) {
+	glUniform1fv(glGetUniformLocation(m_program, location), 2, value);
+}
 
-void Shader::loadBool(const char* location, bool value){
-
+void Shader::loadBool(const char* location, bool value) {
 	glUniform1i(glGetUniformLocation(m_program, location), value);
 }
 

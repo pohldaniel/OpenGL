@@ -36,13 +36,13 @@ private:
 };
 
 
-class Mesh;
-class Model {
-	friend Mesh;
+class Mesh2;
+class Model2 {
+	friend Mesh2;
 public:
 
-	Model();
-	~Model();
+	Model2();
+	~Model2();
 
 	void draw() const;
 	void draw(const Camera camera) const;
@@ -79,7 +79,7 @@ public:
 	bool m_hasNormals;
 	bool m_hasTangents;
 
-	std::vector<Mesh*> m_mesh;
+	std::vector<Mesh2*> m_mesh;
 
 	int addVertex(int hash, float *pVertex, int stride);
 	int m_numberOfMeshes;
@@ -95,9 +95,9 @@ public:
 	std::map<int, std::vector<int>> m_vertexCache;
 };
 
-class Mesh {
+class Mesh2 {
 
-	friend Model;
+	friend Model2;
 
 public:
 	///////////////////////////////geometry content
@@ -112,9 +112,9 @@ public:
 		std::string displacementMapPath;
 	};
 
-	Mesh(std::string mltName, int numberTriangles, Model* model);
-	Mesh(int numberTriangles, Model* model);
-	~Mesh();
+	Mesh2(std::string mltName, int numberTriangles, Model2* model);
+	Mesh2(int numberTriangles, Model2* model);
+	~Mesh2();
 
 	void draw();
 	void draw(const Camera camera);
@@ -122,14 +122,15 @@ public:
 	void setMaterial(const Vector3f &ambient, const Vector3f &diffuse, const Vector3f &specular, float shinies);
 	Material getMaterial();
 	bool readMaterial();
+	void generateNormals();
+	void generateTangents();
 
-	Model* m_model;
+	Model2* m_model;
 	std::string m_mltName;
 	Material m_material;
 
 	unsigned int m_triangleOffset, m_numberOfTriangles, m_stride;
-	///////////////////////////////////////OpenGL content////////////////// to do seperate it 
-
+	///////////////////////////////////////OpenGL content//////////////////
 	void createBuffer();
 	void createTexture();
 
@@ -148,5 +149,4 @@ public:
 	std::vector<Vector2f> m_texels;
 	std::vector<Vector3f> m_normals;
 };
-
 #endif

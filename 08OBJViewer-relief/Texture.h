@@ -16,6 +16,6 @@ public:
 	void bind(unsigned int unit);
 	GLuint m_texture;
 
-	static void bind(unsigned int unit, unsigned int texture);	
+	static void bind(unsigned int unit, unsigned int texture);
 };
 #endif

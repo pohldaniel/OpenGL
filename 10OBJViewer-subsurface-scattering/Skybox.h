@@ -37,9 +37,4 @@ private:
 	unsigned int m_skyboxVBO;
 	unsigned int m_vao;
 };
-
-
-
-
-
-#endif // __shaderH__
+#endif
