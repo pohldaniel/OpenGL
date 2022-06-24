@@ -9,13 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="soil">
-      <UniqueIdentifier>{1d08a36e-2ec7-4254-9fed-d7ef96a52167}</UniqueIdentifier>
-    </Filter>
     <Filter Include="soil2">
       <UniqueIdentifier>{527006f3-20d9-430d-874b-10a5e2f779c0}</UniqueIdentifier>
     </Filter>
