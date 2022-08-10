@@ -28,7 +28,8 @@ Quaternion interpolateQuat(Quaternion a, Quaternion b, float blend) {
 		result[2] = blendI * a[2] + blend * b[2];
 	}
 
-	return Quaternion::normalize(result);
+	Quaternion::Normalize(result);
+	return result;
 }
 
 Animator::Animator(AnimatedModel *model){

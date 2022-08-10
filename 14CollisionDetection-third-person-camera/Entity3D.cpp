@@ -154,7 +154,7 @@ void Entity3D::update(float elapsedTimeSec){
 
 	// When moving backwards invert rotations to match direction of travel.
 	if (Vector3f::Dot(heading, m_forward) < 0.0f)
-		temp = temp.inverse();
+		temp = Quaternion::Inverse(temp);
 
 	m_orientation *= temp;
 	m_orientation.normalize();

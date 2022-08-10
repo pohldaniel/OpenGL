@@ -163,7 +163,6 @@ private:
 	float mtx[4][4];
 };
 
-
 class Quaternion {
 
 	friend Quaternion operator*(float lhs, const Quaternion &rhs);
@@ -209,13 +208,16 @@ public:
 	void fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees);
 
 	void toAxisAngle(Vector3f &axis, float &degrees) const;
-	Matrix4f toMatrix4f() const;
+	Matrix4f& toMatrix4f();
 	void toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const;
 
-	static Quaternion &FromMatrix(const Matrix4f &m);
+	static Quaternion& FromMatrix(Quaternion &quat, const Matrix4f &m);
+	static Quaternion& Conjugate(Quaternion &quat);
+	static Quaternion& Inverse(Quaternion &quat);
 	static void Normalize(Quaternion &p);
 private:
 	float quat[4];
+	Matrix4f mtx;
 };
 
 

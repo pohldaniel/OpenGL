@@ -1208,7 +1208,7 @@ void Quaternion::toAxisAngle(Vector3f &axis, float &degrees) const {
 	}
 }
 
-Matrix4f Quaternion::toMatrix4f() const {
+Matrix4f& Quaternion::toMatrix4f() {
 	// Converts this quaternion to a rotation matrix.
 	//
 	//  | 1 - 2(y^2 + z^2)	2(xy - wz)			2(xz + wy)			0  |
@@ -1229,44 +1229,53 @@ Matrix4f Quaternion::toMatrix4f() const {
 	float wy = quat[3] * y2;
 	float wz = quat[3] * z2;
 
-	Matrix4f m;
+	mtx[0][0] = 1.0f - (yy + zz);
+	mtx[0][1] = xy - wz;
+	mtx[0][2] = xz + wy;
+	mtx[0][3] = 0.0f;
 
-	m[0][0] = 1.0f - (yy + zz);
-	m[0][1] = xy - wz;
-	m[0][2] = xz + wy;
-	m[0][3] = 0.0f;
+	mtx[1][0] = xy + wz;
+	mtx[1][1] = 1.0f - (xx + zz);
+	mtx[1][2] = yz - wx;
+	mtx[1][3] = 0.0f;
 
-	m[1][0] = xy + wz;
-	m[1][1] = 1.0f - (xx + zz);
-	m[1][2] = yz - wx;
-	m[1][3] = 0.0f;
+	mtx[2][0] = xz - wy;
+	mtx[2][1] = yz + wx;
+	mtx[2][2] = 1.0f - (xx + yy);
+	mtx[2][3] = 0.0f;
 
-	m[2][0] = xz - wy;
-	m[2][1] = yz + wx;
-	m[2][2] = 1.0f - (xx + yy);
-	m[2][3] = 0.0f;
+	mtx[3][0] = 0.0f;
+	mtx[3][1] = 0.0f;
+	mtx[3][2] = 0.0f;
+	mtx[3][3] = 1.0f;
 
-	m[3][0] = 0.0f;
-	m[3][1] = 0.0f;
-	m[3][2] = 0.0f;
-	m[3][3] = 1.0f;
-
-	return m;
+	return mtx;
 }
 
 void Quaternion::toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const {
-	Matrix4f m = toMatrix4f();
-	m.toHeadPitchRoll(headDegrees, pitchDegrees, rollDegrees);
+	mtx.toHeadPitchRoll(headDegrees, pitchDegrees, rollDegrees);
 }
 
 void Quaternion::Normalize(Quaternion &q) {
-	float invMag = 1.0f / q.length();
-	q.quat[0] *= invMag; q.quat[1] *= invMag; q.quat[2] *= invMag; q.quat[3] *= invMag;
+	q.normalize();
 }
 
-Quaternion &Quaternion::FromMatrix(const Matrix4f &m) {
-	Quaternion quat;
+Quaternion& Quaternion::FromMatrix(Quaternion &quat, const Matrix4f &m) {
 	quat.fromMatrix(m);
+	//for (short i = 0; i < 4; i++) {
+	//	memcmp(quat.mtx[i], m[i], sizeof(float) * 4) == 0;
+	//}
+
+	return quat;
+}
+
+Quaternion& Quaternion::Conjugate(Quaternion &quat) {
+	quat.conjugate();
+	return quat;
+}
+
+Quaternion& Quaternion::Inverse(Quaternion &quat) {
+	quat.inverse();
 	return quat;
 }
 

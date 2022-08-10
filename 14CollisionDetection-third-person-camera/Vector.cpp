@@ -982,6 +982,10 @@ const float Vector4f::operator[](int index) const {
 const Quaternion Quaternion::IDENTITY(0.0f, 0.0f, 0.0f, 1.0f);
 
 Quaternion::Quaternion() {
+	quat[0] = 0.0f;
+	quat[1] = 0.0f;
+	quat[2] = 0.0f;
+	quat[3] = 0.0f;
 }
 
 Quaternion::Quaternion(float x, float y, float z, float w) {
@@ -1033,7 +1037,7 @@ Quaternion &Quaternion::operator-=(const Quaternion &rhs) {
 Quaternion &Quaternion::operator*=(const Quaternion &rhs) {
 
 	// Multiply so that rotations are applied in a left to right order.
-	Quaternion tmp(		
+	Quaternion tmp(
 		(quat[3] * rhs[0]) + (quat[0] * rhs[3]) - (quat[1] * rhs[2]) + (quat[2] * rhs[1]),
 		(quat[3] * rhs[1]) + (quat[0] * rhs[2]) + (quat[1] * rhs[3]) - (quat[2] * rhs[0]),
 		(quat[3] * rhs[2]) - (quat[0] * rhs[1]) + (quat[1] * rhs[0]) + (quat[2] * rhs[3]),
@@ -1046,8 +1050,6 @@ Quaternion &Quaternion::operator*=(const Quaternion &rhs) {
 	(quat[3] * rhs[1]) - (quat[0] * rhs[2]) + (quat[1] * rhs[3]) + (quat[2] * rhs[0]),
 	(quat[3] * rhs[2]) + (quat[0] * rhs[1]) - (quat[1] * rhs[0]) + (quat[2] * rhs[3]),
 	(quat[3] * rhs[3]) - (quat[0] * rhs[0]) - (quat[1] * rhs[1]) - (quat[2] * rhs[2]));*/
-
-
 	*this = tmp;
 	return *this;
 }
@@ -1109,18 +1111,19 @@ void Quaternion::set(float x, float y, float z, float w) {
 	quat[0] = x, quat[1] = y, quat[2] = z, quat[3] = w;
 }
 
-Quaternion Quaternion::conjugate() const {
-	Quaternion tmp(-quat[0], -quat[1], -quat[2], quat[3]);
-	return tmp;
+void Quaternion::conjugate() {
+	quat[0] = -quat[0]; quat[1] = -quat[1]; quat[2] = -quat[2];
 }
 
-Quaternion Quaternion::inverse() const {
+void Quaternion::inverse() {
 	float invMag = 1.0f / length();
-	return conjugate() * invMag;
+	conjugate();
+
+	quat[0] = quat[0] * invMag; quat[1] = quat[1] * invMag; quat[2] = quat[2] * invMag; quat[3] = quat[3] * invMag;
 }
 
 void Quaternion::fromAxisAngle(const Vector3f &axis, float degrees) {
-	float halfTheta = (degrees * PI) / 180.0f * 0.5f;
+	float halfTheta = degrees * PI_ON_180 * 0.5f;
 	float s = sinf(halfTheta);
 	quat[3] = cosf(halfTheta), quat[0] = axis[0] * s, quat[1] = axis[1] * s, quat[2] = axis[2] * s;
 }
@@ -1129,7 +1132,6 @@ void Quaternion::fromMatrix(const Matrix4f &m) {
 	// Creates a quaternion from a rotation matrix. 
 	// The algorithm used is from Allan and Mark Watt's "Advanced 
 	// Animation and Rendering Techniques" (ACM Press 1992).
-
 	float s = 0.0f;
 	float q[4] = { 0.0f };
 	float trace = m[0][0] + m[1][1] + m[2][2];
@@ -1141,7 +1143,8 @@ void Quaternion::fromMatrix(const Matrix4f &m) {
 		q[0] = (m[2][1] - m[1][2]) * s;
 		q[1] = (m[0][2] - m[2][0]) * s;
 		q[2] = (m[1][0] - m[0][1]) * s;
-	}else {
+	}
+	else {
 
 		int nxt[3] = { 1, 2, 0 };
 		int i = 0, j = 0, k = 0;
@@ -1160,10 +1163,14 @@ void Quaternion::fromMatrix(const Matrix4f &m) {
 		s = 0.5f / s;
 		q[3] = (m[k][j] - m[j][k]) * s;
 		q[j] = (m[j][i] + m[i][j]) * s;
-		q[k] = (m[k][i] + m[i][k]) * s;	
+		q[k] = (m[k][i] + m[i][k]) * s;
 	}
 
 	quat[0] = q[0], quat[1] = q[1], quat[2] = q[2], quat[3] = q[3];
+
+	//for (short i = 0; i < 4; i++) {
+	//memcmp(mtx[i], m[i], sizeof(float) * 4) == 0;
+	//}
 }
 
 
@@ -1176,7 +1183,6 @@ void Quaternion::fromHeadPitchRoll(float headDegrees, float pitchDegrees, float 
 
 void Quaternion::toAxisAngle(Vector3f &axis, float &degrees) const {
 	// Converts this quaternion to an axis and an angle.
-
 	float sinHalfThetaSq = 1.0f - quat[3] * quat[3];
 
 	// Guard against numerical imprecision and identity quaternions.
@@ -1185,7 +1191,8 @@ void Quaternion::toAxisAngle(Vector3f &axis, float &degrees) const {
 		axis[0] = 1.0f, axis[1] = axis[2] = 0.0f;
 		degrees = 0.0f;
 
-	}else {
+	}
+	else {
 
 		float invSinHalfTheta = 1.0f / sqrtf(sinHalfThetaSq);
 
@@ -1196,7 +1203,7 @@ void Quaternion::toAxisAngle(Vector3f &axis, float &degrees) const {
 	}
 }
 
-Matrix4f Quaternion::toMatrix4f() const {
+Matrix4f& Quaternion::toMatrix4f() {
 	// Converts this quaternion to a rotation matrix.
 	//
 	//  | 1 - 2(y^2 + z^2)	2(xy - wz)			2(xz + wy)			0  |
@@ -1217,44 +1224,53 @@ Matrix4f Quaternion::toMatrix4f() const {
 	float wy = quat[3] * y2;
 	float wz = quat[3] * z2;
 
-	Matrix4f m;
+	mtx[0][0] = 1.0f - (yy + zz);
+	mtx[0][1] = xy - wz;
+	mtx[0][2] = xz + wy;
+	mtx[0][3] = 0.0f;
 
-	m[0][0] = 1.0f - (yy + zz);
-	m[0][1] = xy - wz;
-	m[0][2] = xz + wy;
-	m[0][3] = 0.0f;
+	mtx[1][0] = xy + wz;
+	mtx[1][1] = 1.0f - (xx + zz);
+	mtx[1][2] = yz - wx;
+	mtx[1][3] = 0.0f;
 
-	m[1][0] = xy + wz;
-	m[1][1] = 1.0f - (xx + zz);
-	m[1][2] = yz - wx;
-	m[1][3] = 0.0f;
+	mtx[2][0] = xz - wy;
+	mtx[2][1] = yz + wx;
+	mtx[2][2] = 1.0f - (xx + yy);
+	mtx[2][3] = 0.0f;
 
-	m[2][0] = xz - wy;
-	m[2][1] = yz + wx;
-	m[2][2] = 1.0f - (xx + yy);
-	m[2][3] = 0.0f;
+	mtx[3][0] = 0.0f;
+	mtx[3][1] = 0.0f;
+	mtx[3][2] = 0.0f;
+	mtx[3][3] = 1.0f;
 
-	m[3][0] = 0.0f;
-	m[3][1] = 0.0f;
-	m[3][2] = 0.0f;
-	m[3][3] = 1.0f;
-
-	return m;
+	return mtx;
 }
 
 void Quaternion::toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const {
-	Matrix4f m = toMatrix4f();
-	m.toHeadPitchRoll(headDegrees, pitchDegrees, rollDegrees);
+	mtx.toHeadPitchRoll(headDegrees, pitchDegrees, rollDegrees);
 }
 
 void Quaternion::Normalize(Quaternion &q) {
-	float invMag = 1.0f / q.length();
-	q.quat[0] *= invMag; q.quat[1] *= invMag; q.quat[2] *= invMag; q.quat[3] *= invMag;
+	q.normalize();
 }
 
-Quaternion &Quaternion::FromMatrix(const Matrix4f &m) {
-	Quaternion quat;
+Quaternion& Quaternion::FromMatrix(Quaternion &quat, const Matrix4f &m) {
 	quat.fromMatrix(m);
+	//for (short i = 0; i < 4; i++) {
+	//	memcmp(quat.mtx[i], m[i], sizeof(float) * 4) == 0;
+	//}
+
+	return quat;
+}
+
+Quaternion& Quaternion::Conjugate(Quaternion &quat) {
+	quat.conjugate();
+	return quat;
+}
+
+Quaternion& Quaternion::Inverse(Quaternion &quat) {
+	quat.inverse();
 	return quat;
 }
 
